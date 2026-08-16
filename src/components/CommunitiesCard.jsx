@@ -4,6 +4,7 @@ import { getJoinedCommunity, joinCommunity } from "../utils/getDatas";
 import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router";
+import { useState } from "react";
 
 const CommunitiesCard = ({
   id,
@@ -14,10 +15,11 @@ const CommunitiesCard = ({
   member,
   upcoming_event,
   setShowModal,
-  update,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
-  const joinedCommunity = getJoinedCommunity(id);
+  const [joinedCommunity, setJoinedCommunity] = useState(
+    getJoinedCommunity(id),
+  );
 
   const handleJoin = () => {
     if (!userLogin) {
@@ -27,7 +29,7 @@ const CommunitiesCard = ({
     }
 
     joinCommunity(id);
-    update();
+    setJoinedCommunity(getJoinedCommunity(id));
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -75,7 +77,7 @@ const CommunitiesCard = ({
         <div className="flex gap-2 my-2">
           <button
             onClick={handleJoin}
-            className={`${joinedCommunity ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80`}
+            className={`${joinedCommunity ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80`}
           >
             {joinedCommunity ? "✔ Registered" : "Join Community"}
           </button>

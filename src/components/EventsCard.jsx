@@ -4,6 +4,7 @@ import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
 import { getJoinedEvent, joinEvent } from "../utils/getDatas";
 import { Link } from "react-router";
+import { useState } from "react";
 
 const EventsCard = ({
   id,
@@ -16,10 +17,10 @@ const EventsCard = ({
   attendees,
   capacity,
   setShowModal,
-  update,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
-  const joinedEvent = getJoinedEvent(id);
+
+  const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
 
   const handleJoin = () => {
     if (!userLogin) {
@@ -29,7 +30,7 @@ const EventsCard = ({
     }
 
     joinEvent(id);
-    update();
+    setJoinedEvent(getJoinedEvent(id));
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -52,10 +53,7 @@ const EventsCard = ({
         </div>
       </div>
       <div className="grid gap-2 py-2 px-4">
-        <Link
-          to={`/events/detail/${id}`}
-          className="grid gap-2"
-        >
+        <Link to={`/events/detail/${id}`} className="grid gap-2">
           <p className="text-md font-semibold">{title}</p>
           <div className="flex gap-1 text-dark-gray">
             <CiCalendar />
