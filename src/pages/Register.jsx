@@ -13,21 +13,23 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const users = JSON.parse(localStorage.getItem("users"));
+  const organizerAndAdmin = [
+    JSON.parse(import.meta.env.VITE_ORGANIZER),
+    JSON.parse(import.meta.env.VITE_ADMIN),
+  ];
+
+  const combinedUser = users
+    ? [...organizerAndAdmin, ...users]
+    : [...organizerAndAdmin];
+
+  const newId = users && users.map((user) => user.id)[users.length - 1] + 1;
 
   const onSubmit = (data) => {
-    const users = JSON.parse(localStorage.getItem("users"));
-
-    const newId = users && users.map((user) => user.id)[users.length - 1] + 1;
-
-    if (!users) {
-      const newUser = { id: 3, ...data };
-      localStorage.setItem("users", JSON.stringify([newUser]));
-      return;
-    }
-
-    if (users.find((user) => user.email === data.email)) {
+    if (combinedUser.find((user) => user.email === data.email)) {
       setError("email", {
         type: "manual",
         message: "Email is already registered",
@@ -36,7 +38,15 @@ const Register = () => {
       return;
     }
 
-    const updatedUsers = [...users, { id: newId, ...data }];
+    if (!users) {
+      const newUser = { id: 3, role: "user", ...data };
+      localStorage.setItem("users", JSON.stringify([newUser]));
+
+      navigate("/login");
+      return;
+    }
+
+    const updatedUsers = [...users, { id: newId, role: "user", ...data }];
     localStorage.setItem("users", JSON.stringify(updatedUsers));
 
     navigate("/login");
@@ -44,9 +54,9 @@ const Register = () => {
 
   return (
     <>
-      <section className="flex lg:justify-between min-h-screen">
+      <section className="flex lg:justify-between min-h-dvh">
         <Discover />
-        <section className="flex items-center justify-center bg-gray w-full lg:w-10/12 px-4 lg:px-58">
+        <section className="flex items-center justify-center bg-gray w-full lg:w-10/12 px-8 lg:px-58">
           <div className="grid gap-4 w-full">
             <div>
               <p className="text-xl font-bold">Welcome back</p>
