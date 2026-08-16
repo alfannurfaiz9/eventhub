@@ -2,6 +2,7 @@ import { CiCalendar } from "react-icons/ci";
 import { CiLocationOn } from "react-icons/ci";
 import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
+import { getJoinedEvent, joinEvent } from "../utils/getDatas";
 import { Link } from "react-router";
 
 const EventsCard = ({
@@ -15,13 +16,20 @@ const EventsCard = ({
   attendees,
   capacity,
   setShowModal,
+  update,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
+  const joinedEvent = getJoinedEvent(id);
 
   const handleJoin = () => {
     if (!userLogin) {
       setShowModal(true);
+
+      return;
     }
+
+    joinEvent(id);
+    update();
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -44,7 +52,10 @@ const EventsCard = ({
         </div>
       </div>
       <div className="grid gap-2 py-2 px-4">
-        <Link to={`/events/detail/${id}`} className="grid gap-2">
+        <Link
+          to={`/events/detail/${id}`}
+          className="grid gap-2"
+        >
           <p className="text-md font-semibold">{title}</p>
           <div className="flex gap-1 text-dark-gray">
             <CiCalendar />
@@ -76,9 +87,9 @@ const EventsCard = ({
         <div className="flex gap-2 my-2">
           <button
             onClick={handleJoin}
-            className="py-1 px-4 w-10/12 bg-primary text-white rounded-lg cursor-pointer hover:opacity-80"
+            className={`${joinedEvent ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80`}
           >
-            Join Event
+            {joinedEvent ? "✔ Registered" : "Join Event"}
           </button>
           <button className="py-1 px-4 text-dark-gray border border-gray-300 rounded-lg cursor-pointer hover:opacity-80">
             <CiBookmark />

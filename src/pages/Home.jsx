@@ -18,9 +18,14 @@ import { useState } from "react";
 const Homepage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [inputSearch, setInputSearch] = useState("");
+  const [num, setNum] = useState(null);
   const search = searchParams.get("search") || "";
 
   const [showModal, setShowModal] = useState(false);
+
+  const update = () => {
+    setNum(num + 1);
+  };
 
   return (
     <>
@@ -108,6 +113,7 @@ const Homepage = () => {
             .filter((event) => event.title.toLowerCase().includes(search))
             .map((event, idx) => (
               <EventsCard
+                key={`${event}-${idx}`}
                 id={event.id}
                 img={event.img}
                 cat={getCategories(event)}
@@ -118,6 +124,7 @@ const Homepage = () => {
                 attendees={event.attendees}
                 capacity={event.capacity}
                 setShowModal={setShowModal}
+                update={update}
               />
             ))}
         </div>
@@ -150,6 +157,7 @@ const Homepage = () => {
                 member={community.member}
                 upcoming_event={community.upcoming_event}
                 setShowModal={setShowModal}
+                update={update}
               />
             ))}
         </div>

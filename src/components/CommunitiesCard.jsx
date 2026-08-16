@@ -1,4 +1,5 @@
 import { categories } from "../utils/datas.js";
+import { getJoinedCommunity, joinCommunity } from "../utils/getDatas";
 
 import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
@@ -13,13 +14,20 @@ const CommunitiesCard = ({
   member,
   upcoming_event,
   setShowModal,
+  update,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
+  const joinedCommunity = getJoinedCommunity(id);
 
   const handleJoin = () => {
     if (!userLogin) {
       setShowModal(true);
+
+      return;
     }
+
+    joinCommunity(id);
+    update();
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -67,9 +75,9 @@ const CommunitiesCard = ({
         <div className="flex gap-2 my-2">
           <button
             onClick={handleJoin}
-            className="py-1 px-4 w-full text-sm bg-primary text-white rounded-lg cursor-pointer hover:opacity-80"
+            className={`${joinedCommunity ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80`}
           >
-            Join Community
+            {joinedCommunity ? "✔ Registered" : "Join Community"}
           </button>
         </div>
       </div>
