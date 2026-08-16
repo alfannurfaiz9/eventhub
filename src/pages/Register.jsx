@@ -49,7 +49,15 @@ const Register = () => {
     }
 
     if (!users) {
-      const newUser = { id: 3, role: "user", full_name, email, password };
+      const newUser = {
+        id: 3,
+        role: "user",
+        full_name,
+        email,
+        password,
+        community_id: [],
+        event_id: [],
+      };
       localStorage.setItem("users", JSON.stringify([newUser]));
 
       navigate("/login");
@@ -58,7 +66,15 @@ const Register = () => {
 
     const updatedUsers = [
       ...users,
-      { id: newId, role: "user", full_name, email, password },
+      {
+        id: newId,
+        role: "user",
+        full_name,
+        email,
+        password,
+        community_id: [],
+        event_id: [],
+      },
     ];
     localStorage.setItem("users", JSON.stringify(updatedUsers));
 
