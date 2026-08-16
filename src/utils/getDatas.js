@@ -99,7 +99,11 @@ export const joinEvent = (id) => {
 export const getJoinedEvent = (id) => {
   const user = getUser();
 
-  return user.event_id?.includes(id);
+  if (!user) {
+    return;
+  }
+
+  return user.event_id.includes(Number(id));
 };
 
 export const joinCommunity = (id) => {
@@ -131,5 +135,9 @@ export const joinCommunity = (id) => {
 export const getJoinedCommunity = (id) => {
   const user = getUser();
 
-  return user.community_id?.includes(id);
+  if (!user) {
+    return;
+  }
+
+  return user.community_id.includes(Number(id));
 };
