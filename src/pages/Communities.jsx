@@ -11,7 +11,7 @@ const Communities = () => {
   const [activeLink, setActiveLink] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
-  const category = searchParams.get("filter") || "";
+  const category = searchParams.get("category") || "";
 
   const filteredCategory = () => {
     return communities.filter((community) => {
@@ -85,9 +85,9 @@ const Communities = () => {
               onClick={() => {
                 const newParams = new URLSearchParams(searchParams);
 
-                newParams.delete("filter");
+                newParams.delete("category");
                 setSearchParams(newParams);
-                setActiveLink("")
+                setActiveLink("");
               }}
               className={`${activeLink ? "text-dark-gray border border-gray-300" : "bg-primary text-white"} py-2 px-4 text-xs rounded-lg cursor-pointer hover:opacity-90`}
             >
@@ -99,10 +99,10 @@ const Communities = () => {
                   const newParams = new URLSearchParams(searchParams);
 
                   if (category === cat.name.toLowerCase()) {
-                    newParams.delete("filter");
+                    newParams.delete("category");
                     setActiveLink("");
                   } else {
-                    newParams.set("filter", cat.name.toLowerCase());
+                    newParams.set("category", cat.name.toLowerCase());
                     setActiveLink(cat.name);
                   }
 
