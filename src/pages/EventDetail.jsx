@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
-import Navbar from "../components/Navbar.jsx";
 import EventSpeakers from "../components/EventSpeakers.jsx";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 import RecommendationCard from "../components/RecommendationCard.jsx";
@@ -20,6 +19,7 @@ import { MdSend } from "react-icons/md";
 const EventDetail = () => {
   const [event, setEvent] = useState(null);
   const [community, setCommunity] = useState(null);
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -36,7 +36,6 @@ const EventDetail = () => {
 
   return (
     <>
-      <Navbar />
       <>
         <div className="py-4 px-6 border-b border-b-gray shadow-xs">
           <Link

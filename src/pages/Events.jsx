@@ -1,6 +1,5 @@
 import { BsFilterRight } from "react-icons/bs";
 
-import Navbar from "../components/Navbar";
 import EventsCard from "../components/EventsCard";
 import EventsModal from "../components/EventsModal.jsx";
 
@@ -68,7 +67,6 @@ const Movies = () => {
 
   return (
     <>
-      <Navbar />
       <div className={showModal ? "block" : "hidden"}>
         <EventsModal setShowModal={setShowModal} />
       </div>

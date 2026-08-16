@@ -1,6 +1,5 @@
 import { Link, useSearchParams } from "react-router";
 
-import Navbar from "../components/Navbar.jsx";
 import EventsCard from "../components/EventsCard.jsx";
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import TestimonialsCard from "../components/TestimonialsCard.jsx";
@@ -25,7 +24,6 @@ const Homepage = () => {
 
   return (
     <>
-      <Navbar />
       <div className={showModal ? "block" : "hidden"}>
         <EventsModal setShowModal={setShowModal} />
       </div>

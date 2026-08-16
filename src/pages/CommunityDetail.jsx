@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router";
 
-import Navbar from "../components/Navbar.jsx";
 import EventsCard from "../components/EventsCard.jsx";
 
 import { FaArrowLeft } from "react-icons/fa";
@@ -10,8 +9,9 @@ import { getCategories, getEvent } from "../utils/getDatas.js";
 import { useEffect, useState } from "react";
 
 const CommunityDetail = () => {
-  const [community, setCommunity] = useState(null);
   const { id } = useParams();
+
+  const [community, setCommunity] = useState(null);
 
   useEffect(() => {
     (() => {
@@ -21,7 +21,6 @@ const CommunityDetail = () => {
 
   return (
     <>
-      <Navbar />
       {community ? (
         <>
           <div className="py-4 px-6 border-b border-b-gray shadow-xs">
@@ -97,21 +96,23 @@ const CommunityDetail = () => {
               <div className="grid lg:grid-cols-3">
                 {getEvent(community).length ? (
                   getEvent(community).map((event, idx) => (
-                    <Link to={`/events/${event.id}`} key={`${event.id}-${idx}`}>
-                      <EventsCard
-                        img={event.img}
-                        cat={getCategories(event)}
-                        title={event.title}
-                        date={event.date}
-                        time={event.time}
-                        location={event.location}
-                        attendees={event.attendees}
-                        capacity={event.capacity}
-                      />
-                    </Link>
+                    <EventsCard
+                      key={`${event.id}-${idx}`}
+                      id={event.id}
+                      img={event.img}
+                      cat={getCategories(event)}
+                      title={event.title}
+                      date={event.date}
+                      time={event.time}
+                      location={event.location}
+                      attendees={event.attendees}
+                      capacity={event.capacity}
+                    />
                   ))
                 ) : (
-                  <p className="text-xs text-dark-gray">No event in this category</p>
+                  <p className="text-xs text-dark-gray">
+                    No event in this category
+                  </p>
                 )}
               </div>
             </div>

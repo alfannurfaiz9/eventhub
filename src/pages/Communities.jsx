@@ -1,4 +1,3 @@
-import Navbar from "../components/Navbar";
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import EventsModal from "../components/EventsModal.jsx";
 
@@ -40,7 +39,6 @@ const Communities = () => {
 
   return (
     <>
-      <Navbar />
       <div className={showModal ? "block" : "hidden"}>
         <EventsModal setShowModal={setShowModal} />
       </div>
