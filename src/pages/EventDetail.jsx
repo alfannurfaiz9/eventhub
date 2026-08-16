@@ -126,9 +126,9 @@ const EventDetail = () => {
                   </div>
                 </div>
               </div>
-              <article className="grid gap-4">
+              <section className="grid gap-4">
                 <p className="font-bold">You might also like</p>
-                <div className="grid lg:grid-cols-3 gap-4">
+                <article className="grid lg:grid-cols-3 gap-4">
                   {getRecommendations(event).length ? (
                     getRecommendations(event).map((rec, idx) => (
                       <Link to={`/events/${rec.id}`} key={`${rec.id}-${idx}`}>
@@ -144,8 +144,8 @@ const EventDetail = () => {
                       No recommendation for this categories
                     </p>
                   )}
-                </div>
-              </article>
+                </article>
+              </section>
             </section>
             <section className="grid gap-4 h-fit">
               <div className="bg-white py-4 px-3 grid gap-3 rounded-xl border border-gray-300">
