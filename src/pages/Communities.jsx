@@ -68,7 +68,7 @@ const Communities = () => {
         </div>
       </section>
       <section className="py-6 px-4 lg:px-14">
-        <div className="flex gap-4 flex-col items-start lg:flex-row lg:items-center">
+        <div className="flex gap-4 flex-col items-start lg:flex-row lg:items-center pb-4">
           <div className="p-1 border border-gray-300 w-fit rounded-lg flex gap-2">
             <button className="py-2 px-3 lg:py-1 lg:px-2 text-xs bg-primary text-white rounded-lg cursor-pointer hover:opacity-90">
               All
@@ -89,7 +89,7 @@ const Communities = () => {
                 setSearchParams(newParams);
                 setActiveLink("");
               }}
-              className={`${activeLink ? "text-dark-gray border border-gray-300" : "bg-primary text-white"} py-2 px-4 text-xs rounded-lg cursor-pointer hover:opacity-90`}
+              className={`${activeLink ? "text-dark-gray border border-gray-300" : "bg-primary text-white"} py-1 lg:py-2 px-3 lg:px-4 text-xs rounded-lg cursor-pointer hover:opacity-90`}
             >
               All Categories
             </button>
@@ -109,7 +109,7 @@ const Communities = () => {
                   setSearchParams(newParams);
                 }}
                 key={cat.id}
-                className={`${activeLink === cat.name && "bg-primary text-white"} py-2 px-4 text-xs text-dark-gray rounded-lg cursor-pointer border border-gray-300 hover:opacity-80`}
+                className={`${activeLink === cat.name && "bg-primary text-white"} py-1 lg:py-2 px-3 lg:px-4 text-xs text-dark-gray rounded-lg cursor-pointer border border-gray-300 hover:opacity-80`}
               >
                 {cat.name}
               </button>
