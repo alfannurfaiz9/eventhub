@@ -15,7 +15,10 @@ const CommunityDetail = () => {
 
   useEffect(() => {
     (() => {
-      setCommunity(communities.filter((c) => c.id.toString() === id)[0]);
+      const filteredCommunities = communities.filter(
+        (c) => c.id.toString() === id,
+      )[0];
+      setCommunity(filteredCommunities);
     })();
   }, [id]);
 

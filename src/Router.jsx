@@ -9,6 +9,7 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import AuthLayout from "./layouts/AuthLayout.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
+import ProtectedLayout from "./layouts/ProtectedLayout.jsx";
 
 const Router = () => {
   return (
@@ -25,7 +26,6 @@ const Router = () => {
         <Route path="/events">
           <Route index element={<Events />} />
           <Route path=":category/:location" element={<Events />} />
-          <Route path=":id" element={<EventDetail />} />
         </Route>
 
         <Route path="/communities">
@@ -33,9 +33,15 @@ const Router = () => {
           <Route path="all" element={<Communities />} />
           <Route path=":search" element={<Communities />} />
         </Route>
+      </Route>
+
+      <Route element={<ProtectedLayout />}>
+        <Route path="/events">
+          <Route path="detail/:id" element={<EventDetail />} />
+        </Route>
 
         <Route path="/communities">
-          <Route index path=":id" element={<CommunityDetail />} />
+          <Route path="detail/:id" element={<CommunityDetail />} />
         </Route>
       </Route>
     </Routes>

@@ -35,7 +35,7 @@ const CommunitiesCard = ({
         )}
       </div>
       <div className="py-1 px-2">
-        <Link to={`/communities/${id}`} className="grid gap-2">
+        <Link to={`/communities/detail/${id}`} className="grid gap-2">
           <p className="text-md font-semibold">{name}</p>
           <p className="text-xs text-dark-gray line-clamp-2">{desc}</p>
           <div className="flex gap-2 text-xs">

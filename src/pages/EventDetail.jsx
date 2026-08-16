@@ -130,7 +130,7 @@ const EventDetail = () => {
                 <article className="grid lg:grid-cols-3 gap-4">
                   {getRecommendations(event).length ? (
                     getRecommendations(event).map((rec, idx) => (
-                      <Link to={`/events/${rec.id}`} key={`${rec.id}-${idx}`}>
+                      <Link to={`/events/detail/${rec.id}`} key={`${rec.id}-${idx}`}>
                         <RecommendationCard
                           img={rec.img}
                           title={rec.title}
@@ -203,7 +203,7 @@ const EventDetail = () => {
                   <div>
                     <p className="font-bold">Rizky Pratama</p>
                     <Link
-                      to={`/communities/${community?.id}`}
+                      to={`/communities/detail/${community?.id}`}
                       className="text-xs text-blue hover:underline hover:opacity-80"
                     >
                       {community?.name}

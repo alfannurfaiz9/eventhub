@@ -44,7 +44,7 @@ const EventsCard = ({
         </div>
       </div>
       <div className="grid gap-2 py-2 px-4">
-        <Link to={`/events/${id}`} className="grid gap-2">
+        <Link to={`/events/detail/${id}`} className="grid gap-2">
           <p className="text-md font-semibold">{title}</p>
           <div className="flex gap-1 text-dark-gray">
             <CiCalendar />
