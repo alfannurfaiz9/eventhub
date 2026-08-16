@@ -1,9 +1,10 @@
 import Navbar from "../components/Navbar";
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
+import EventsModal from "../components/EventsModal.jsx";
 
 import { categories } from "../utils/datas.js";
 import { communities } from "../utils/datas.js";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { CiSearch } from "react-icons/ci";
 import { useState } from "react";
 
@@ -12,6 +13,8 @@ const Communities = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
+
+  const [showModal, setShowModal] = useState(false);
 
   const filteredCategory = () => {
     return communities.filter((community) => {
@@ -38,6 +41,9 @@ const Communities = () => {
   return (
     <>
       <Navbar />
+      <div className={showModal ? "block" : "hidden"}>
+        <EventsModal setShowModal={setShowModal} />
+      </div>
       <section className="grid gap-2 justify-center text-center bg-black text-white px-4 py-10">
         <h2 className="font-bold text-4xl">Explore Communities</h2>
         <p className="text-xs text-dark-gray">
@@ -125,19 +131,17 @@ const Communities = () => {
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-4 my-6 gap-4">
             {filteredCategory().map((community, idx) => (
-              <Link
-                to={`/communities/${community.id}`}
-                key={`${community.id}-${idx}`}
-              >
-                <CommunitiesCard
-                  img={community.img}
-                  name={community.name}
-                  desc={community.desc}
-                  cat={community.categories}
-                  member={community.member}
-                  upcoming_event={community.upcoming_event}
-                />
-              </Link>
+              <CommunitiesCard
+                key={`${communities.id}-${idx}`}
+                id={community.id}
+                img={community.img}
+                name={community.name}
+                desc={community.desc}
+                cat={community.categories}
+                member={community.member}
+                upcoming_event={community.upcoming_event}
+                setShowModal={setShowModal}
+              />
             ))}
           </div>
         </div>

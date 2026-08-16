@@ -11,7 +11,7 @@ import {
   sortEventByPopularity,
   sortEventByRemainingCap,
 } from "../utils/getDatas.js";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 
@@ -21,12 +21,16 @@ const Movies = () => {
     location: "",
     sort: "",
   });
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState(false);
+
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const location = searchParams.get("location") || "";
   const sort = searchParams.get("sort") || "";
+
+  const [showModal, setShowModal] = useState(false);
 
   const filteredEvents = () => {
     const filtered = events.filter((event) => {
@@ -65,7 +69,9 @@ const Movies = () => {
   return (
     <>
       <Navbar />
-      {/* <EventsModal /> */}
+      <div className={showModal ? "block" : "hidden"}>
+        <EventsModal setShowModal={setShowModal} />
+      </div>
       <section>
         <div className="py-3 px-6 flex gap-4 border-b border-gray">
           <div className="p-2 flex gap-2 bg-gray rounded-lg w-full">
@@ -220,7 +226,7 @@ const Movies = () => {
                 onClick={() => {
                   const newParams = new URLSearchParams(searchParams);
 
-                  newParams.delete("sort");
+                  newParams.set("sort", "upcoming");
 
                   setSearchParams(newParams);
 
@@ -281,19 +287,20 @@ const Movies = () => {
             events found
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-4">
-            {filteredEvents().map((event) => (
-              <Link to={`/events/${event.id}`} key={event.id}>
-                <EventsCard
-                  img={event.img}
-                  cat={getCategories(event)}
-                  title={event.title}
-                  date={event.date}
-                  time={event.time}
-                  location={event.location}
-                  attendees={event.attendees}
-                  capacity={event.capacity}
-                />
-              </Link>
+            {filteredEvents().map((event, idx) => (
+              <EventsCard
+                key={`${event.id}-${idx}`}
+                id={event.id}
+                img={event.img}
+                cat={getCategories(event)}
+                title={event.title}
+                date={event.date}
+                time={event.time}
+                location={event.location}
+                attendees={event.attendees}
+                capacity={event.capacity}
+                setShowModal={setShowModal}
+              />
             ))}
           </div>
           <div className="w-fit mx-auto">

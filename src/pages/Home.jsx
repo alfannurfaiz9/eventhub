@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.jsx";
 import EventsCard from "../components/EventsCard.jsx";
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import TestimonialsCard from "../components/TestimonialsCard.jsx";
+import EventsModal from "../components/EventsModal.jsx";
 
 import { events } from "../utils/datas.js";
 import { communities } from "../utils/datas.js";
@@ -20,17 +21,20 @@ const Homepage = () => {
   const [inputSearch, setInputSearch] = useState("");
   const search = searchParams.get("search") || "";
 
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <>
       <Navbar />
+      <div className={showModal ? "block" : "hidden"}>
+        <EventsModal setShowModal={setShowModal} />
+      </div>
       <section className="bg-black py-24 px-5 lg:py-16 lg:px-72 text-center">
         <div className="grid gap-8">
           <div className="grid gap-8">
             <div className="bg-light-primary flex gap-1 py-1 px-4 text-xs w-fit justify-self-center rounded-full border-t border-b border-primary">
               <BsStars className="text-primary" />
-              <p className="text-primary">
-                Discover · Connect · Participate
-              </p>
+              <p className="text-primary">Discover · Connect · Participate</p>
             </div>
             <h2 className="font-extrabold text-4xl lg:text-6xl text-white">
               Find events that{" "}
@@ -105,18 +109,18 @@ const Homepage = () => {
           {events
             .filter((event) => event.title.toLowerCase().includes(search))
             .map((event, idx) => (
-              <Link to={`/events/${event.id}`} key={`${event.id}-${idx}`}>
-                <EventsCard
-                  img={event.img}
-                  cat={getCategories(event)}
-                  title={event.title}
-                  date={event.date}
-                  time={event.time}
-                  location={event.location}
-                  attendees={event.attendees}
-                  capacity={event.capacity}
-                />
-              </Link>
+              <EventsCard
+                id={event.id}
+                img={event.img}
+                cat={getCategories(event)}
+                title={event.title}
+                date={event.date}
+                time={event.time}
+                location={event.location}
+                attendees={event.attendees}
+                capacity={event.capacity}
+                setShowModal={setShowModal}
+              />
             ))}
         </div>
       </section>
@@ -138,19 +142,17 @@ const Homepage = () => {
               community.name.toLowerCase().includes(search),
             )
             .map((community, idx) => (
-              <Link
-                to={`/communities/${community.id}`}
-                key={`${community.id}-${idx}`}
-              >
-                <CommunitiesCard
-                  img={community.img}
-                  name={community.name}
-                  desc={community.desc}
-                  cat={community.categories}
-                  member={community.member}
-                  upcoming_event={community.upcoming_event}
-                />
-              </Link>
+              <CommunitiesCard
+                key={`${communities.id}-${idx}`}
+                id={community.id}
+                img={community.img}
+                name={community.name}
+                desc={community.desc}
+                cat={community.categories}
+                member={community.member}
+                upcoming_event={community.upcoming_event}
+                setShowModal={setShowModal}
+              />
             ))}
         </div>
       </section>
