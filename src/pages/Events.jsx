@@ -5,43 +5,61 @@ import EventsCard from "../components/EventsCard";
 import EventsModal from "../components/EventsModal.jsx";
 
 import { categories, communities, events } from "../utils/datas.js";
-import { getAllLocations, getCategories } from "../utils/getDatas.js";
+import {
+  getAllLocations,
+  getCategories,
+  sortEventByPopularity,
+  sortEventByRemainingCap,
+} from "../utils/getDatas.js";
 import { Link, useSearchParams } from "react-router";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 
 const Movies = () => {
-  const [activeLink, setActiveLink] = useState({ category: "", location: "" });
+  const [activeLink, setActiveLink] = useState({
+    category: "",
+    location: "",
+    sort: "",
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState(false);
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const location = searchParams.get("location") || "";
+  const sort = searchParams.get("sort") || "";
 
   const filteredEvents = () => {
-    return events.filter((event) => {
-      if (!search && !category) {
-        return event;
-      }
+    const filtered = events.filter((event) => {
+      const searchFilter = search.length
+        ? event.title.toLowerCase().includes(search)
+        : event;
 
-      const searchFilter = event.title.toLowerCase().includes(search);
-
-      if (!category) {
-        return searchFilter;
-      }
-
-      const catId = categories.filter(
-        (cat) => cat.name.toLowerCase() === category,
-      )[0].id;
+      const catId =
+        category.length &&
+        categories.filter((cat) => cat.name.toLowerCase() === category)[0].id;
 
       const comms = communities.filter(
         (com) => com.id === event.community_id,
       )[0];
 
-      const categoryFilter = comms.categories.includes(catId);
+      const categoryFilter = category.length
+        ? comms.categories.includes(catId)
+        : searchFilter || event;
 
-      return searchFilter && categoryFilter;
+      const locationFilter = location.length
+        ? event.location.toLowerCase() === location
+        : searchFilter && categoryFilter;
+
+      return searchFilter && categoryFilter && locationFilter;
     });
+
+    const popular = sortEventByPopularity(filtered);
+    const almostFull = sortEventByRemainingCap(filtered);
+
+    if (sort.toLowerCase() === "most popular") return popular;
+    if (sort.toLowerCase() === "almost full") return almostFull;
+
+    return filtered;
   };
 
   return (
@@ -112,7 +130,7 @@ const Movies = () => {
 
                   if (category === cat.name.toLowerCase()) {
                     newParams.delete("category");
-                    
+
                     setActiveLink((prev) => {
                       return {
                         ...prev,
@@ -195,15 +213,59 @@ const Movies = () => {
               ))}
             </div>
           </div>
-          <div className="py-3 px-6 text-sm grid gap-2 border-b border-gray text-dark-gray">
+          <div className="py-3 px-6 text-sm grid gap-2 border-b border-gray">
             <p className="font-semibold">SORT BY</p>
             <div className="flex flex-wrap gap-2 text-sm">
-              <button className="cursor-pointer hover:opacity-70 py-1 px-2 bg-primary text-white rounded-md border border-gray-300">
+              <button
+                onClick={() => {
+                  const newParams = new URLSearchParams(searchParams);
+
+                  newParams.delete("sort");
+
+                  setSearchParams(newParams);
+
+                  setActiveLink((prev) => {
+                    return {
+                      ...prev,
+                      sort: "",
+                    };
+                  });
+                }}
+                className={`${activeLink.sort === "" ? "bg-primary text-white" : "bg-white text-dark-gray"} cursor-pointer hover:opacity-70 py-1 px-2 rounded-md border border-gray-300`}
+              >
                 Upcoming
               </button>
               {["Most popular", "Almost full", "Recently added"].map(
-                (status) => (
-                  <button className="cursor-pointer hover:opacity-70 py-1 px-2 rounded-md border border-gray-300">
+                (status, idx) => (
+                  <button
+                    key={`${status}-${idx}`}
+                    onClick={() => {
+                      const newParams = new URLSearchParams(searchParams);
+
+                      newParams.set("sort", status.toLowerCase());
+
+                      setActiveLink((prev) => {
+                        return {
+                          ...prev,
+                          sort: status.toLowerCase(),
+                        };
+                      });
+
+                      if (sort === status.toLowerCase()) {
+                        newParams.delete("sort");
+
+                        setActiveLink((prev) => {
+                          return {
+                            ...prev,
+                            sort: "",
+                          };
+                        });
+                      }
+
+                      setSearchParams(newParams);
+                    }}
+                    className={`${activeLink.sort === status.toLowerCase() ? "bg-primary text-white" : "bg-white text-dark-gray"} cursor-pointer hover:opacity-70 py-1 px-2 rounded-md border border-gray-300`}
+                  >
                     {status}
                   </button>
                 ),

@@ -48,3 +48,13 @@ export const getCategoriesId = (param) => {
 
   return filterCategories.id;
 };
+
+export const sortEventByPopularity = (events) => {
+  return [...events].sort((a, b) => b.attendees - a.attendees);
+};
+
+export const sortEventByRemainingCap = (events) => {
+  return [...events].sort(
+    (a, b) => a.attendees - a.capacity - (b.attendees - b.capacity),
+  );
+};
