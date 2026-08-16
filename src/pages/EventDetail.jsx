@@ -6,7 +6,12 @@ import DiscussionCard from "../components/DiscussionCard.jsx";
 import RecommendationCard from "../components/RecommendationCard.jsx";
 
 import { communities, discussions, events, speakers } from "../utils/datas.js";
-import { getCategories, getRecommendations } from "../utils/getDatas.js";
+import {
+  getCategories,
+  getJoinedEvent,
+  getRecommendations,
+  joinEvent,
+} from "../utils/getDatas.js";
 
 import { FaArrowLeft } from "react-icons/fa";
 import { CiBookmark, CiCalendar, CiLocationOn } from "react-icons/ci";
@@ -17,10 +22,11 @@ import { GoComment } from "react-icons/go";
 import { MdSend } from "react-icons/md";
 
 const EventDetail = () => {
+  const { id } = useParams();
+
   const [event, setEvent] = useState(null);
   const [community, setCommunity] = useState(null);
-
-  const { id } = useParams();
+  const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
 
   useEffect(() => {
     (() => {
@@ -33,6 +39,11 @@ const EventDetail = () => {
       setCommunity(filteredCommunities[0]);
     })();
   }, [id, event]);
+
+  const handleJoin = () => {
+    joinEvent(Number(id));
+    setJoinedEvent(getJoinedEvent(id));
+  };
 
   return (
     <>
@@ -130,7 +141,10 @@ const EventDetail = () => {
                 <article className="grid lg:grid-cols-3 gap-4">
                   {getRecommendations(event).length ? (
                     getRecommendations(event).map((rec, idx) => (
-                      <Link to={`/events/detail/${rec.id}`} key={`${rec.id}-${idx}`}>
+                      <Link
+                        to={`/events/detail/${rec.id}`}
+                        key={`${rec.id}-${idx}`}
+                      >
                         <RecommendationCard
                           img={rec.img}
                           title={rec.title}
@@ -180,8 +194,11 @@ const EventDetail = () => {
                     className={`absolute left-0 top-0 rounded-full ${Math.round((event.attendees / event.capacity) * 100) < 80 && "bg-green"} ${Math.round((event.attendees / event.capacity) * 100) > 80 && Math.round((event.attendees / event.capacity) * 100) < 100 && "bg-yellow"} ${Math.round((event.attendees / event.capacity) * 100) === 100 && "bg-red"}  h-full`}
                   ></div>
                 </div>
-                <button className="py-1 w-full text-sm bg-primary rounded-lg text-white cursor-pointer hover:opacity-90">
-                  Join Event
+                <button
+                  onClick={handleJoin}
+                  className={`${joinedEvent ? "bg-green" : "bg-primary"} py-1 w-full text-sm text-white rounded-lg  cursor-pointer hover:opacity-90`}
+                >
+                  {joinedEvent ? "✔ Registered" : "Join Event"}
                 </button>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <button className="flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50">
