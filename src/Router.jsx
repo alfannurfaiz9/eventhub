@@ -6,6 +6,8 @@ import Communities from "./pages/Communities.jsx";
 import EventDetail from "./pages/EventDetail.jsx";
 import CommunityDetail from "./pages/CommunityDetail.jsx";
 import Register from "./pages/Register.jsx";
+import Login from "./pages/Login.jsx";
+import AuthLayout from "./layouts/AuthLayout.jsx";
 
 const Router = () => {
   return (
@@ -13,7 +15,10 @@ const Router = () => {
       <Route path="/" element={<Navigate to="/explore" replace />} />
       <Route path="/explore" element={<Home />} />
 
-      <Route path="/register" element={<Register />} />
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
 
       <Route path="/events">
         <Route index element={<Events />} />
