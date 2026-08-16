@@ -126,8 +126,8 @@ const EventDetail = () => {
                   </div>
                 </div>
               </div>
-              <div className="grid gap-4">
-                <h3 className="font-bold">You might also like</h3>
+              <article className="grid gap-4">
+                <p className="font-bold">You might also like</p>
                 <div className="grid lg:grid-cols-3 gap-4">
                   {getRecommendations(event).length ? (
                     getRecommendations(event).map((rec, idx) => (
@@ -145,7 +145,7 @@ const EventDetail = () => {
                     </p>
                   )}
                 </div>
-              </div>
+              </article>
             </section>
             <section className="grid gap-4 h-fit">
               <div className="bg-white py-4 px-3 grid gap-3 rounded-xl border border-gray-300">

@@ -9,7 +9,7 @@ const RecommendationCard = ({ img, title, date }) => {
         )}
       </div>
       <div className="p-2">
-        <p className="text-sm font-bold">{title}</p>
+        <h2 className="text-sm font-bold">{title}</h2>
         <p className="text-xs text-dark-gray">{date}</p>
       </div>
     </div>
