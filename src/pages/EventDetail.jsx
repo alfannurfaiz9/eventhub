@@ -10,7 +10,10 @@ import {
   getCategories,
   getJoinedEvent,
   getRecommendations,
+  getSavedEvent,
+  getUser,
   joinEvent,
+  saveEvent,
 } from "../utils/getDatas.js";
 
 import { FaArrowLeft } from "react-icons/fa";
@@ -27,9 +30,16 @@ const EventDetail = () => {
   const [event, setEvent] = useState(null);
   const [community, setCommunity] = useState(null);
   const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
+  const [savedEvent, setSavedEvent] = useState(getSavedEvent(id));
+  const [user, setUser] = useState(null);
+  const [discuss, setDiscuss] = useState(null);
+  const [newDiscuss, setNewDiscuss] = useState("");
 
   useEffect(() => {
     (() => {
+      setUser(getUser());
+      setDiscuss(discussions);
+
       const filteredEvent = events.filter((e) => e.id.toString() === id);
       setEvent(filteredEvent[0]);
 
@@ -43,6 +53,29 @@ const EventDetail = () => {
   const handleJoin = () => {
     joinEvent(Number(id));
     setJoinedEvent(getJoinedEvent(id));
+  };
+
+  const handleSave = () => {
+    saveEvent(Number(id));
+    setSavedEvent(getSavedEvent(id));
+  };
+
+  const handleAddDiscuss = () => {
+    const newId = discuss && discuss[discuss.length - 1].id;
+
+    if (!newDiscuss) {
+      return;
+    }
+
+    setDiscuss([
+      ...discuss,
+      {
+        id: newId + 1,
+        img: user?.img,
+        name: user?.full_name,
+        desc: newDiscuss,
+      },
+    ]);
   };
 
   return (
@@ -109,7 +142,7 @@ const EventDetail = () => {
                   </h3>
                 </div>
                 <div className="grid gap-4">
-                  {discussions.map((discuss, idx) => (
+                  {discuss?.map((discuss, idx) => (
                     <DiscussionCard
                       key={`${discuss.id}-${idx}`}
                       img={discuss.img}
@@ -120,16 +153,22 @@ const EventDetail = () => {
                   <div className="grid grid-cols-[auto_1fr] gap-4">
                     <img
                       className="w-7 h-7 rounded-full"
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTMSHWOi0zVkRyJ7BJkq1XsZpWQ-_3Y5oZJDer-Q7amHWxkrInY78-2TU&s=10"
+                      src={user?.img}
                       alt="avatar-profile"
                     />
                     <div className="p-2 rounded-lg text-sm bg-white flex gap-2 justify-between">
                       <input
                         className="focus:outline-none w-full text-dark-gray"
                         type="text"
+                        onChange={(e) => {
+                          setNewDiscuss(e.target.value);
+                        }}
                         placeholder="Add to the discussion..."
                       />
-                      <button className="w-fit text-primary text-lg">
+                      <button
+                        onClick={handleAddDiscuss}
+                        className="w-fit text-primary text-lg"
+                      >
                         <MdSend />
                       </button>
                     </div>
@@ -201,8 +240,11 @@ const EventDetail = () => {
                   {joinedEvent ? "✔ Registered" : "Join Event"}
                 </button>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <button className="flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50">
-                    <CiBookmark /> Save
+                  <button
+                    onClick={handleSave}
+                    className={`${savedEvent ? "bg-light-green text-green" : ""} flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50`}
+                  >
+                    <CiBookmark /> {savedEvent ? "Saved" : "Save"}
                   </button>
                   <button className="flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50">
                     <IoShareSocialOutline /> Share

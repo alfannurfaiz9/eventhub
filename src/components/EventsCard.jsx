@@ -2,7 +2,12 @@ import { CiCalendar } from "react-icons/ci";
 import { CiLocationOn } from "react-icons/ci";
 import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
-import { getJoinedEvent, joinEvent } from "../utils/getDatas";
+import {
+  getJoinedEvent,
+  getSavedEvent,
+  joinEvent,
+  saveEvent,
+} from "../utils/getDatas";
 import { Link } from "react-router";
 import { useState } from "react";
 
@@ -17,10 +22,12 @@ const EventsCard = ({
   attendees,
   capacity,
   setShowModal,
+  renderEvent,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
 
   const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
+  const [savedEvent, setSavedEvent] = useState(getSavedEvent(id));
 
   const handleJoin = () => {
     if (!userLogin) {
@@ -31,7 +38,21 @@ const EventsCard = ({
 
     joinEvent(id);
     setJoinedEvent(getJoinedEvent(id));
+    renderEvent && renderEvent();
   };
+
+  const handleSave = () => {
+    if (!userLogin) {
+      setShowModal(true);
+
+      return;
+    }
+
+    saveEvent(id);
+    setSavedEvent(getSavedEvent(id));
+    renderEvent && renderEvent();
+  };
+
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
       <div className="relative h-46 overflow-hidden flex items-start">
@@ -89,7 +110,10 @@ const EventsCard = ({
           >
             {joinedEvent ? "✔ Registered" : "Join Event"}
           </button>
-          <button className="py-1 px-4 text-dark-gray border border-gray-300 rounded-lg cursor-pointer hover:opacity-80">
+          <button
+            onClick={handleSave}
+            className={`${savedEvent ? "text-green bg-light-green" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80`}
+          >
             <CiBookmark />
           </button>
         </div>

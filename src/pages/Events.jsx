@@ -1,7 +1,7 @@
 import { BsFilterRight } from "react-icons/bs";
 
 import EventsCard from "../components/EventsCard";
-import EventsModal from "../components/EventsModal.jsx";
+import Modal from "../components/Modal.jsx";
 
 import { categories, communities, events } from "../utils/datas.js";
 import {
@@ -47,11 +47,11 @@ const Movies = () => {
 
       const categoryFilter = category.length
         ? comms.categories.includes(catId)
-        : searchFilter || event;
+        : event;
 
       const locationFilter = location.length
         ? event.location.toLowerCase() === location
-        : searchFilter && categoryFilter;
+        : event;
 
       return searchFilter && categoryFilter && locationFilter;
     });
@@ -68,7 +68,7 @@ const Movies = () => {
   return (
     <>
       <div className={showModal ? "block" : "hidden"}>
-        <EventsModal setShowModal={setShowModal} />
+        <Modal setShowModal={setShowModal} />
       </div>
       <section>
         <div className="py-3 px-6 flex gap-4 border-b border-gray">
@@ -184,8 +184,9 @@ const Movies = () => {
               >
                 All locations
               </button>
-              {getAllLocations().map((loc) => (
+              {getAllLocations().map((loc, idx) => (
                 <button
+                  key={`loc-${idx}`}
                   onClick={() => {
                     const newParams = new URLSearchParams(searchParams);
 
@@ -301,11 +302,11 @@ const Movies = () => {
               />
             ))}
           </div>
-          <div className="w-fit mx-auto">
+          {/* <div className="w-fit mx-auto">
             <button className="py-2 px-4 font-medium text-black rounded-xl border border-gray-300 cursor-pointer hover:opacity-60">
               Load more events
             </button>
-          </div>
+          </div> */}
         </div>
       </section>
     </>
