@@ -24,7 +24,7 @@ export const getRecommendations = (event) => {
 };
 
 export const getEvent = (community) => {
-  const event = events.filter((event) => event.community_id === community.id);
+  const event = events.filter((event) => event.community_id === community?.id);
 
   return event;
 };
@@ -70,7 +70,7 @@ export const getUser = () => {
 
   const allUsers = getAllUsers();
 
-  const user = allUsers.find((user) => user.id.toString() === id);
+  const user = allUsers?.find((user) => user?.id?.toString() === id);
 
   return user;
 };
@@ -140,4 +140,38 @@ export const getJoinedCommunity = (id) => {
   }
 
   return user.community_id.includes(Number(id));
+};
+
+export const saveEvent = (id) => {
+  const allUsers = getAllUsers();
+  const user = getUser();
+
+  const userCurrentSavedEvent = user.saved_event_id;
+  const updatedSavedEvent = userCurrentSavedEvent && [
+    ...userCurrentSavedEvent,
+    id,
+  ];
+
+  const deletedEvent = userCurrentSavedEvent.includes(id);
+  const undeletedEvent = userCurrentSavedEvent.filter((event) => event !== id);
+
+  const updateUser = {
+    ...user,
+    saved_event_id: deletedEvent ? undeletedEvent : updatedSavedEvent,
+  };
+  const anotherUser = allUsers.filter((u) => u.id !== user.id);
+
+  const updatedLocalStorage = anotherUser && [updateUser, ...anotherUser];
+
+  localStorage.setItem("users", JSON.stringify(updatedLocalStorage));
+};
+
+export const getSavedEvent = (id) => {
+  const user = getUser();
+
+  if (!user) {
+    return;
+  }
+
+  return user.saved_event_id.includes(Number(id));
 };

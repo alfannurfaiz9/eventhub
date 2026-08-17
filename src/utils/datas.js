@@ -253,6 +253,45 @@ export const speakers = [
   },
 ];
 
+export const members = [
+  {
+    id: 1,
+    name: "Ahmad Fauzan",
+    role: "Staff Engineer",
+    img: "https://infopmb.itpln.ac.id/wp-content/uploads/2017/10/user9.jpg",
+  },
+  {
+    id: 2,
+    name: "Dina Rahayu",
+    role: "Backend Lead",
+    img: "https://media.licdn.com/dms/image/v2/D4D03AQGfmmtap9UGSw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1668447329811?e=2147483647&v=beta&t=0KlNkR86z7JOy1hLVPWrASGpK72NTRUy26PAxBsZ-QY",
+  },
+  {
+    id: 3,
+    name: "Rizky Pratama",
+    role: "Engineering Manager",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNimuJo4I5UsisjQEp60syLdIPd9eG3ClCl5QFBOxi5XzVvNVaBBEAe8Sm&s=10",
+  },
+  {
+    id: 4,
+    name: "Sinta Dewi",
+    role: "Senior Frontend Engineer",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTMSHWOi0zVkRyJ7BJkq1XsZpWQ-_3Y5oZJDer-Q7amHWxkrInY78-2TU&s=10",
+  },
+  {
+    id: 5,
+    name: "Hendra Wijaya",
+    role: "DX Lead",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBzYBVHbZNoybtLVPJeuGFIn5k9Tiic3bj3KqBZ1EDK4yQp8T1Icu2im4&s=10",
+  },
+  {
+    id: 6,
+    name: "Anisa Putri",
+    role: "Senior PM",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnC2BlGWABukEhIqm0GfQXY7Gm9YkLdT6N5x_tIFT_XDm8QKo6NcOgI9O1&s=10",
+  },
+];
+
 export const discussions = [
   {
     id: 1,
