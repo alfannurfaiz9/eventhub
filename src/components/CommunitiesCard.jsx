@@ -15,6 +15,7 @@ const CommunitiesCard = ({
   member,
   upcoming_event,
   setShowModal,
+  renderCommunity,
 }) => {
   const userLogin = localStorage.getItem("isLogin");
   const [joinedCommunity, setJoinedCommunity] = useState(
@@ -30,6 +31,7 @@ const CommunitiesCard = ({
 
     joinCommunity(id);
     setJoinedCommunity(getJoinedCommunity(id));
+    renderCommunity && renderCommunity();
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
