@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import EventsCard from "../components/EventsCard.jsx";
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import TestimonialsCard from "../components/TestimonialsCard.jsx";
-import EventsModal from "../components/EventsModal.jsx";
+import Modal from "../components/Modal.jsx";
 
 import { events } from "../utils/datas.js";
 import { communities } from "../utils/datas.js";
@@ -25,7 +25,7 @@ const Homepage = () => {
   return (
     <>
       <div className={showModal ? "block" : "hidden"}>
-        <EventsModal setShowModal={setShowModal} />
+        <Modal setShowModal={setShowModal} />
       </div>
       <section className="bg-black py-24 px-5 lg:py-16 lg:px-72 text-center">
         <div className="grid gap-8">
@@ -78,9 +78,9 @@ const Homepage = () => {
             </div>
           </div>
           <div className="text-xs lg:text-sm flex flex-wrap gap-3 text-dark-gray justify-center">
-            {categories.map((cat) => (
+            {categories.map((cat, idx) => (
               <p
-                key={cat.id}
+                key={`${cat.id}-${idx}`}
                 className="py-1 px-2 border-t border-b border-dark-gray text-xs rounded-full"
               >
                 {cat.name}
@@ -108,7 +108,7 @@ const Homepage = () => {
             .filter((event) => event.title.toLowerCase().includes(search))
             .map((event, idx) => (
               <EventsCard
-                key={`${event}-${idx}`}
+                key={`${event.id}-${idx}`}
                 id={event.id}
                 img={event.img}
                 cat={getCategories(event)}
@@ -142,7 +142,7 @@ const Homepage = () => {
             )
             .map((community, idx) => (
               <CommunitiesCard
-                key={`${communities.id}-${idx}`}
+                key={`${community.id}-${idx}`}
                 id={community.id}
                 img={community.img}
                 name={community.name}
@@ -162,8 +162,9 @@ const Homepage = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-4">
-          {reviews.map((review) => (
+          {reviews.map((review, idx) => (
             <TestimonialsCard
+              key={`${review.id}-${idx}`}
               desc={review.desc}
               name={review.name}
               role={review.role}

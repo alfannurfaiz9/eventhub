@@ -51,12 +51,15 @@ const Register = () => {
     if (!users) {
       const newUser = {
         id: 3,
-        role: "user",
+        role: "attendee",
+        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
         full_name,
         email,
         password,
         community_id: [],
         event_id: [],
+        saved_community_id: [],
+        saved_event_id: [],
       };
       localStorage.setItem("users", JSON.stringify([newUser]));
 
@@ -69,11 +72,14 @@ const Register = () => {
       {
         id: newId,
         role: "user",
+        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
         full_name,
         email,
         password,
         community_id: [],
         event_id: [],
+        saved_community_id: [],
+        saved_event_id: [],
       },
     ];
     localStorage.setItem("users", JSON.stringify(updatedUsers));
@@ -211,9 +217,12 @@ const Register = () => {
             </div>
             <div className="flex items-center gap-2">
               <input
+                className="text-center"
                 id="accept_terms"
                 type="checkbox"
-                {...register("accept_terms")}
+                {...register("accept_terms", {
+                  required: "You must accept the terms and conditions",
+                })}
               />
               <label htmlFor="accept_terms" className="text-xs text-dark-gray">
                 I agree to the
@@ -221,6 +230,12 @@ const Register = () => {
                 <span className="text-primary">Privacy Policy</span>
               </label>
             </div>
+
+            <span
+              className={`${errors?.accept_terms?.message ? "text-red" : "text-gray"} text-[10px]`}
+            >
+              {errors?.accept_terms?.message || "error"}
+            </span>
             <button
               className="bg-primary text-white py-1.5 rounded-lg cursor-pointer hover:opacity-90 text-sm"
               type="submit"
