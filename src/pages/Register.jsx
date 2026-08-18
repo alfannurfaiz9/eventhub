@@ -71,7 +71,7 @@ const Register = () => {
       ...users,
       {
         id: newId,
-        role: "user",
+        role: "attendee",
         img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
         full_name,
         email,
