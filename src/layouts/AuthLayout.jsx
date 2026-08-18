@@ -1,6 +1,5 @@
 import { Outlet, useNavigate } from "react-router";
 import Discover from "../components/Discover";
-import { getUser } from "../utils/getDatas";
 import { useEffect } from "react";
 
 const AuthLayout = () => {
