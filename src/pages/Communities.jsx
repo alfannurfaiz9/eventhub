@@ -11,6 +11,7 @@ import { getJoinedCommunity, getUser } from "../utils/getDatas.js";
 const Communities = () => {
   const [joinedCommunity, setJoinedEvent] = useState(null);
   const [activeLink, setActiveLink] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [filterParams, setFilterParams] = useSearchParams();
   const search = searchParams.get("search") || "";
@@ -58,16 +59,20 @@ const Communities = () => {
 
     if (e === "all") {
       newParams.delete("status");
+      setActiveFilter("all");
     }
 
     if (e === "joined") {
+      setActiveFilter("joined");
       newParams.set("status", "joined");
     } else if (e === "not-joined") {
+      setActiveFilter("not-joined");
       newParams.set("status", "not-joined");
     }
 
     if (status === e) {
       newParams.delete("status");
+      setActiveFilter("all");
     }
 
     setFilterParams(newParams);
@@ -120,19 +125,19 @@ const Communities = () => {
           <div className="p-1 border border-gray-300 w-fit rounded-lg flex gap-2">
             <button
               onClick={() => handleUserFilter("all")}
-              className="py-2 px-3 lg:py-1 lg:px-2 text-xs bg-primary text-white rounded-lg cursor-pointer hover:opacity-90"
+              className={`${activeFilter === "" || activeFilter === "all" ? "bg-primary text-white" : "bg-white text-dark-gray"} py-2 px-3 lg:py-1 lg:px-2 text-xs rounded-lg cursor-pointer hover:opacity-90`}
             >
               All
             </button>
             <button
               onClick={() => handleUserFilter("joined")}
-              className="py-2 px-3 lg:py-1 lg:px-2 text-xs text-dark-gray rounded-lg cursor-pointer hover:opacity-80"
+              className={`${activeFilter === "joined" ? "bg-primary text-white" : "bg-white text-dark-gray"} py-2 px-3 lg:py-1 lg:px-2 text-xs rounded-lg cursor-pointer hover:opacity-90`}
             >
               Joined
             </button>
             <button
               onClick={() => handleUserFilter("not-joined")}
-              className="py-2 px-3 lg:py-1 lg:px-2 text-xs text-dark-gray rounded-lg cursor-pointer hover:opacity-80"
+              className={`${activeFilter === "not-joined" ? "bg-primary text-white" : "bg-white text-dark-gray"} py-2 px-3 lg:py-1 lg:px-2 text-xs rounded-lg cursor-pointer hover:opacity-90`}
             >
               Not Joined
             </button>
