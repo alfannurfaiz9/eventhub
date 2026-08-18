@@ -162,7 +162,7 @@ const Navbar = () => {
             <div className={logedInUser ? "flex items-center" : "hidden"}>
               <Link to="/notifications" className="cursor-pointer relative">
                 <div className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 z-10 flex items-center justify-center rounded-full bg-primary text-white">
-                  <p className="text-[7px]">3</p>
+                  <p className="text-[7px]">1</p>
                 </div>
                 <IoIosNotificationsOutline className="text-2xl" />
               </Link>
