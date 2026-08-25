@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
+import { registerUserThunk } from "../redux/slices/registerSlice";
 
 const Register = () => {
   const {
@@ -11,21 +13,27 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const users = JSON.parse(localStorage.getItem("users"));
+  const registeredUsers = useSelector(
+    (state) => state.registerState.registeredUser,
+  );
+
   const organizerAndAdmin = [
     JSON.parse(import.meta.env.VITE_ORGANIZER),
     JSON.parse(import.meta.env.VITE_ADMIN),
   ];
 
-  const combinedUser = users
-    ? [...organizerAndAdmin, ...users]
+  const combinedUser = registeredUsers
+    ? [...organizerAndAdmin, ...registeredUsers]
     : [...organizerAndAdmin];
 
-  const newId = users && users.map((user) => user.id)[users.length - 1] + 1;
+  const newId = registeredUsers
+    ? combinedUser.map((user) => user.id)[combinedUser.length - 1] + 1
+    : 3;
 
   const onSubmit = (data) => {
     const { full_name, email, password, confirm_password } = data;
@@ -35,56 +43,35 @@ const Register = () => {
         type: "manual",
         message: "The passwords you entered do not match",
       });
-
       return;
     }
-
     if (combinedUser.find((user) => user.email === email)) {
       setError("email", {
         type: "manual",
         message: "Email is already registered",
       });
-
       return;
     }
 
-    if (!users) {
-      const newUser = {
-        id: 3,
-        role: "attendee",
-        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
-        full_name,
-        email,
-        password,
-        community_id: [],
-        event_id: [],
-        saved_community_id: [],
-        saved_event_id: [],
-      };
-      localStorage.setItem("users", JSON.stringify([newUser]));
+    const newUser = {
+      id: newId,
+      role: "attendee",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
+      full_name,
+      email,
+      password,
+      community_id: [],
+      event_id: [],
+      saved_community_id: [],
+      saved_event_id: [],
+    };
 
-      navigate("/login");
-      return;
-    }
-
-    const updatedUsers = [
-      ...users,
-      {
-        id: newId,
-        role: "attendee",
-        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
-        full_name,
-        email,
-        password,
-        community_id: [],
-        event_id: [],
-        saved_community_id: [],
-        saved_event_id: [],
-      },
-    ];
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-
-    navigate("/login");
+    dispatch(
+      registerUserThunk({
+        data: newUser,
+        navigate,
+      }),
+    );
   };
 
   return (

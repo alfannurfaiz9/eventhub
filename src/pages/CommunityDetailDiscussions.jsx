@@ -2,14 +2,14 @@ import { MdSend } from "react-icons/md";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 
 import { discussions } from "../utils/datas.js";
-import { getUser } from "../utils/getDatas.js";
+import useAuth from "../hooks/useAuth.js";
 
 const CommunityDetailDiscussions = () => {
-  const user = getUser();
+  const user = useAuth();
 
   return (
     <div className="grid gap-4">
-      <div className="flex items-center gap-2">
+      <div className={`${user ? "flex" : "hidden"} items-center gap-2`}>
         <img
           className="w-7 h-7 rounded-full"
           src={user?.img}

@@ -1,30 +1,23 @@
-import { useEffect, useState } from "react";
 import EventsCard from "../components/EventsCard";
-import { getCategories, getSavedEvent } from "../utils/getDatas";
-import { events } from "../utils/datas";
+import { getCategories } from "../utils/getDatas";
+import { useSelector } from "react-redux";
+import useAuth from "../hooks/useAuth";
 
 const MyEventSaved = () => {
-  const [savedEvent, setSavedEvent] = useState(null);
+  const user = useAuth();
 
-  const renderEvent = () => {
-    const event = events.filter((event) => {
-      return getSavedEvent(event.id);
-    });
+  const events = useSelector((state) => state.eventsState.events);
+  const savedEvent = events.filter((e) => user?.saved_event_id?.includes(e.id));
 
-    setSavedEvent(event);
-  };
+  const rendered =
+    user.role === "organizer" || user.role === "admin" ? [] : savedEvent;
 
-  useEffect(() => {
-    (() => {
-      renderEvent();
-    })();
-  }, []);
   return (
     <>
       <section
-        className={`${savedEvent?.length ? "h-fit" : "min-h-dvh"} py-6 px-4 lg:px-24 bg-gray grid lg:grid-cols-3 gap-4`}
+        className={`${rendered?.length ? "h-fit" : "min-h-dvh"} py-6 px-4 lg:px-24 bg-gray grid lg:grid-cols-3 gap-4`}
       >
-        {savedEvent?.map((event, idx) => (
+        {rendered?.map((event, idx) => (
           <EventsCard
             key={`${event.id}-${idx}`}
             id={event.id}
@@ -36,7 +29,6 @@ const MyEventSaved = () => {
             location={event.location}
             attendees={event.attendees}
             capacity={event.capacity}
-            renderEvent={renderEvent}
           />
         ))}
       </section>

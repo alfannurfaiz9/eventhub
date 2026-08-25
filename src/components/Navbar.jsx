@@ -1,48 +1,57 @@
 import { Link, NavLink, useNavigate } from "react-router";
 import {
   MdOutlineAccountCircle,
+  MdOutlineAdminPanelSettings,
   MdOutlineEventNote,
   MdOutlineExplore,
 } from "react-icons/md";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMoonOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { BiHomeAlt } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
 import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 
-import { getUser } from "../utils/getDatas.js";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/slices/AuthSlice.js";
+import { TbLayoutDashboard } from "react-icons/tb";
+
+import useAuth from "../hooks/useAuth.js";
+import themeContext from "../context/themeContext.js";
+import { CiLight } from "react-icons/ci";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [user, setUser] = useState(null);
 
-  const logedInUser = localStorage.getItem("isLogin");
+  const user = useAuth();
+  const { theme, changeTheme } = useContext(themeContext);
+
+  console.log(theme);
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("isLogin");
-
+    dispatch(logout());
     navigate("/login");
   };
 
-  useEffect(() => {
-    (() => {
-      setUser(getUser());
-    })();
-  }, []);
-
   return (
-    <header className="text-sm py-4 lg:py-3 px-6 flex gap-4 items-center shadow-sm sticky top-0 z-50 bg-white">
+    <header
+      className={`${theme === "light" ? "bg-white" : "bg-black"} text-sm py-4 lg:py-3 px-6 flex gap-4 items-center shadow-sm sticky top-0 z-50 border-b border-white/30`}
+    >
       <nav className="flex items-center justify-between gap-4 w-full">
         <div className="flex gap-4">
           <Link to="/">
-            <h1 className="font-bold cursor-pointer">
-              <span className="text-white bg-primary py-1 px-2 rounded-lg mr-1">
+            <h1
+              className={`${theme === "light" ? "text-black" : "text-white"} font-bold cursor-pointer`}
+            >
+              <span
+                className={`${theme === "light" ? "text-white" : "text-black"} bg-primary py-1 px-2 rounded-lg mr-1`}
+              >
                 E
               </span>
               EventHub
@@ -53,7 +62,7 @@ const Navbar = () => {
               <NavLink
                 to="/explore"
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
                 }
               >
                 Explore
@@ -63,7 +72,7 @@ const Navbar = () => {
               <NavLink
                 to="/events"
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
                 }
               >
                 Events
@@ -73,17 +82,17 @@ const Navbar = () => {
               <NavLink
                 to="/communities"
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
                 }
               >
                 Communities
               </NavLink>
             </li>
-            <li className={logedInUser ? "block" : "hidden"}>
+            <li className={user && user?.role !== "admin" ? "block" : "hidden"}>
               <NavLink
                 to="/my-events"
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
                 }
               >
                 My Events
@@ -91,19 +100,17 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <div
-          className={
-            logedInUser ? "hidden" : "hidden lg:flex items-center gap-4"
-          }
-        >
-          <input
-            className="px-1 focus:outline-none"
-            type="text"
-            name="browse"
-            id="browse"
-            placeholder="Browsing as guest"
-          />
-          <IoMoonOutline className="text-xl cursor-pointer" />
+        <div className={user ? "hidden" : "hidden lg:flex items-center gap-4"}>
+          <p className="px-1 text-sm text-dark-gray">Browsing as guest</p>
+          <div
+            onClick={() => changeTheme()}
+            className={`${theme === "light" ? "text-black" : "text-white"} text-xl cursor-pointer w-6 flex items-center justify-center`}
+          >
+            <IoMoonOutline className={theme === "light" ? "block" : "hidden"} />
+            <CiLight
+              className={`${theme === "dark" ? "block" : "hidden"} text-2xl`}
+            />
+          </div>
           <Link
             to="/login"
             className="py-2 px-4 bg-primary hover:opacity-90 text-white rounded-lg cursor-pointer"
@@ -111,13 +118,33 @@ const Navbar = () => {
             Sign In
           </Link>
         </div>
-        <div
-          className={
-            logedInUser ? "hidden lg:flex items-center gap-4" : "hidden"
-          }
-        >
-          <div className={logedInUser ? "flex items-center gap-4" : "hidden"}>
-            <div className="flex items-center">
+        <div className={user ? "hidden lg:flex items-center gap-4" : "hidden"}>
+          <div className={user ? "flex items-center gap-4" : "hidden"}>
+            <div className={user?.role === "organizer" ? "block" : "hidden"}>
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `flex items-center hover:text-primary hover:bg-light-primary gap-2 px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black/80" : "text-white"}`
+                }
+              >
+                <TbLayoutDashboard className="text-lg" />
+                <p className="text-xs font-semibold">Dashboard</p>
+              </NavLink>
+            </div>
+            <div className={user?.role === "admin" ? "block" : "hidden"}>
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `flex items-center hover:text-primary hover:bg-light-primary gap-2 px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black/80" : "text-white"}`
+                }
+              >
+                <MdOutlineAdminPanelSettings className="text-lg" />
+                <p className="text-xs font-semibold">Admin</p>
+              </NavLink>
+            </div>
+            <div
+              className={`${theme === "light" ? "text-black" : "text-white"} flex items-center`}
+            >
               <Link to="/notifications" className="cursor-pointer relative">
                 <div className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 z-10 flex items-center justify-center rounded-full bg-primary text-white">
                   <p className="text-[7px]">1</p>
@@ -125,9 +152,19 @@ const Navbar = () => {
                 <IoIosNotificationsOutline className="text-2xl" />
               </Link>
             </div>
-            <IoMoonOutline className="text-xl cursor-pointer" />
+            <div
+              onClick={() => changeTheme()}
+              className={`${theme === "light" ? "text-black" : "text-white"} text-xl cursor-pointer w-6 flex items-center justify-center`}
+            >
+              <IoMoonOutline
+                className={theme === "light" ? "block" : "hidden"}
+              />
+              <CiLight
+                className={`${theme === "dark" ? "block" : "hidden"} text-2xl`}
+              />
+            </div>
           </div>
-          <div className={logedInUser ? "relative hidden lg:block" : "hidden"}>
+          <div className={user ? "relative hidden lg:block" : "hidden"}>
             <button
               onClick={() => setShowPopUp(!showPopUp)}
               className="cursor-pointer"
@@ -158,8 +195,10 @@ const Navbar = () => {
           </div>
         </div>
         <div className="relative lg:hidden flex items-center gap-4">
-          <div className="lg:hidden flex items-center gap-4">
-            <div className={logedInUser ? "flex items-center" : "hidden"}>
+          <div
+            className={`${theme === "light" ? "text-black" : "text-white"} lg:hidden flex items-center gap-4`}
+          >
+            <div className={user ? "flex items-center" : "hidden"}>
               <Link to="/notifications" className="cursor-pointer relative">
                 <div className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 z-10 flex items-center justify-center rounded-full bg-primary text-white">
                   <p className="text-[7px]">1</p>
@@ -167,26 +206,36 @@ const Navbar = () => {
                 <IoIosNotificationsOutline className="text-2xl" />
               </Link>
             </div>
-            <IoMoonOutline className="text-xl cursor-pointer" />
+            <div
+              onClick={() => changeTheme()}
+              className="text-xl cursor-pointer w-6 flex items-center justify-center"
+            >
+              <IoMoonOutline
+                className={theme === "light" ? "block" : "hidden"}
+              />
+              <CiLight
+                className={`${theme === "dark" ? "block" : "hidden"} text-2xl`}
+              />
+            </div>
           </div>
-          <RxHamburgerMenu
-            onClick={() => {
-              setShowMenu(!showMenu);
-            }}
-            className={`${showMenu ? "hidden" : "block"} text-xl`}
-          />
-          <AiOutlineClose
-            onClick={() => {
-              setShowMenu(!showMenu);
-            }}
-            className={`${showMenu ? "block" : "hidden"} text-xl`}
-          />
+          <div className={theme === "light" ? "text-black" : "text-white"}>
+            <RxHamburgerMenu
+              onClick={() => {
+                setShowMenu(!showMenu);
+              }}
+              className={`${showMenu ? "hidden" : "block"} text-xl`}
+            />
+            <AiOutlineClose
+              onClick={() => {
+                setShowMenu(!showMenu);
+              }}
+              className={`${showMenu ? "block" : "hidden"} text-xl`}
+            />
+          </div>
           <div
             className={`${showMenu ? "block" : "hidden"} absolute bg-white top-9 right-0 min-w-60 rounded-lg shadow-sm border border-gray-300`}
           >
-            <div
-              className={logedInUser ? "p-2 flex items-center gap-2" : "hidden"}
-            >
+            <div className={user ? "p-2 flex items-center gap-2" : "hidden"}>
               <img
                 className="w-7 h-7 lg:w-7 lg:h-7 rounded-full"
                 src={user?.img}
@@ -198,6 +247,34 @@ const Navbar = () => {
               </div>
             </div>
             <ul>
+              <li
+                className={user && user?.role === "admin" ? "w-full" : "hidden"}
+              >
+                <NavLink
+                  to="/admin"
+                  className={({ isActive }) =>
+                    `p-3 w-full flex items-center gap-2 ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  }
+                >
+                  <MdOutlineAdminPanelSettings className="text-lg" />
+                  Admin
+                </NavLink>
+              </li>
+              <li
+                className={
+                  user && user?.role === "organizer" ? "w-full" : "hidden"
+                }
+              >
+                <NavLink
+                  to="/dashboard"
+                  className={({ isActive }) =>
+                    `p-3 w-full flex items-center gap-2 ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                  }
+                >
+                  <TbLayoutDashboard className="text-lg" />
+                  Dashboard
+                </NavLink>
+              </li>
               <li className="w-full">
                 <NavLink
                   to="/explore"
@@ -231,7 +308,9 @@ const Navbar = () => {
                   Communities
                 </NavLink>
               </li>
-              <li className={logedInUser ? "w-full" : "hidden"}>
+              <li
+                className={user && user?.role !== "admin" ? "w-full" : "hidden"}
+              >
                 <NavLink
                   to="/my-events"
                   className={({ isActive }) =>
@@ -242,7 +321,7 @@ const Navbar = () => {
                   My Events
                 </NavLink>
               </li>
-              <li className={logedInUser ? "w-full" : "hidden"}>
+              <li className={user ? "w-full" : "hidden"}>
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
@@ -255,7 +334,7 @@ const Navbar = () => {
               </li>
               <li
                 className={
-                  !logedInUser ? "w-full border-t border-t-gray-100" : "hidden"
+                  !user ? "w-full border-t border-t-gray-100" : "hidden"
                 }
               >
                 <NavLink
@@ -269,7 +348,7 @@ const Navbar = () => {
               <li
                 onClick={handleLogout}
                 className={
-                  logedInUser ? "w-full border-t border-t-gray-100" : "hidden"
+                  user ? "w-full border-t border-t-gray-100" : "hidden"
                 }
               >
                 <NavLink

@@ -2,14 +2,23 @@ import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import Modal from "../components/Modal.jsx";
 
 import { categories } from "../utils/datas.js";
-import { communities } from "../utils/datas.js";
 import { useSearchParams } from "react-router";
 import { CiSearch } from "react-icons/ci";
 import { useState } from "react";
-import { getJoinedCommunity, getUser } from "../utils/getDatas.js";
+import { getJoinedCommunity } from "../utils/getDatas.js";
+import { useSelector } from "react-redux";
 
 const Communities = () => {
-  const [joinedCommunity, setJoinedEvent] = useState(null);
+  const logedInUser = useSelector((state) => state.authState.user);
+  const registeredUser = useSelector(
+    (state) => state.registerState.registeredUser,
+  );
+  const user = registeredUser.find((u) => u.id === logedInUser);
+
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
+  );
+
   const [activeLink, setActiveLink] = useState("");
   const [activeFilter, setActiveFilter] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,8 +30,6 @@ const Communities = () => {
   const [showModal, setShowModal] = useState(false);
 
   const filteredCategory = () => {
-    const user = getUser();
-
     return communities.filter((community) => {
       const searchFilter = search.length
         ? community.name.toLowerCase().includes(search)
@@ -197,7 +204,6 @@ const Communities = () => {
                 member={community.member}
                 upcoming_event={community.upcoming_event}
                 setShowModal={setShowModal}
-                renderCommunity={renderCommunity}
               />
             ))}
           </div>

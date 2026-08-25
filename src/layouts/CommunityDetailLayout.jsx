@@ -1,37 +1,52 @@
 import { Link, NavLink, Outlet, useParams } from "react-router";
-import {
-  getCategories,
-  getJoinedCommunity,
-  joinCommunity,
-} from "../utils/getDatas";
+import { getCategories } from "../utils/getDatas";
 import { FaArrowLeft } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { communities } from "../utils/datas";
+import { useDispatch, useSelector } from "react-redux";
+import { joinCommunityThunk } from "../redux/slices/registerSlice";
+import { useState } from "react";
+
+import Modal from "../components/Modal";
+import useAuth from "../hooks/useAuth";
 
 const CommunityDetailLayout = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const [community, setCommunity] = useState(null);
-  const [joinedCommunity, setJoinedCommunity] = useState(
-    getJoinedCommunity(id),
+  const user = useAuth();
+
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
   );
 
-  const handleJoin = () => {
-    joinCommunity(Number(id));
-    setJoinedCommunity(getJoinedCommunity(id));
-  };
+  const joinedCommunity = user?.community_id?.includes(Number(id));
 
-  useEffect(() => {
-    (() => {
-      const filteredCommunities = communities.filter(
-        (c) => c.id.toString() === id,
-      )[0];
-      setCommunity(filteredCommunities);
-    })();
-  }, [id]);
+  const community = communities.find((com) => com.id === Number(id));
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleJoin = () => {
+    if (!user) {
+      setShowModal(true);
+      return;
+    }
+
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      joinCommunityThunk({
+        userId: user.id,
+        communityId: Number(id),
+      }),
+    );
+  };
 
   return (
     <>
+      <div className={showModal ? "block" : "hidden"}>
+        <Modal setShowModal={setShowModal} />
+      </div>
       <div className="py-4 px-6 border-b border-b-gray shadow-xs">
         <Link
           to="/communities"
@@ -51,7 +66,7 @@ const CommunityDetailLayout = () => {
         ) : (
           <div className="h-full w-full bg-gray"></div>
         )}
-        <div className="w-full py-2 lg:py-0 h-78 lg:h-86 flex flex-col justify-end absolute top-0 z-10 bg-black/50 text-white">
+        <div className="w-full py-2 lg:py-0 h-78 lg:h-86 flex flex-col justify-end absolute top-0 z-0 bg-black/50 text-white">
           <div className="px-4 lg:px-24 lg:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="grid gap-2">
               <h2 className="text-2xl lg:text-3xl font-bold">
@@ -69,7 +84,8 @@ const CommunityDetailLayout = () => {
             </div>
             <button
               onClick={handleJoin}
-              className={`${joinedCommunity ? "bg-green" : "bg-primary"} py-2 px-8 h-fit w-fit hover:opacity-70 cursor-pointer rounded-lg`}
+              disabled={user?.role === "organizer" || user?.role === "admin"}
+              className={`${joinedCommunity ? "bg-green" : "bg-primary"} py-2 px-8 h-fit w-fit hover:opacity-70 cursor-pointer rounded-lg disabled:bg-gray-300 disabled:text-dark-gray`}
             >
               {joinedCommunity ? "✓ Joined" : "Join community"}
             </button>
@@ -98,7 +114,7 @@ const CommunityDetailLayout = () => {
             end
             to=""
             className={({ isActive }) =>
-              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray border-b-2 border-white"}`
+              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray"}`
             }
           >
             Events
@@ -106,7 +122,7 @@ const CommunityDetailLayout = () => {
           <NavLink
             to="members"
             className={({ isActive }) =>
-              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray border-b-2 border-white"}`
+              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray"}`
             }
           >
             Members
@@ -114,7 +130,7 @@ const CommunityDetailLayout = () => {
           <NavLink
             to="discussions"
             className={({ isActive }) =>
-              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray border-b-2 border-white"}`
+              `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray"}`
             }
           >
             Discussions

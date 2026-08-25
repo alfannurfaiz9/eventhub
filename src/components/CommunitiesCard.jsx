@@ -1,10 +1,11 @@
 import { categories } from "../utils/datas.js";
-import { getJoinedCommunity, joinCommunity } from "../utils/getDatas";
 
 import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { joinCommunityThunk } from "../redux/slices/registerSlice.js";
+import useAuth from "../hooks/useAuth.js";
 
 const CommunitiesCard = ({
   id,
@@ -15,23 +16,28 @@ const CommunitiesCard = ({
   member,
   upcoming_event,
   setShowModal,
-  renderCommunity,
 }) => {
-  const userLogin = localStorage.getItem("isLogin");
-  const [joinedCommunity, setJoinedCommunity] = useState(
-    getJoinedCommunity(id),
-  );
+  const dispatch = useDispatch();
+
+  const user = useAuth();
 
   const handleJoin = () => {
-    if (!userLogin) {
+    if (!user) {
       setShowModal(true);
 
       return;
     }
 
-    joinCommunity(id);
-    setJoinedCommunity(getJoinedCommunity(id));
-    renderCommunity && renderCommunity();
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      joinCommunityThunk({
+        userId: user.id,
+        communityId: id,
+      }),
+    );
   };
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -79,9 +85,12 @@ const CommunitiesCard = ({
         <div className="flex gap-2 my-2">
           <button
             onClick={handleJoin}
-            className={`${joinedCommunity ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80`}
+            disabled={user?.role === "organizer" || user?.role === "admin"}
+            className={`${user?.community_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
           >
-            {joinedCommunity ? "✔ Registered" : "Join Community"}
+            {user?.community_id?.includes(id)
+              ? "✔ Registered"
+              : "Join Community"}
           </button>
         </div>
       </div>

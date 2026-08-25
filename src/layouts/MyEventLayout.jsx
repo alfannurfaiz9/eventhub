@@ -1,8 +1,10 @@
 import { NavLink, Outlet } from "react-router";
-import { getUser } from "../utils/getDatas";
+import useAuth from "../hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const MyEventLayout = () => {
-  const user = getUser();
+  const user = useAuth();
+  const events = useSelector((state) => state.eventsState.events);
 
   return (
     <>
@@ -16,7 +18,14 @@ const MyEventLayout = () => {
               `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray border-b-2 border-white"}`
             }
           >
-            Upcoming <span>({user.event_id.length})</span>
+            Upcoming{" "}
+            <span>
+              (
+              {user?.role === "organizer" || user?.role === "admin"
+                ? events?.length
+                : user?.event_id?.length}
+              )
+            </span>
           </NavLink>
           <NavLink
             to="past"
@@ -32,7 +41,14 @@ const MyEventLayout = () => {
               `py-3 ${isActive ? "text-primary border-b-2 border-b-primary" : "text-dark-gray border-b-2 border-white"}`
             }
           >
-            Saved <span>({user.saved_event_id.length})</span>
+            Saved{" "}
+            <span>
+              (
+              {user?.role === "organizer" || user?.role === "admin"
+                ? 0
+                : user?.saved_event_id?.length}
+              )
+            </span>
           </NavLink>
         </div>
       </section>

@@ -1,25 +1,14 @@
-import { useEffect, useState } from "react";
-import { events } from "../utils/datas";
-import { getCategories, getSavedEvent } from "../utils/getDatas";
+import { getCategories } from "../utils/getDatas";
 
 import EventsCard from "../components/EventsCard";
+import { useSelector } from "react-redux";
+import useAuth from "../hooks/useAuth";
 
 const MyProfileEvent = () => {
-  const [savedEvent, setSavedEvent] = useState(null);
+  const user = useAuth();
 
-  const renderEvent = () => {
-    const event = events.filter((event) => {
-      return getSavedEvent(event.id);
-    });
-
-    setSavedEvent(event);
-  };
-
-  useEffect(() => {
-    (() => {
-      renderEvent();
-    })();
-  }, []);
+  const events = useSelector((state) => state.eventsState.events);
+  const savedEvent = events.filter((e) => user?.saved_event_id?.includes(e.id));
   return (
     <>
       <section
@@ -37,7 +26,6 @@ const MyProfileEvent = () => {
             location={event.location}
             attendees={event.attendees}
             capacity={event.capacity}
-            renderEvent={renderEvent}
           />
         ))}
       </section>

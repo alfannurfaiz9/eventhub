@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
+import { login } from "../redux/slices/AuthSlice";
 
 const Login = () => {
   const {
@@ -11,42 +13,39 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const users = JSON.parse(localStorage.getItem("users"));
+  const registeredUsers = useSelector(
+    (state) => state.registerState.registeredUser,
+  );
+
   const organizerAndAdmin = [
     JSON.parse(import.meta.env.VITE_ORGANIZER),
     JSON.parse(import.meta.env.VITE_ADMIN),
   ];
 
-  const combinedUser = users
-    ? [...organizerAndAdmin, ...users]
+  const combinedUser = registeredUsers
+    ? [...organizerAndAdmin, ...registeredUsers]
     : [...organizerAndAdmin];
 
   const onSubmit = (data) => {
     const getUser = combinedUser.filter((user) => user.email === data.email);
     const userPassword = getUser ? getUser[0]?.password : null;
 
-    if (!userPassword) {
-      setError("email", {
-        type: "manual",
-        message: "Email not registered",
-      });
-
-      return;
-    }
-
     if (userPassword !== data.password) {
       setError("password", {
         type: "manual",
-        message: "Incorrect password",
+        message: "Incorrect email or password",
       });
 
       return;
     }
 
-    localStorage.setItem("isLogin", JSON.stringify(getUser[0].id));
+    dispatch(login(getUser[0].id));
+
     navigate("/");
   };
 

@@ -4,60 +4,88 @@ import { Link, useParams } from "react-router";
 import EventSpeakers from "../components/EventSpeakers.jsx";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 import RecommendationCard from "../components/RecommendationCard.jsx";
+import Modal from "../components/Modal.jsx";
 
-import { communities, discussions, events, speakers } from "../utils/datas.js";
-import {
-  getCategories,
-  getJoinedEvent,
-  getRecommendations,
-  getSavedEvent,
-  getUser,
-  joinEvent,
-  saveEvent,
-} from "../utils/getDatas.js";
+import { discussions, speakers } from "../utils/datas.js";
+import { getCategories, getRecommendations } from "../utils/getDatas.js";
 
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaBookmark } from "react-icons/fa";
 import { CiBookmark, CiCalendar, CiLocationOn } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
 import { IoShareSocialOutline } from "react-icons/io5";
 
 import { GoComment } from "react-icons/go";
 import { MdSend } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  joinEventThunk,
+  saveEventThunk,
+} from "../redux/slices/registerSlice.js";
+import useAuth from "../hooks/useAuth.js";
 
 const EventDetail = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const [event, setEvent] = useState(null);
-  const [community, setCommunity] = useState(null);
-  const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
-  const [savedEvent, setSavedEvent] = useState(getSavedEvent(id));
-  const [user, setUser] = useState(null);
+  const user = useAuth();
+
+  const events = useSelector((state) => state.eventsState.events);
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
+  );
+
+  const joinedEvent = user?.event_id?.includes(Number(id));
+  const savedEvent = user?.saved_event_id?.includes(Number(id));
+
+  const event = events.find((e) => e.id === Number(id));
+  const fullEvent = event.attendees === event.capacity;
+  const community = communities.find((comm) => comm.id === event.community_id);
+
   const [discuss, setDiscuss] = useState(null);
   const [newDiscuss, setNewDiscuss] = useState("");
 
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     (() => {
-      setUser(getUser());
       setDiscuss(discussions);
-
-      const filteredEvent = events.filter((e) => e.id.toString() === id);
-      setEvent(filteredEvent[0]);
-
-      const filteredCommunities = communities.filter(
-        (community) => community.id === event?.community_id,
-      );
-      setCommunity(filteredCommunities[0]);
     })();
-  }, [id, event]);
+  }, []);
 
   const handleJoin = () => {
-    joinEvent(Number(id));
-    setJoinedEvent(getJoinedEvent(id));
+    if (!user) {
+      setShowModal(true);
+      return;
+    }
+
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      joinEventThunk({
+        userId: user.id,
+        eventId: Number(id),
+      }),
+    );
   };
 
   const handleSave = () => {
-    saveEvent(Number(id));
-    setSavedEvent(getSavedEvent(id));
+    if (!user) {
+      setShowModal(true);
+      return;
+    }
+
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      saveEventThunk({
+        userId: user.id,
+        eventId: Number(id),
+      }),
+    );
   };
 
   const handleAddDiscuss = () => {
@@ -81,6 +109,9 @@ const EventDetail = () => {
   return (
     <>
       <>
+        <div className={showModal ? "block" : "hidden"}>
+          <Modal setShowModal={setShowModal} />
+        </div>
         <div className="py-4 px-6 border-b border-b-gray shadow-xs">
           <Link
             to="/events"
@@ -150,7 +181,9 @@ const EventDetail = () => {
                       desc={discuss.desc}
                     />
                   ))}
-                  <div className="grid grid-cols-[auto_1fr] gap-4">
+                  <div
+                    className={`${user ? "grid" : "hidden"} grid-cols-[auto_1fr] gap-4`}
+                  >
                     <img
                       className="w-7 h-7 rounded-full"
                       src={user?.img}
@@ -235,16 +268,28 @@ const EventDetail = () => {
                 </div>
                 <button
                   onClick={handleJoin}
-                  className={`${joinedEvent ? "bg-green" : "bg-primary"} py-1 w-full text-sm text-white rounded-lg  cursor-pointer hover:opacity-90`}
+                  disabled={
+                    user?.role === "organizer" ||
+                    user?.role === "admin" ||
+                    fullEvent
+                  }
+                  className={`${joinedEvent ? "bg-green" : "bg-primary"} py-1 w-full text-sm text-white rounded-lg  cursor-pointer hover:opacity-90 disabled:bg-gray-300 disabled:text-dark-gray`}
                 >
                   {joinedEvent ? "✔ Registered" : "Join Event"}
                 </button>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <button
                     onClick={handleSave}
-                    className={`${savedEvent ? "bg-light-green text-green" : ""} flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50`}
+                    disabled={
+                      user?.role === "organizer" ||
+                      user?.role === "admin" ||
+                      fullEvent
+                    }
+                    className={`${savedEvent ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex items-center gap-2`}
                   >
-                    <CiBookmark /> {savedEvent ? "Saved" : "Save"}
+                    <CiBookmark className={savedEvent ? "hidden" : "block"} />
+                    <FaBookmark className={savedEvent ? "block" : "hidden"} />
+                    {savedEvent ? "Saved" : "Save"}
                   </button>
                   <button className="flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50">
                     <IoShareSocialOutline /> Share

@@ -5,22 +5,41 @@ import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import TestimonialsCard from "../components/TestimonialsCard.jsx";
 import Modal from "../components/Modal.jsx";
 
-import { events } from "../utils/datas.js";
-import { communities } from "../utils/datas.js";
-import { reviews } from "../utils/datas.js";
+import {
+  reviews,
+  events as eventsDatas,
+  communities as communitiesData,
+} from "../utils/datas.js";
 import { categories } from "../utils/datas.js";
 import { getCategories } from "../utils/getDatas.js";
 
 import { BsStars } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getEventsThunk } from "../redux/slices/eventsSlice.js";
+import { getCommunitiesThunk } from "../redux/slices/CommunitiesSlice.js";
 
 const Homepage = () => {
+  const dispatch = useDispatch();
+
+  const events = useSelector((state) => state.eventsState.events);
+  const renderedEvents = events.filter((e, i) => i < 6);
+
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
+  );
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [inputSearch, setInputSearch] = useState("");
   const search = searchParams.get("search") || "";
 
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    !events.length && dispatch(getEventsThunk(eventsDatas));
+    !communities.length && dispatch(getCommunitiesThunk(communitiesData));
+  }, [dispatch, communities, events]);
 
   return (
     <>
@@ -34,9 +53,9 @@ const Homepage = () => {
               <BsStars className="text-primary" />
               <p className="text-primary">Discover · Connect · Participate</p>
             </div>
-            <h2 className="font-extrabold text-4xl lg:text-6xl text-white">
-              Find events that{" "}
-              <span className="text-primary">actually matter</span> to you
+            <h2 className="font-extrabold text-4xl lg:text-5xl text-white">
+              Find events that <br />
+              <span className="text-primary"> actually matter</span> to you
             </h2>
             <div className="lg:px-8">
               <p className="text-dark-gray text-sm lg:text-lg">
@@ -70,6 +89,7 @@ const Homepage = () => {
                   }
 
                   setSearchParams(newParams);
+                  setInputSearch("");
                 }}
                 className="text-sm bg-primary text-white py-1.5 px-4 rounded-lg cursor-pointer hover:opacity-90"
               >
@@ -104,23 +124,27 @@ const Homepage = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-6 lg:gap-4">
-          {events
-            .filter((event) => event.title.toLowerCase().includes(search))
-            .map((event, idx) => (
-              <EventsCard
-                key={`${event.id}-${idx}`}
-                id={event.id}
-                img={event.img}
-                cat={getCategories(event)}
-                title={event.title}
-                date={event.date}
-                time={event.time}
-                location={event.location}
-                attendees={event.attendees}
-                capacity={event.capacity}
-                setShowModal={setShowModal}
-              />
-            ))}
+          {renderedEvents?.length ? (
+            renderedEvents
+              .filter((event) => event.title.toLowerCase().includes(search))
+              .map((event, idx) => (
+                <EventsCard
+                  key={`${event.id}-${idx}`}
+                  id={event.id}
+                  img={event.img}
+                  cat={getCategories(event)}
+                  title={event.title}
+                  date={event.date}
+                  time={event.time}
+                  location={event.location}
+                  attendees={event.attendees}
+                  capacity={event.capacity}
+                  setShowModal={setShowModal}
+                />
+              ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       </section>
       <section className="py-6 px-6 lg:px-12 bg-med-gray">
@@ -136,23 +160,27 @@ const Homepage = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-4 my-6 gap-6 lg:gap-4">
-          {communities
-            .filter((community) =>
-              community.name.toLowerCase().includes(search),
-            )
-            .map((community, idx) => (
-              <CommunitiesCard
-                key={`${community.id}-${idx}`}
-                id={community.id}
-                img={community.img}
-                name={community.name}
-                desc={community.desc}
-                cat={community.categories}
-                member={community.member}
-                upcoming_event={community.upcoming_event}
-                setShowModal={setShowModal}
-              />
-            ))}
+          {communities?.length ? (
+            communities
+              .filter((community) =>
+                community.name.toLowerCase().includes(search),
+              )
+              .map((community, idx) => (
+                <CommunitiesCard
+                  key={`${community.id}-${idx}`}
+                  id={community.id}
+                  img={community.img}
+                  name={community.name}
+                  desc={community.desc}
+                  cat={community.categories}
+                  member={community.member}
+                  upcoming_event={community.upcoming_event}
+                  setShowModal={setShowModal}
+                />
+              ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       </section>
       <section className="py-6 px-6 lg:px-12 bg-med-gray">

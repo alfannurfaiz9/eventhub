@@ -4,7 +4,7 @@ const DiscussionCard = ({ img, name, desc }) => {
       <img className="w-7 h-7 rounded-full" src={img} alt="avatar-profile" />
       <div className="grid gap-1 p-2 rounded-lg text-sm bg-white border border-gray-300">
         <p className="font-semibold">
-          {name}{" "}
+          {name}
           <span className="ml-1 text-dark-gray font-normal text-xs">
             2d ago
           </span>

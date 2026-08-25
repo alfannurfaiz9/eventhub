@@ -1,9 +1,9 @@
 import { BsFilterRight } from "react-icons/bs";
 
-import EventsCard from "../components/EventsCard";
+import EventsCard from "../components/EventsCard.jsx";
 import Modal from "../components/Modal.jsx";
 
-import { categories, communities, events } from "../utils/datas.js";
+import { categories, communities } from "../utils/datas.js";
 import {
   getAllLocations,
   getCategories,
@@ -13,8 +13,14 @@ import {
 import { useSearchParams } from "react-router";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
+import { useSelector } from "react-redux";
 
 const Movies = () => {
+  const events = useSelector((state) => state.eventsState.events);
+  const [renderedEvents, setRenderedEvents] = useState(
+    events.filter((e, i) => i < 6),
+  );
+
   const [activeLink, setActiveLink] = useState({
     category: "",
     location: "",
@@ -32,7 +38,7 @@ const Movies = () => {
   const [showModal, setShowModal] = useState(false);
 
   const filteredEvents = () => {
-    const filtered = events.filter((event) => {
+    const filtered = renderedEvents.filter((event) => {
       const searchFilter = search.length
         ? event.title.toLowerCase().includes(search)
         : event;
@@ -57,7 +63,9 @@ const Movies = () => {
     });
 
     const popular = sortEventByPopularity(filtered);
-    const almostFull = sortEventByRemainingCap(filtered);
+    const almostFull = sortEventByRemainingCap(filtered).filter(
+      (e) => e.attendees !== e.capacity,
+    );
 
     if (sort.toLowerCase() === "most popular") return popular;
     if (sort.toLowerCase() === "almost full") return almostFull;
@@ -302,11 +310,16 @@ const Movies = () => {
               />
             ))}
           </div>
-          {/* <div className="w-fit mx-auto">
-            <button className="py-2 px-4 font-medium text-black rounded-xl border border-gray-300 cursor-pointer hover:opacity-60">
+          <div className="w-fit mx-auto">
+            <button
+              onClick={() => {
+                setRenderedEvents(events);
+              }}
+              className={`${renderedEvents.length > 6 && "hidden"} py-2 px-4 font-medium text-sm text-black rounded-xl border border-gray-300 cursor-pointer hover:opacity-60`}
+            >
               Load more events
             </button>
-          </div> */}
+          </div>
         </div>
       </section>
     </>

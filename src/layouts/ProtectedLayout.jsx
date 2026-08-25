@@ -1,20 +1,19 @@
 import { Outlet, useNavigate } from "react-router";
 
-import Navbar from "../components/Navbar.jsx";
 import { useEffect } from "react";
+import useAuth from "../hooks/useAuth.js";
 
 const ProtectedLayout = () => {
-  const userLogin = localStorage.getItem("isLogin");
+  const user = useAuth();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    !userLogin && navigate("/login");
+    !user && navigate("/login");
   });
 
   return (
     <>
-      <Navbar />
       <main>
         <Outlet />
       </main>

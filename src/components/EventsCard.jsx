@@ -2,14 +2,11 @@ import { CiCalendar } from "react-icons/ci";
 import { CiLocationOn } from "react-icons/ci";
 import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
-import {
-  getJoinedEvent,
-  getSavedEvent,
-  joinEvent,
-  saveEvent,
-} from "../utils/getDatas";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { joinEventThunk, saveEventThunk } from "../redux/slices/registerSlice";
+import useAuth from "../hooks/useAuth.js";
+import { FaBookmark } from "react-icons/fa";
 
 const EventsCard = ({
   id,
@@ -22,35 +19,48 @@ const EventsCard = ({
   attendees,
   capacity,
   setShowModal,
-  renderEvent,
 }) => {
-  const userLogin = localStorage.getItem("isLogin");
+  const dispatch = useDispatch();
 
-  const [joinedEvent, setJoinedEvent] = useState(getJoinedEvent(id));
-  const [savedEvent, setSavedEvent] = useState(getSavedEvent(id));
+  const user = useAuth();
+  const fullEvent = attendees === capacity;
 
   const handleJoin = () => {
-    if (!userLogin) {
+    if (!user) {
       setShowModal(true);
 
       return;
     }
 
-    joinEvent(id);
-    setJoinedEvent(getJoinedEvent(id));
-    renderEvent && renderEvent();
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      joinEventThunk({
+        userId: user.id,
+        eventId: id,
+      }),
+    );
   };
 
   const handleSave = () => {
-    if (!userLogin) {
+    if (!user) {
       setShowModal(true);
 
       return;
     }
 
-    saveEvent(id);
-    setSavedEvent(getSavedEvent(id));
-    renderEvent && renderEvent();
+    if (user.role === "organizer" || user.role === "admin") {
+      return;
+    }
+
+    dispatch(
+      saveEventThunk({
+        userId: user.id,
+        eventId: id,
+      }),
+    );
   };
 
   return (
@@ -67,7 +77,10 @@ const EventsCard = ({
         )}
         <div className="absolute bottom-0 flex gap-2 p-2 text-xs">
           {cat.map((el) => (
-            <p key={el.id} className={el.style}>
+            <p
+              key={el.id}
+              className={`${el.style} backdrop-blur-[3px] shadow-sm`}
+            >
               {el.name}
             </p>
           ))}
@@ -79,7 +92,7 @@ const EventsCard = ({
           <div className="flex gap-1 text-dark-gray">
             <CiCalendar />
             <p className="text-xs">
-              {date} - {time}
+              {date} - {time} WIB
             </p>
           </div>
           <div className="flex gap-1 text-dark-gray">
@@ -106,15 +119,30 @@ const EventsCard = ({
         <div className="flex gap-2 my-2">
           <button
             onClick={handleJoin}
-            className={`${joinedEvent ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80`}
+            disabled={
+              user?.role === "organizer" || user?.role === "admin" || fullEvent
+            }
+            className={`${user?.event_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
           >
-            {joinedEvent ? "✔ Registered" : "Join Event"}
+            {user?.event_id?.includes(id) ? "✔ Registered" : "Join Event"}
           </button>
           <button
             onClick={handleSave}
-            className={`${savedEvent ? "text-green bg-light-green" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80`}
+            disabled={
+              user?.role === "organizer" || user?.role === "admin" || fullEvent
+            }
+            className={`${user?.saved_event_id?.includes(id) ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
           >
-            <CiBookmark />
+            <CiBookmark
+              className={
+                user?.saved_event_id?.includes(id) ? "hidden" : "block"
+              }
+            />
+            <FaBookmark
+              className={
+                user?.saved_event_id?.includes(id) ? "block" : "hidden"
+              }
+            />
           </button>
         </div>
       </div>

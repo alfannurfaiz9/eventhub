@@ -1,25 +1,18 @@
-import { useEffect, useState } from "react";
-import { communities } from "../utils/datas";
-import { getJoinedCommunity } from "../utils/getDatas";
-
 import CommunitiesCard from "../components/CommunitiesCard.jsx";
+import { useSelector } from "react-redux";
+import useAuth from "../hooks/useAuth.js";
 
 const MyProfileCommunities = () => {
-  const [joinedCommunity, setJoinedCommunity] = useState(null);
+  const user = useAuth();
 
-  const renderEvent = () => {
-    const community = communities.filter((community) => {
-      return getJoinedCommunity(community.id);
-    });
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
+  );
 
-    setJoinedCommunity(community);
-  };
+  const joinedCommunity = communities.filter((comm) =>
+    user?.community_id?.includes(comm.id),
+  );
 
-  useEffect(() => {
-    (() => {
-      renderEvent();
-    })();
-  }, []);
   return (
     <>
       <section
@@ -35,7 +28,6 @@ const MyProfileCommunities = () => {
             cat={community.categories}
             member={community.member}
             upcoming_event={community.upcoming_event}
-            renderCommunity={renderEvent}
           />
         ))}
       </section>
