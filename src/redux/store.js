@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import persistCombineReducers from "redux-persist/es/persistCombineReducers";
 
-import authReducer from "./slices/AuthSlice";
-import eventsReducer from "./slices/EventsSlice";
+import authReducer from "./slices/authSlice";
+import eventsReducer from "./slices/eventsSlice";
 import communitiesReducer from "./slices/communitiesSlice";
 import registerReducer from "./slices/registerSlice";
 

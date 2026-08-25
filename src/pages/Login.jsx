@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-import { login } from "../redux/slices/AuthSlice";
+import { login } from "../redux/slices/authSlice";
 
 const Login = () => {
   const {

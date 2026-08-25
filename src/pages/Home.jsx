@@ -18,7 +18,7 @@ import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventsThunk } from "../redux/slices/eventsSlice.js";
-import { getCommunitiesThunk } from "../redux/slices/CommunitiesSlice.js";
+import { getCommunitiesThunk } from "../redux/slices/communitiesSlice.js";
 
 const Homepage = () => {
   const dispatch = useDispatch();

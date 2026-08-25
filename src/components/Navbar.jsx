@@ -15,7 +15,7 @@ import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 
 import { useDispatch } from "react-redux";
-import { logout } from "../redux/slices/AuthSlice.js";
+import { logout } from "../redux/slices/authSlice.js";
 import { TbLayoutDashboard } from "react-icons/tb";
 
 import useAuth from "../hooks/useAuth.js";
