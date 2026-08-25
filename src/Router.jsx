@@ -31,13 +31,15 @@ import AdminDashboardOverview from "./components/admin/AdminDashboardOverview.js
 import AdminDashboardUsers from "./components/admin/AdminDashboardUsers.jsx";
 import AdminDashboardEvents from "./components/admin/AdminDashboardEvents.jsx";
 import AdminDashboardCommunities from "./components/admin/AdminDashboardCommunities.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 const Router = () => {
   return (
     <Routes>
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
       </Route>
 
       <Route element={<MainLayout />}>
