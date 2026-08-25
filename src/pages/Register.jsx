@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaEyeSlash, FaRegEye } from "react-icons/fa";
+import { FaEyeSlash, FaGithub, FaGoogle, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { registerUserThunk } from "../redux/slices/registerSlice";
@@ -91,11 +91,11 @@ const Register = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="py-2 w-full text-xs border border-gray-300 rounded-lg bg-white cursor-pointer hover:opacity-60 font-semibold text-dark-gray">
-              Google
+            <button className="flex gap-2 items-center justify-center py-2 w-full text-xs border border-gray-300 rounded-lg bg-white cursor-pointer hover:opacity-60 font-semibold text-dark-gray">
+              <FaGoogle /> Google
             </button>
-            <button className="py-2 w-full text-xs border border-gray-300 rounded-lg bg-white cursor-pointer hover:opacity-60 font-semibold text-dark-gray">
-              Github
+            <button className="flex gap-2 items-center justify-center py-2 w-full text-xs border border-gray-300 rounded-lg bg-white cursor-pointer hover:opacity-60 font-semibold text-dark-gray">
+              <FaGithub /> Github
             </button>
           </div>
           <div className="grid grid-cols-[1fr_2fr_1fr] items-center gap-2">
