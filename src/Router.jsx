@@ -23,6 +23,14 @@ import Notifications from "./pages/Notifications.jsx";
 import MyEventLayout from "./layouts/MyEventLayout.jsx";
 import MyProfileLayout from "./layouts/MyProfileLayout.jsx";
 import CommunityDetailLayout from "./layouts/CommunityDetailLayout.jsx";
+import OrganizerDashboard from "./pages/organizer/OrganizerDashboard.jsx";
+import CreateEvent from "./pages/organizer/CreateEvent.jsx";
+import OrganizerLayout from "./layouts/organizer/OrganizerLayout.jsx";
+import AdminLayout from "./layouts/admin/AdminLayout.jsx";
+import AdminDashboardOverview from "./components/admin/AdminDashboardOverview.jsx";
+import AdminDashboardUsers from "./components/admin/AdminDashboardUsers.jsx";
+import AdminDashboardEvents from "./components/admin/AdminDashboardEvents.jsx";
+import AdminDashboardCommunities from "./components/admin/AdminDashboardCommunities.jsx";
 
 const Router = () => {
   return (
@@ -34,23 +42,15 @@ const Router = () => {
 
       <Route element={<MainLayout />}>
         <Route path="/" element={<Navigate to="/explore" replace />} />
-        <Route path="/explore" element={<Home />} />
+        <Route path="explore" element={<Home />} />
 
-        <Route path="/events">
+        <Route path="events">
           <Route index element={<Events />} />
-        </Route>
-
-        <Route path="/communities">
-          <Route index element={<Communities />} />
-        </Route>
-      </Route>
-
-      <Route element={<ProtectedLayout />}>
-        <Route path="/events">
           <Route path="detail/:id" element={<EventDetail />} />
         </Route>
 
-        <Route path="/communities">
+        <Route path="communities">
+          <Route index element={<Communities />} />
           <Route path="detail/:id" element={<CommunityDetailLayout />}>
             <Route index element={<CommunityDetail />} />
             <Route path="members" element={<CommunityDetailMember />} />
@@ -60,21 +60,35 @@ const Router = () => {
             />
           </Route>
         </Route>
+        <Route element={<ProtectedLayout />}>
+          <Route path="notifications">
+            <Route index element={<Notifications />} />
+          </Route>
 
-        <Route path="/notifications">
-          <Route index element={<Notifications />} />
-        </Route>
+          <Route path="my-events" element={<MyEventLayout />}>
+            <Route index element={<MyEventUpcoming />} />
+            <Route path="past" element={<MyEventPast />} />
+            <Route path="saved" element={<MyEventSaved />} />
+          </Route>
 
-        <Route path="/my-events" element={<MyEventLayout />}>
-          <Route index element={<MyEventUpcoming />} />
-          <Route path="past" element={<MyEventPast />} />
-          <Route path="saved" element={<MyEventSaved />} />
-        </Route>
+          <Route path="profile" element={<MyProfileLayout />}>
+            <Route index element={<MyProfileEvent />} />
+            <Route path="communities" element={<MyProfileCommunities />} />
+            <Route path="saved" element={<MyProfileSaved />} />
+          </Route>
 
-        <Route path="/profile" element={<MyProfileLayout />}>
-          <Route index element={<MyProfileEvent />} />
-          <Route path="communities" element={<MyProfileCommunities />} />
-          <Route path="saved" element={<MyProfileSaved />} />
+          <Route path="dashboard" element={<OrganizerLayout />}>
+            <Route index element={<OrganizerDashboard />} />
+            <Route path="create" element={<CreateEvent />} />
+          </Route>
+
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboardOverview />} />
+            <Route path="users" element={<AdminDashboardUsers />} />
+            <Route path="events" element={<AdminDashboardEvents />} />
+            <Route path="communities" element={<AdminDashboardCommunities />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
