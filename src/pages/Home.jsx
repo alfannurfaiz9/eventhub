@@ -19,15 +19,25 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventsThunk } from "../redux/slices/eventsSlice.js";
 import { getCommunitiesThunk } from "../redux/slices/communitiesSlice.js";
+import useAuth from "../hooks/useAuth.js";
+import { RiArrowRightUpLongLine } from "react-icons/ri";
 
 const Homepage = () => {
   const dispatch = useDispatch();
+  const user = useAuth();
 
   const events = useSelector((state) => state.eventsState.events);
   const renderedEvents = events.filter((e, i) => i < 6);
 
   const communities = useSelector(
     (state) => state.communitiesState.communities,
+  );
+  const renderedCommunities = communities.filter((comm) =>
+    user?.community_id?.includes(comm.id),
+  )[0];
+
+  const getRecommendation = events.filter(
+    (e) => e.community_id === renderedCommunities?.id,
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -107,6 +117,47 @@ const Homepage = () => {
               </p>
             ))}
           </div>
+        </div>
+      </section>
+      <section
+        className={`${getRecommendation.length ? "block" : "hidden"} py-6 px-6 lg:px-12 bg-med-gray`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="w-10/12">
+            <div className="flex items-center gap-1">
+              <RiArrowRightUpLongLine className="text-primary text-xl" />
+              <p className="text-primary text-sm">RECOMMENDED FOR YOU</p>
+            </div>
+            <p className="text-xl font-bold text-black">
+              Because you joined
+              <span className="text-primary"> {renderedCommunities?.name}</span>
+            </p>
+          </div>
+          <Link
+            className="text-xs text-dark-gray hover:opacity-70 hover:underline"
+            to={`/communities/detail/${renderedCommunities?.id}`}
+          >
+            See all
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-6 lg:gap-4">
+          {getRecommendation
+            ?.filter((event) => event.title.toLowerCase().includes(search))
+            .map((event, idx) => (
+              <EventsCard
+                key={`${event.id}-${idx}`}
+                id={event.id}
+                img={event.img}
+                cat={getCategories(event)}
+                title={event.title}
+                date={event.date}
+                time={event.time}
+                location={event.location}
+                attendees={event.attendees}
+                capacity={event.capacity}
+                setShowModal={setShowModal}
+              />
+            ))}
         </div>
       </section>
       <section className="py-6 px-6 lg:px-12 bg-med-gray">
