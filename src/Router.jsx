@@ -32,6 +32,7 @@ import AdminDashboardUsers from "./components/admin/AdminDashboardUsers.jsx";
 import AdminDashboardEvents from "./components/admin/AdminDashboardEvents.jsx";
 import AdminDashboardCommunities from "./components/admin/AdminDashboardCommunities.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 
 const Router = () => {
   return (
@@ -93,6 +94,8 @@ const Router = () => {
           </Route>
         </Route>
       </Route>
+
+       <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 };
