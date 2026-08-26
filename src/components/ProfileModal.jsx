@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateProfileThunk } from "../redux/slices/registerSlice";
@@ -15,6 +15,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
   const [name, setName] = useState(user?.full_name);
   const [address, setAddress] = useState(user?.address || "Bogor");
   const [bio, setBio] = useState(user?.bio || "Hello this is my bio");
+  const [img, setImg] = useState("");
 
   const handleClose = () => {
     setShowModal(false);
@@ -25,6 +26,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
 
     dispatch(
       updateProfileThunk({
+        img,
         userId: user.id,
         full_name: name,
         address,
@@ -51,9 +53,23 @@ const ProfileModal = ({ setShowModal = "" }) => {
           />
         </div>
         <div className="py-2 px-4 flex flex-col gap-2 text-sm">
-          <div className="w-16 h-16">
-            <img src={user?.img} alt="profile-pict" />
-          </div>
+          <label
+            className="h-16 w-16 rounded-full overflow-hidden"
+            htmlFor="image"
+          >
+            <img
+              className="h-full w-full object-cover"
+              src={img ? img : user?.img}
+              alt="profile-pict"
+            />
+            <input
+              onChange={(e) => setImg(URL.createObjectURL(e.target.files[0]))}
+              className="hidden"
+              type="file"
+              name="image"
+              id="image"
+            />
+          </label>
           <div className="flex flex-col gap-1">
             <label htmlFor="full_name">Full Name</label>
             <input
@@ -99,7 +115,10 @@ const ProfileModal = ({ setShowModal = "" }) => {
             type="submit"
             className="py-2 px-4 rounded-lg text-white bg-primary cursor-pointer hover:opacity-80"
           >
-            {loading ? "Loading..." : "Save Changes"}
+            <AiOutlineLoading3Quarters
+              className={`${loading ? "block" : "hidden"} text-xl animate-spin`}
+            />
+            {loading ? "" : "Save Changes"}
           </button>
         </div>
       </form>
