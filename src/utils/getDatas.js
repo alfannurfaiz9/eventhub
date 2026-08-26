@@ -4,8 +4,10 @@ export const getCategories = (e, c) => {
   const community =
     e && communities.find((community) => community.id === e.community_id);
 
-  const filteredCat = categories.filter((cat) =>
-    e ? community.categories.includes(cat.id) : c.categories.includes(cat.id),
+  const filteredCat = categories?.filter((cat) =>
+    e
+      ? community?.categories?.includes(cat.id)
+      : c?.categories?.includes(cat.id),
   );
 
   return filteredCat;
