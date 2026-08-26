@@ -216,6 +216,7 @@ const registerSlice = createSlice({
             (user) => user.id === payload.userId,
           );
 
+          selected.img = payload.img;
           selected.full_name = payload.full_name;
           selected.address = payload.address;
           selected.bio = payload.bio;
