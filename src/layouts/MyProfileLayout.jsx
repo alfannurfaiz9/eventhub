@@ -23,13 +23,15 @@ const MyProfileLayout = () => {
       <section className="bg-white pt-6 px-4 lg:px-38 grid gap-4 border-b border-b-gray-300">
         <div className="flex flex-col gap-4 lg:gap-0 lg:flex-row items-start justify-between">
           <div className="flex gap-4 lg:w-10/12">
-            <div className="w-18 h-18 rounded-xl overflow-hidden relative">
-              <div className="absolute h-4 w-4 bg-green rounded-full bottom-2 right-1 border-2 border-white"></div>
-              <img
-                className="h-full w-full object-cover"
-                src={user?.img}
-                alt="profile-photo"
-              />
+            <div className="relative h-fit w-fit">
+              <div className="absolute h-4 w-4 bg-green rounded-full bottom-1 right-1 border-2 border-white"></div>
+              <div className="w-18 h-18 rounded-xl overflow-hidden">
+                <img
+                  className="h-full w-full object-cover"
+                  src={user?.img}
+                  alt="profile-photo"
+                />
+              </div>
             </div>
             <div className="grid gap-4 w-8/12">
               <div className="grid gap-1">
