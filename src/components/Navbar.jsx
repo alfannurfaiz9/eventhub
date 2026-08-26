@@ -30,8 +30,6 @@ const Navbar = () => {
   const user = useAuth();
   const { theme, changeTheme } = useContext(themeContext);
 
-  console.log(theme);
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
