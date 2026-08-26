@@ -45,13 +45,13 @@ const Movies = () => {
 
       const catId =
         category.length &&
-        categories.filter((cat) => cat.name.toLowerCase() === category)[0].id;
+        categories?.filter((cat) => cat.name.toLowerCase() === category)[0].id;
 
       const comms = communities.filter(
         (com) => com.id === event.community_id,
       )[0];
 
-      const categoryFilter = category.length
+      const categoryFilter = category?.length
         ? comms.categories.includes(catId)
         : event;
 
@@ -64,7 +64,7 @@ const Movies = () => {
 
     const popular = sortEventByPopularity(filtered);
     const almostFull = sortEventByRemainingCap(filtered).filter(
-      (e) => e.attendees !== e.capacity,
+      (e) => e.attendees !== e.capacity && e.attendees > 0,
     );
 
     if (sort.toLowerCase() === "most popular") return popular;
