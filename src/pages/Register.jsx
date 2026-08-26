@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaGithub, FaGoogle, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { registerUserThunk } from "../redux/slices/registerSlice";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Register = () => {
   const {
@@ -73,6 +74,20 @@ const Register = () => {
       }),
     );
   };
+
+  const [loading, setLoading] = useState(false);
+
+  const reg = useSelector((state) => state.registerState);
+
+  useEffect(() => {
+    (() => {
+      if (reg.isPending) {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
+    })();
+  }, [reg]);
 
   return (
     <>
@@ -224,10 +239,13 @@ const Register = () => {
               {errors?.accept_terms?.message || "error"}
             </span>
             <button
-              className="bg-primary text-white py-1.5 rounded-lg cursor-pointer hover:opacity-90 text-sm"
+              className="flex items-center justify-center bg-primary text-white py-1.5 rounded-lg cursor-pointer hover:opacity-90 text-sm"
               type="submit"
             >
-              Create an account
+              <AiOutlineLoading3Quarters
+                className={`${loading ? "block" : "hidden"} text-xl animate-spin`}
+              />
+              {loading ? "" : "Create an account"}
             </button>
           </form>
         </div>
