@@ -3,9 +3,36 @@ import DiscussionCard from "../components/DiscussionCard.jsx";
 
 import { discussions } from "../utils/datas.js";
 import useAuth from "../hooks/useAuth.js";
+import { useState } from "react";
 
 const CommunityDetailDiscussions = () => {
   const user = useAuth();
+
+  const [discuss, setDiscuss] = useState(discussions);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newId = discuss && discuss[discuss.length - 1].id;
+
+    if (!e.target.new_discuss) {
+      return;
+    }
+
+    setDiscuss((prev) => {
+      return [
+        {
+          id: newId + 1,
+          img: user?.img,
+          name: user?.full_name,
+          desc: e.target.new_discuss.value,
+        },
+        ...prev,
+      ];
+    });
+
+    e.target.new_discuss.value = "";
+  };
 
   return (
     <div className="grid gap-4">
@@ -15,18 +42,22 @@ const CommunityDetailDiscussions = () => {
           src={user?.img}
           alt="avatar-profile"
         />
-        <div className="p-2 rounded-lg w-full text-sm bg-white flex gap-2 justify-between">
+        <form
+          onSubmit={handleSubmit}
+          className="p-2 rounded-lg w-full text-sm bg-white flex gap-2 justify-between"
+        >
           <input
             className="focus:outline-none w-full text-dark-gray"
             type="text"
+            name="new_discuss"
             placeholder="Add to the discussion..."
           />
-          <button className="w-fit text-primary text-lg">
+          <button type="submit" className="w-fit text-primary text-lg">
             <MdSend />
           </button>
-        </div>
+        </form>
       </div>
-      {discussions?.map((discussion, idx) => (
+      {discuss?.map((discussion, idx) => (
         <DiscussionCard
           key={`${discussion.id}-${idx}`}
           img={discussion.img}
