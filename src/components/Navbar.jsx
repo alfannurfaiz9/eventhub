@@ -22,6 +22,17 @@ import useAuth from "../hooks/useAuth.js";
 import themeContext from "../context/themeContext.js";
 import { CiLight } from "react-icons/ci";
 
+const guestAndAdminList = [
+  { icon: BiHomeAlt, name: "Explore", link: "/explore" },
+  { icon: MdOutlineExplore, name: "Events", link: "/events" },
+  { icon: RiGroupLine, name: "Communities", link: "/communities" },
+];
+
+const attendeeAndOrganizerList = [
+  ...guestAndAdminList,
+  { icon: MdOutlineEventNote, name: "My Events", link: "/my-events" },
+];
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
@@ -31,6 +42,11 @@ const Navbar = () => {
   const { theme, changeTheme } = useContext(themeContext);
 
   const navigate = useNavigate();
+
+  const renderedList =
+    !user || user.role === "admin"
+      ? guestAndAdminList
+      : attendeeAndOrganizerList;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -56,46 +72,18 @@ const Navbar = () => {
             </h1>
           </Link>
           <ul className="hidden lg:flex gap-2">
-            <li>
-              <NavLink
-                to="/explore"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
-                }
-              >
-                Explore
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/events"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
-                }
-              >
-                Events
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/communities"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
-                }
-              >
-                Communities
-              </NavLink>
-            </li>
-            <li className={user && user?.role !== "admin" ? "block" : "hidden"}>
-              <NavLink
-                to="/my-events"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
-                }
-              >
-                My Events
-              </NavLink>
-            </li>
+            {renderedList.map((list, idx) => (
+              <li key={idx}>
+                <NavLink
+                  to={list.link}
+                  className={({ isActive }) =>
+                    `px-3 py-1.5 rounded-md ${isActive ? "bg-light-primary text-primary" : theme === "light" ? "text-black" : "text-white"}`
+                  }
+                >
+                  {list.name}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
         <div className={user ? "hidden" : "hidden lg:flex items-center gap-4"}>
@@ -273,52 +261,19 @@ const Navbar = () => {
                   Dashboard
                 </NavLink>
               </li>
-              <li className="w-full">
-                <NavLink
-                  to="/explore"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 p-3 w-full ${isActive ? "bg-light-primary text-primary" : "text-black"}`
-                  }
-                >
-                  <BiHomeAlt className="text-lg" />
-                  Explore
-                </NavLink>
-              </li>
-              <li className="w-full">
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    `p-3 w-full flex items-center gap-2 ${isActive ? "bg-light-primary text-primary" : "text-black"}`
-                  }
-                >
-                  <MdOutlineExplore className="text-lg" />
-                  Events
-                </NavLink>
-              </li>
-              <li className="w-full">
-                <NavLink
-                  to="/communities"
-                  className={({ isActive }) =>
-                    `p-3 w-full flex items-center gap-2 ${isActive ? "bg-light-primary text-primary" : "text-black"}`
-                  }
-                >
-                  <RiGroupLine className="text-lg" />
-                  Communities
-                </NavLink>
-              </li>
-              <li
-                className={user && user?.role !== "admin" ? "w-full" : "hidden"}
-              >
-                <NavLink
-                  to="/my-events"
-                  className={({ isActive }) =>
-                    `p-3 w-full flex items-center gap-2 ${isActive ? "bg-light-primary text-primary" : "text-black"}`
-                  }
-                >
-                  <MdOutlineEventNote className="text-lg" />
-                  My Events
-                </NavLink>
-              </li>
+              {renderedList.map((list, idx) => (
+                <li key={idx} className="w-full">
+                  <NavLink
+                    to={list.link}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 p-3 w-full ${isActive ? "bg-light-primary text-primary" : "text-black"}`
+                    }
+                  >
+                    <list.icon className="text-lg" />
+                    {list.name}
+                  </NavLink>
+                </li>
+              ))}
               <li className={user ? "w-full" : "hidden"}>
                 <NavLink
                   to="/profile"
