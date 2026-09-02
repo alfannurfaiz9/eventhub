@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import persistCombineReducers from "redux-persist/es/persistCombineReducers";
 
 import authReducer from "./slices/authSlice";
 import eventsReducer from "./slices/eventsSlice";
@@ -32,7 +31,7 @@ const storage = {
 const persistAuthConfig = {
   key: "user",
   storage,
-  whitelist: ["authState"],
+  whitelist: ["user"],
 };
 
 const persistEventsConfig = {
@@ -54,18 +53,17 @@ const persistRegisterConfig = {
 };
 
 const store = configureStore({
-  reducer: persistCombineReducers(persistAuthConfig, {
-    authState: authReducer,
+  reducer: {
+    authState: persistReducer(persistAuthConfig, authReducer),
     registerState: persistReducer(persistRegisterConfig, registerReducer),
     eventsState: persistReducer(persistEventsConfig, eventsReducer),
     communitiesState: persistReducer(
       persistCommunitiesConfig,
       communitiesReducer,
     ),
-  }),
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      // serializableCheck: false,
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
