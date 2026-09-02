@@ -3,10 +3,12 @@ import { CiLocationOn } from "react-icons/ci";
 import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
 import { Link } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { joinEventThunk, saveEventThunk } from "../redux/slices/registerSlice";
 import useAuth from "../hooks/useAuth.js";
 import { FaBookmark } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const EventsCard = ({
   id,
@@ -21,11 +23,14 @@ const EventsCard = ({
   setShowModal,
 }) => {
   const dispatch = useDispatch();
-
   const user = useAuth();
-  const fullEvent = attendees === capacity;
 
-  const handleJoin = () => {
+  const [selectedId, setSelectedId] = useState({ join: null, save: null });
+
+  const register = useSelector((state) => state.registerState);
+  const disabledEvent = attendees === capacity;
+
+  const handleJoin = (id) => {
     if (!user) {
       setShowModal(true);
 
@@ -35,6 +40,13 @@ const EventsCard = ({
     if (user.role === "organizer" || user.role === "admin") {
       return;
     }
+
+    setSelectedId((prev) => {
+      return {
+        ...prev,
+        join: id,
+      };
+    });
 
     dispatch(
       joinEventThunk({
@@ -44,7 +56,7 @@ const EventsCard = ({
     );
   };
 
-  const handleSave = () => {
+  const handleSave = (id) => {
     if (!user) {
       setShowModal(true);
 
@@ -55,6 +67,13 @@ const EventsCard = ({
       return;
     }
 
+    setSelectedId((prev) => {
+      return {
+        ...prev,
+        save: id,
+      };
+    });
+
     dispatch(
       saveEventThunk({
         userId: user.id,
@@ -62,6 +81,14 @@ const EventsCard = ({
       }),
     );
   };
+
+  useEffect(() => {
+    (() => {
+      if (!register.isPending) {
+        setSelectedId({ join: null, save: null });
+      }
+    })();
+  }, [register.isPending]);
 
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -118,31 +145,47 @@ const EventsCard = ({
         </Link>
         <div className="flex gap-2 my-2">
           <button
-            onClick={handleJoin}
+            onClick={() => handleJoin(id)}
             disabled={
-              user?.role === "organizer" || user?.role === "admin" || fullEvent
+              user?.role === "organizer" ||
+              user?.role === "admin" ||
+              disabledEvent
             }
-            className={`${user?.event_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
+            className={`${user?.event_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
           >
-            {user?.event_id?.includes(id) ? "✔ Registered" : "Join Event"}
+            {selectedId.join === id ? (
+              <AiOutlineLoading3Quarters className="text-xl animate-spin" />
+            ) : user?.event_id?.includes(id) ? (
+              "✔ Registered"
+            ) : (
+              "Join Event"
+            )}
           </button>
           <button
-            onClick={handleSave}
+            onClick={() => handleSave(id)}
             disabled={
-              user?.role === "organizer" || user?.role === "admin" || fullEvent
+              user?.role === "organizer" ||
+              user?.role === "admin" ||
+              disabledEvent
             }
             className={`${user?.saved_event_id?.includes(id) ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
           >
-            <CiBookmark
-              className={
-                user?.saved_event_id?.includes(id) ? "hidden" : "block"
-              }
-            />
-            <FaBookmark
-              className={
-                user?.saved_event_id?.includes(id) ? "block" : "hidden"
-              }
-            />
+            {selectedId.save === id ? (
+              <AiOutlineLoading3Quarters className="text-sm animate-spin" />
+            ) : (
+              <>
+                <CiBookmark
+                  className={
+                    user?.saved_event_id?.includes(id) ? "hidden" : "block"
+                  }
+                />
+                <FaBookmark
+                  className={
+                    user?.saved_event_id?.includes(id) ? "block" : "hidden"
+                  }
+                />
+              </>
+            )}
           </button>
         </div>
       </div>

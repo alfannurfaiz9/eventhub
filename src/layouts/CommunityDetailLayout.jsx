@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import Modal from "../components/Modal";
 import useAuth from "../hooks/useAuth";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const CommunityDetailLayout = () => {
   const { id } = useParams();
@@ -23,6 +24,8 @@ const CommunityDetailLayout = () => {
   const community = communities.find((com) => com.id === Number(id));
 
   const [showModal, setShowModal] = useState(false);
+
+  const register = useSelector((state) => state.registerState);
 
   const handleJoin = () => {
     if (!user) {
@@ -85,9 +88,15 @@ const CommunityDetailLayout = () => {
             <button
               onClick={handleJoin}
               disabled={user?.role === "organizer" || user?.role === "admin"}
-              className={`${joinedCommunity ? "bg-green" : "bg-primary"} py-2 px-8 h-fit w-fit hover:opacity-70 cursor-pointer rounded-lg disabled:bg-gray-300 disabled:text-dark-gray`}
+              className={`${joinedCommunity ? "bg-green" : "bg-primary"} py-2 px-8 h-10  hover:opacity-70 cursor-pointer rounded-lg disabled:bg-gray-300 disabled:text-dark-gray w-52 flex items-center justify-center`}
             >
-              {joinedCommunity ? "✓ Joined" : "Join community"}
+              {register.isPending ? (
+                <AiOutlineLoading3Quarters className="text-xl animate-spin" />
+              ) : joinedCommunity ? (
+                "✔ Registered"
+              ) : (
+                "Join Community"
+              )}
             </button>
           </div>
         </div>

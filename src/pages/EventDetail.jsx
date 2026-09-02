@@ -22,6 +22,7 @@ import {
   saveEventThunk,
 } from "../redux/slices/registerSlice.js";
 import useAuth from "../hooks/useAuth.js";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -34,17 +35,17 @@ const EventDetail = () => {
     (state) => state.communitiesState.communities,
   );
 
-  const joinedEvent = user?.event_id?.includes(Number(id));
-  const savedEvent = user?.saved_event_id?.includes(Number(id));
-
   const event = events.find((e) => e.id === Number(id));
-  const fullEvent = event.attendees === event.capacity;
+  const disabledEvent = event.attendees === event.capacity;
   const community = communities.find((comm) => comm.id === event.community_id);
 
   const [discuss, setDiscuss] = useState(null);
   const [newDiscuss, setNewDiscuss] = useState("");
 
   const [showModal, setShowModal] = useState(false);
+
+  const register = useSelector((state) => state.registerState);
+  const [selectedBtn, setSelectedBtn] = useState("");
 
   useEffect(() => {
     (() => {
@@ -53,6 +54,8 @@ const EventDetail = () => {
   }, []);
 
   const handleJoin = () => {
+    setSelectedBtn("join");
+
     if (!user) {
       setShowModal(true);
       return;
@@ -71,6 +74,8 @@ const EventDetail = () => {
   };
 
   const handleSave = () => {
+    setSelectedBtn("save");
+
     if (!user) {
       setShowModal(true);
       return;
@@ -105,6 +110,14 @@ const EventDetail = () => {
       },
     ]);
   };
+
+  useEffect(() => {
+    (() => {
+      if (!register.isPending) {
+        setSelectedBtn("");
+      }
+    })();
+  }, [register.isPending]);
 
   return (
     <>
@@ -267,29 +280,55 @@ const EventDetail = () => {
                   ></div>
                 </div>
                 <button
-                  onClick={handleJoin}
+                  onClick={() => handleJoin(id)}
                   disabled={
                     user?.role === "organizer" ||
                     user?.role === "admin" ||
-                    fullEvent
+                    disabledEvent
                   }
-                  className={`${joinedEvent ? "bg-green" : "bg-primary"} py-1 w-full text-sm text-white rounded-lg  cursor-pointer hover:opacity-90 disabled:bg-gray-300 disabled:text-dark-gray`}
+                  className={`${user?.event_id?.includes(Number(id)) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 px-4 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center w-full`}
                 >
-                  {joinedEvent ? "✔ Registered" : "Join Event"}
+                  {register.isPending && selectedBtn === "join" ? (
+                    <AiOutlineLoading3Quarters className="text-xl animate-spin" />
+                  ) : user?.event_id?.includes(Number(id)) ? (
+                    "✔ Registered"
+                  ) : (
+                    "Join Event"
+                  )}
                 </button>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <button
-                    onClick={handleSave}
+                    onClick={() => handleSave(Number(id))}
                     disabled={
                       user?.role === "organizer" ||
                       user?.role === "admin" ||
-                      fullEvent
+                      disabledEvent
                     }
-                    className={`${savedEvent ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex items-center gap-2`}
+                    className={`${user?.saved_event_id?.includes(Number(id)) ? "text-primary bg-light-primary" : "text-black border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex items-center justify-center`}
                   >
-                    <CiBookmark className={savedEvent ? "hidden" : "block"} />
-                    <FaBookmark className={savedEvent ? "block" : "hidden"} />
-                    {savedEvent ? "Saved" : "Save"}
+                    {register.isPending && selectedBtn === "save" ? (
+                      <AiOutlineLoading3Quarters className="text-sm animate-spin" />
+                    ) : (
+                      <>
+                        <CiBookmark
+                          className={
+                            user?.saved_event_id?.includes(Number(id))
+                              ? "hidden"
+                              : "block"
+                          }
+                        />
+                        <FaBookmark
+                          className={
+                            user?.saved_event_id?.includes(Number(id))
+                              ? "block"
+                              : "hidden"
+                          }
+                        />
+                        {user?.saved_event_id?.includes(Number(id))
+                          ? "Saved"
+                          : "Save"}
+                      </>
+                    )}
                   </button>
                   <button className="flex items-center justify-center gap-2 py-1 border border-gray-300 rounded-lg cursor-pointer hover:opacity-50">
                     <IoShareSocialOutline /> Share

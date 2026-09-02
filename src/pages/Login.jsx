@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEyeSlash, FaGithub, FaGoogle, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-import { login } from "../redux/slices/authSlice";
+import { loginThunk } from "../redux/slices/authSlice";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Login = () => {
   const {
@@ -16,11 +17,14 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const registeredUsers = useSelector(
     (state) => state.registerState.registeredUser,
   );
+
+  const authState = useSelector((state) => state.authState);
 
   const organizerAndAdmin = [
     JSON.parse(import.meta.env.VITE_ORGANIZER),
@@ -31,23 +35,36 @@ const Login = () => {
     ? [...organizerAndAdmin, ...registeredUsers]
     : [...organizerAndAdmin];
 
-  const onSubmit = (data) => {
-    const getUser = combinedUser.filter((user) => user.email === data.email);
-    const userPassword = getUser ? getUser[0]?.password : null;
+  const onSubmit = async (data) => {
+    try {
+      const user = combinedUser.find((user) => user.email === data.email);
+      const userPassword = user ? user?.password : null;
 
-    if (userPassword !== data.password) {
-      setError("password", {
-        type: "manual",
-        message: "Incorrect email or password",
-      });
+      if (userPassword !== data.password) {
+        setError("password", {
+          type: "manual",
+          message: "Incorrect email or password",
+        });
 
-      return;
+        return;
+      }
+
+      await dispatch(loginThunk(user.id)).unwrap();
+      navigate("/");
+    } catch (error) {
+      console.log(error);
     }
-
-    dispatch(login(getUser[0].id));
-
-    navigate("/");
   };
+
+  useEffect(() => {
+    (() => {
+      if (authState.isPending) {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
+    })();
+  }, [authState]);
 
   return (
     <>
@@ -138,11 +155,15 @@ const Login = () => {
                 {errors?.password?.message || "error"}
               </span>
             </div>
+
             <button
-              className="bg-primary text-white py-2 rounded-lg cursor-pointer hover:opacity-90 text-sm"
+              className="flex items-center justify-center bg-primary text-white py-2 rounded-lg cursor-pointer hover:opacity-90 text-sm"
               type="submit"
             >
-              Sign In
+              <AiOutlineLoading3Quarters
+                className={`${loading ? "block" : "hidden"} text-xl animate-spin`}
+              />
+              {loading ? "" : "Sign In"}
             </button>
           </form>
           <div className="flex justify-center gap-2 text-xs text-dark-gray">

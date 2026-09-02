@@ -3,9 +3,11 @@ import { categories } from "../utils/datas.js";
 import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { joinCommunityThunk } from "../redux/slices/registerSlice.js";
 import useAuth from "../hooks/useAuth.js";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useEffect, useState } from "react";
 
 const CommunitiesCard = ({
   id,
@@ -20,8 +22,13 @@ const CommunitiesCard = ({
   const dispatch = useDispatch();
 
   const user = useAuth();
+  const register = useSelector((state) => state.registerState);
 
-  const handleJoin = () => {
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleJoin = (id) => {
+    setSelectedId(id);
+
     if (!user) {
       setShowModal(true);
 
@@ -39,6 +46,15 @@ const CommunitiesCard = ({
       }),
     );
   };
+
+  useEffect(() => {
+    (() => {
+      if (!register.isPending) {
+        setSelectedId(null);
+      }
+    })();
+  }, [register.isPending]);
+
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
       <div className="h-38 overflow-hidden flex items-center">
@@ -84,13 +100,17 @@ const CommunitiesCard = ({
         </Link>
         <div className="flex gap-2 my-2">
           <button
-            onClick={handleJoin}
+            onClick={() => handleJoin(id)}
             disabled={user?.role === "organizer" || user?.role === "admin"}
-            className={`${user?.community_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
+            className={`${user?.community_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
           >
-            {user?.community_id?.includes(id)
-              ? "✔ Registered"
-              : "Join Community"}
+            {selectedId === id ? (
+              <AiOutlineLoading3Quarters className="text-xl animate-spin" />
+            ) : user?.community_id?.includes(id) ? (
+              "✔ Registered"
+            ) : (
+              "Join Community"
+            )}
           </button>
         </div>
       </div>
