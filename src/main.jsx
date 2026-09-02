@@ -8,6 +8,7 @@ import ThemeProvider from "./context/ThemeProvider.jsx";
 import reduxStore, { persistor } from "./redux/store.js";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { Bounce, ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,6 +16,19 @@ createRoot(document.getElementById("root")).render(
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider>
           <BrowserRouter>
+            <ToastContainer
+              position="bottom-right"
+              autoClose={989}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
             <Router />
           </BrowserRouter>
         </ThemeProvider>

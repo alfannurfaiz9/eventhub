@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const initialState = {
   registeredUser: [],
@@ -93,6 +94,23 @@ export const updateProfileThunk = createAsyncThunk(
   },
 );
 
+export const resetPasswordThunk = createAsyncThunk(
+  "reset_password",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(payload);
+        }, 3000);
+      });
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const registerSlice = createSlice({
   name: "registerd_user",
   initialState,
@@ -106,10 +124,10 @@ const registerSlice = createSlice({
           state.isRejected = false;
         },
         fulfilled: (state, { payload }) => {
-          state.registeredUser.push(payload.data);
+          state.registeredUser.push(payload);
           state.isPending = false;
           state.isFulfilled = true;
-          payload.navigate("/login");
+          toast.success("Account created successfully");
         },
         rejected: (state, { payload }) => {
           state.isPending = false;
@@ -134,8 +152,11 @@ const registerSlice = createSlice({
             selected.event_id = selected.event_id.filter(
               (id) => id != payload.eventId,
             );
+
+            toast.success("You have left the event");
           } else {
             selected.event_id.push(payload.eventId);
+            toast.success("Successfully joined the event");
           }
           state.isPending = false;
           state.isFulfilled = true;
@@ -163,8 +184,10 @@ const registerSlice = createSlice({
             selected.saved_event_id = selected.saved_event_id.filter(
               (id) => id != payload.eventId,
             );
+            toast.success("Event removed from your list");
           } else {
             selected.saved_event_id.push(payload.eventId);
+            toast.success("Successfully save the event");
           }
           state.isPending = false;
           state.isFulfilled = true;
@@ -192,8 +215,10 @@ const registerSlice = createSlice({
             selected.community_id = selected.community_id.filter(
               (id) => id != payload.communityId,
             );
+            toast.success("You have left the community");
           } else {
             selected.community_id.push(payload.communityId);
+            toast.success("Successfully joined the community");
           }
 
           state.isPending = false;
@@ -223,6 +248,30 @@ const registerSlice = createSlice({
 
           state.isPending = false;
           state.isFulfilled = true;
+          toast.success("Profile updated successfully");
+        },
+        rejected: (state, { payload }) => {
+          state.isPending = false;
+          state.isRejected = true;
+          state.error = payload;
+        },
+      })
+      .addAsyncThunk(resetPasswordThunk, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          const selected = state.registeredUser.find(
+            (user) => user.id === payload.userId,
+          );
+
+          selected.password = payload.new_password;
+
+          state.isPending = false;
+          state.isFulfilled = true;
+          toast.success("Password updated successfully");
         },
         rejected: (state, { payload }) => {
           state.isPending = false;
