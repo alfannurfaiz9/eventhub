@@ -5,6 +5,8 @@ import ProfileModal from "../components/ProfileModal";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useSelector } from "react-redux";
+import { TbPasswordUser } from "react-icons/tb";
+import ResetPasswordModal from "../components/ResetPasswordModal";
 
 const MyProfileLayout = () => {
   const user = useAuth();
@@ -14,11 +16,15 @@ const MyProfileLayout = () => {
   );
 
   const [showModal, setShowModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
 
   return (
     <>
       <div className={`${showModal ? "block" : "hidden"}`}>
         <ProfileModal setShowModal={setShowModal} />
+      </div>
+      <div className={`${editModal ? "block" : "hidden"}`}>
+        <ResetPasswordModal setEditModal={setEditModal} />
       </div>
       <section className="bg-white pt-6 px-4 lg:px-38 grid gap-4 border-b border-b-gray-300">
         <div className="flex flex-col gap-4 lg:gap-0 lg:flex-row items-start justify-between">
@@ -34,7 +40,7 @@ const MyProfileLayout = () => {
               </div>
             </div>
             <div className="grid gap-4 w-8/12">
-              <div className="grid gap-1">
+              <div className="grid gap-2">
                 <h2 className="text-xl font-bold">{user?.full_name}</h2>
                 <p className="text-sm text-dark-gray">{user?.email}</p>
                 <button
@@ -46,6 +52,16 @@ const MyProfileLayout = () => {
                 >
                   <FiEdit3 />
                   Edit Profile
+                </button>
+                <button
+                  onClick={() => setEditModal(true)}
+                  disabled={
+                    user?.role === "organizer" || user?.role === "admin"
+                  }
+                  className="flex lg:hidden items-center gap-2 hover:opacity-60 cursor-pointer w-fit py-1 px-2 text-xs rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
+                >
+                  <TbPasswordUser />
+                  Reset Password
                 </button>
                 <div className="flex flex-wrap gap-1 lg:gap-3 text-dark-gray text-xs items-center">
                   <div className="flex gap-1 items-center">
@@ -122,14 +138,24 @@ const MyProfileLayout = () => {
               <p className="text-xs text-dark-gray">Saved</p>
             </div>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            disabled={user?.role === "organizer" || user?.role === "admin"}
-            className="hidden lg:flex items-center gap-2 hover:opacity-60 cursor-pointer w-fit py-2 px-4 text-sm rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
-          >
-            <FiEdit3 />
-            Edit Profile
-          </button>
+          <div className="lg:grid gap-2 hidden place-items-end w-full">
+            <button
+              onClick={() => setShowModal(true)}
+              disabled={user?.role === "organizer" || user?.role === "admin"}
+              className="flex w-fit items-center gap-2 hover:opacity-60 cursor-pointer py-2 px-4 text-sm rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
+            >
+              <FiEdit3 />
+              Edit Profile
+            </button>
+            <button
+              onClick={() => setEditModal(true)}
+              disabled={user?.role === "organizer" || user?.role === "admin"}
+              className="flex w-fit items-center gap-2 hover:opacity-60 cursor-pointer py-2 px-4 text-sm rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
+            >
+              <TbPasswordUser />
+              Reset Password
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-6 text-sm font-semibold text-dark-gray">
           <NavLink
