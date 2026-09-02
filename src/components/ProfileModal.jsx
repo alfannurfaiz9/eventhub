@@ -40,7 +40,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
   }, [loading, setShowModal]);
 
   return (
-    <div className="fixed top-0 left-0 min-w-screen min-h-screen z-10 bg-[#000000b2] flex items-start lg:items-center justify-center">
+    <div className="fixed top-0 left-0 min-w-screen min-h-screen z-50 bg-[#000000b2] flex items-start lg:items-center justify-center">
       <form
         onSubmit={hanldeSubmit}
         className="w-80 mt-40 lg:mt-0 lg:w-96 mx-auto bg-white rounded-xl shadow-lg grid gap-4"
@@ -106,6 +106,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
         </div>
         <div className="p-4 flex gap-2 justify-end text-sm">
           <button
+            type="button"
             onClick={handleClose}
             className="py-2 px-4 rounded-lg text-black bg-gray cursor-pointer hover:opacity-80"
           >
@@ -113,7 +114,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
           </button>
           <button
             type="submit"
-            className="py-2 px-4 rounded-lg text-white bg-primary cursor-pointer hover:opacity-80"
+            className="py-2 px-4 rounded-lg text-white bg-primary cursor-pointer hover:opacity-80 w-32 flex justify-center"
           >
             <AiOutlineLoading3Quarters
               className={`${loading ? "block" : "hidden"} text-xl animate-spin`}
