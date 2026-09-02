@@ -15,12 +15,12 @@ import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 
 import { useDispatch } from "react-redux";
-import { logout } from "../redux/slices/authSlice.js";
 import { TbLayoutDashboard } from "react-icons/tb";
 
 import useAuth from "../hooks/useAuth.js";
 import themeContext from "../context/themeContext.js";
 import { CiLight } from "react-icons/ci";
+import { logoutThunk } from "../redux/slices/authSlice.js";
 
 const guestAndAdminList = [
   { icon: BiHomeAlt, name: "Explore", link: "/explore" },
@@ -48,14 +48,18 @@ const Navbar = () => {
       ? guestAndAdminList
       : attendeeAndOrganizerList;
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutThunk()).unwrap();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <header
-      className={`${theme === "light" ? "bg-white" : "bg-black"} text-sm py-4 lg:py-3 px-6 flex gap-4 items-center shadow-sm sticky top-0 z-50 border-b border-white/30`}
+      className={`${theme === "light" ? "bg-white" : "bg-black"} text-sm py-4 lg:py-3 px-6 flex gap-4 items-center shadow-sm sticky top-0 z-40 border-b border-white/30`}
     >
       <nav className="flex items-center justify-between gap-4 w-full">
         <div className="flex gap-4">
