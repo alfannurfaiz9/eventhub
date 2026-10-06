@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutThunk } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 const LogoutModal = ({ setShowModal = "" }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const user = useAuth();
   const authState = useSelector((state) => state.authState);
   const [loading, setLoading] = useState(false);
 
@@ -16,12 +18,20 @@ const LogoutModal = ({ setShowModal = "" }) => {
   };
 
   const handleLogout = async () => {
-    try {
-      await dispatch(logoutThunk()).unwrap();
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(
+      logoutThunk({
+        opt: {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        },
+        next: () => {
+          navigate("/login");
+        },
+      }),
+    );
   };
 
   useEffect(() => {

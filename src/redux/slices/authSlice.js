@@ -15,7 +15,7 @@ export const loginThunk = createAsyncThunk(
     try {
       const response = await fetch(
         "http://localhost:9000/auth/login",
-        payload.body,
+        payload.opt,
       );
       if (!response.ok) {
         throw await response.json();
@@ -25,7 +25,7 @@ export const loginThunk = createAsyncThunk(
 
       return {
         data: data.Data,
-        next: payload.next
+        next: payload.next,
       };
     } catch (error) {
       return rejectWithValue(error);
@@ -35,15 +35,18 @@ export const loginThunk = createAsyncThunk(
 
 export const logoutThunk = createAsyncThunk(
   "logout_user",
-  async (_, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const data = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 3000);
-      });
+      const response = await fetch(
+        "http://localhost:9000/auth/logout",
+        payload.opt,
+      );
 
-      return data;
+      if (!response.ok) {
+        throw await response.json();
+      }
+
+      return payload
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -64,6 +67,7 @@ const authSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.user = payload.data;
+          state.user.img_url = `http://localhost:9000/user/img/${payload.data.img_url}`;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("Successfully loged in");
@@ -86,11 +90,13 @@ const authSlice = createSlice({
           state.error = null;
         },
         fulfilled: (state, { payload }) => {
-          state.user = payload;
+          state.user = null;
           state.isPending = false;
           state.isFulfilled = true;
-          state.error = null;
           toast.success("You have been logged out successfully");
+          if (payload.next) {
+            payload.next();
+          }
         },
         rejected: (state, { payload }) => {
           state.isPending = false;

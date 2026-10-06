@@ -20,7 +20,6 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import useAuth from "../hooks/useAuth.js";
 import themeContext from "../context/themeContext.js";
 import { CiLight } from "react-icons/ci";
-import { logoutThunk } from "../redux/slices/authSlice.js";
 import LogoutModal from "./LogoutModal.jsx";
 
 const guestAndAdminList = [
@@ -43,8 +42,6 @@ const Navbar = () => {
   const user = useAuth();
   const { theme, changeTheme } = useContext(themeContext);
 
-  // const navigate = useNavigate();
-
   const renderedList =
     !user || user.role === "admin"
       ? guestAndAdminList
@@ -53,15 +50,6 @@ const Navbar = () => {
   const handleLogout = () => {
     setShowModal(true);
   };
-
-  // const handleLogout = async () => {
-  //   try {
-  //     await dispatch(logoutThunk()).unwrap();
-  //     navigate("/login");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <>
@@ -177,7 +165,7 @@ const Navbar = () => {
               >
                 <img
                   className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
-                  src={user?.img}
+                  src={user?.img_url}
                   alt="profile-pict"
                 />
                 <div
@@ -247,7 +235,7 @@ const Navbar = () => {
               <div className={user ? "p-2 flex items-center gap-2" : "hidden"}>
                 <img
                   className="w-7 h-7 lg:w-7 lg:h-7 rounded-full"
-                  src={user?.img}
+                  src={user?.img_url}
                   alt="profile-pict"
                 />
                 <div>
@@ -329,13 +317,10 @@ const Navbar = () => {
                     user ? "w-full border-t border-t-gray-100" : "hidden"
                   }
                 >
-                  <NavLink
-                    to="/profile"
-                    className="p-3 w-full flex items-center gap-2 font-semibold text-red"
-                  >
+                  <p className="p-3 w-full flex items-center gap-2 font-semibold text-red">
                     <PiSignOutBold className="text-lg" />
                     Sign Out
-                  </NavLink>
+                  </p>
                 </li>
               </ul>
             </div>

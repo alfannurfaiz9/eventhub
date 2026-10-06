@@ -26,7 +26,7 @@ const Login = () => {
     const { email, password } = data;
     dispatch(
       loginThunk({
-        body: {
+        opt: {
           headers: {
             "Content-Type": "application/json",
           },
