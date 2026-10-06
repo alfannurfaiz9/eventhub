@@ -103,12 +103,12 @@ const EventsCard = ({
           <div className="h-full w-full bg-gray"></div>
         )}
         <div className="absolute bottom-0 flex gap-2 p-2 text-xs">
-          {cat.map((el) => (
+          {cat.map((el, idx) => (
             <p
-              key={el.id}
-              className={`${el.style} backdrop-blur-[3px] shadow-sm`}
+              key={`${idx}`}
+              className={`backdrop-blur-[3px] shadow-sm text-white/60 bg-white/20 p-1 rounded-md`}
             >
-              {el.name}
+              {el}
             </p>
           ))}
         </div>

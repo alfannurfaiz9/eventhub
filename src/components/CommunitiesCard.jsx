@@ -73,7 +73,7 @@ const CommunitiesCard = ({
           <p className="text-md font-semibold">{name}</p>
           <p className="text-xs text-dark-gray line-clamp-2">{desc}</p>
           <div className="flex gap-2 text-xs">
-            {cat.map((c) =>
+            {/* {cat.map((c) =>
               categories
                 .filter((cat) => cat.id === c)
                 .map((el) => (
@@ -81,7 +81,7 @@ const CommunitiesCard = ({
                     {el.name}
                   </p>
                 )),
-            )}
+            )} */}
           </div>
           <div className="text-xs text-dark-gray flex gap-4">
             <div className="flex gap-1 items-center">

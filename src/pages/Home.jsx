@@ -16,28 +16,28 @@ import { getCategories } from "../utils/getDatas.js";
 import { BsStars } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getEventsThunk } from "../redux/slices/eventsSlice.js";
 import { getCommunitiesThunk } from "../redux/slices/communitiesSlice.js";
 import useAuth from "../hooks/useAuth.js";
 import { RiArrowRightUpLongLine } from "react-icons/ri";
+import moment from "moment";
+import useEvent from "../hooks/useEvent.js";
+import useCommunity from "../hooks/useCommunity.js";
 
 const Homepage = () => {
   const dispatch = useDispatch();
   const user = useAuth();
 
-  const events = useSelector((state) => state.eventsState.events);
-  const renderedEvents = events.filter((e, i) => i < 6);
+  const events = useEvent();
+  const communities = useCommunity();
 
-  const communities = useSelector(
-    (state) => state.communitiesState.communities,
-  );
-  const renderedCommunities = communities.filter((comm) =>
+  const renderedCommunities = communities?.filter((comm) =>
     user?.community_id?.includes(comm.id),
   )[0];
 
-  const getRecommendation = events.filter(
-    (e) => e.community_id === renderedCommunities?.id,
+  const getRecommendation = events?.filter(
+    (e) => e?.community_id === renderedCommunities?.id,
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,27 +46,10 @@ const Homepage = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [dataFromApi, setDataFromApi] = useState(null);
-
   useEffect(() => {
-    !events.length && dispatch(getEventsThunk(eventsDatas));
-    !communities.length && dispatch(getCommunitiesThunk(communitiesData));
+    !events?.length && dispatch(getEventsThunk(eventsDatas));
+    !communities?.length && dispatch(getCommunitiesThunk(communitiesData));
   }, [dispatch, communities, events]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetch("http://localhost:9000/events");
-        const res = await data.json();
-
-        setDataFromApi(res);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
-
-  console.log(dataFromApi)
 
   return (
     <>
@@ -137,7 +120,7 @@ const Homepage = () => {
         </div>
       </section>
       <section
-        className={`${getRecommendation.length ? "block" : "hidden"} py-6 px-6 lg:px-12 bg-med-gray`}
+        className={`${getRecommendation?.length ? "block" : "hidden"} py-6 px-6 lg:px-12 bg-med-gray`}
       >
         <div className="flex items-center justify-between">
           <div className="w-10/12">
@@ -164,7 +147,7 @@ const Homepage = () => {
               <EventsCard
                 key={`${event.id}-${idx}`}
                 id={event.id}
-                img={event.img}
+                img={event.img_url}
                 cat={getCategories(event)}
                 title={event.title}
                 date={event.date}
@@ -192,20 +175,25 @@ const Homepage = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-6 lg:gap-4">
-          {renderedEvents?.length ? (
-            renderedEvents
+          {events?.length ? (
+            events
               .filter((event) => event.title.toLowerCase().includes(search))
               .map((event, idx) => (
                 <EventsCard
                   key={`${event.id}-${idx}`}
                   id={event.id}
-                  img={event.img}
-                  cat={getCategories(event)}
+                  img={`http://localhost:9000/events/img/${event.img_url}`}
+                  cat={event.category.split(",")}
                   title={event.title}
-                  date={event.date}
-                  time={event.time}
+                  date={moment(event.start_at).add(1, "year").format("LL")}
+                  time={
+                    moment(event.start_at)
+                      .add(1, "day")
+                      .format("LLL")
+                      .split(" ")[3]
+                  }
                   location={event.location}
-                  attendees={event.attendees}
+                  attendees={event.total_attendee}
                   capacity={event.capacity}
                   setShowModal={setShowModal}
                 />
@@ -229,23 +217,19 @@ const Homepage = () => {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-4 my-6 gap-6 lg:gap-4">
           {communities?.length ? (
-            communities
-              .filter((community) =>
-                community.name.toLowerCase().includes(search),
-              )
-              .map((community, idx) => (
-                <CommunitiesCard
-                  key={`${community.id}-${idx}`}
-                  id={community.id}
-                  img={community.img}
-                  name={community.name}
-                  desc={community.desc}
-                  cat={community.categories}
-                  member={community.member}
-                  upcoming_event={community.upcoming_event}
-                  setShowModal={setShowModal}
-                />
-              ))
+            communities.map((community, idx) => (
+              <CommunitiesCard
+                key={`${community.id}-${idx}`}
+                id={community.id}
+                img={`http://localhost:9000/communities/img/${community.img_url}`}
+                name={community.name}
+                desc={community.description}
+                cat={community.category}
+                member={community.total_member}
+                upcoming_event={community.upcoming_event}
+                setShowModal={setShowModal}
+              />
+            ))
           ) : (
             <p>Loading...</p>
           )}
