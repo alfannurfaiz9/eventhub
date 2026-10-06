@@ -27,13 +27,13 @@ const CommunitiesCard = ({
   const [selectedId, setSelectedId] = useState(null);
 
   const handleJoin = (id) => {
-    setSelectedId(id);
-
     if (!user) {
       setShowModal(true);
 
       return;
     }
+
+    setSelectedId(id);
 
     if (user.role === "organizer" || user.role === "admin") {
       return;

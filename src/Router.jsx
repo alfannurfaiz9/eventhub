@@ -83,6 +83,7 @@ const Router = () => {
           <Route path="dashboard" element={<OrganizerLayout />}>
             <Route index element={<OrganizerDashboard />} />
             <Route path="create" element={<CreateEvent />} />
+            <Route path="edit-event/:id" element={<CreateEvent />} />
           </Route>
 
           <Route path="admin" element={<AdminLayout />}>
@@ -95,7 +96,7 @@ const Router = () => {
         </Route>
       </Route>
 
-       <Route path="*" element={<ErrorPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 };

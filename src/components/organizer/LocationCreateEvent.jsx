@@ -1,17 +1,29 @@
 import moment from "moment";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router";
 
 const LocationCreateEvent = ({ setNewEvent, setStep }) => {
+  const { id } = useParams();
+  const events = useSelector((state) => state.eventsState.events);
+  const event = events.find((e) => e.id === Number(id));
+
+  const [date, setDate] = useState(
+    moment(event?.date).format("YYYY-MM-DD") || "",
+  );
+
   const [loc, setLoc] = useState("Offline");
   const [address, setAddress] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    console.log(e.target.start.value);
+
     setNewEvent((prev) => {
       return {
         ...prev,
-        date: moment(e.target.date.value).format("MMMM DD,YYYY"),
+        date: moment(date).format("MMMM DD,YYYY"),
         time: e.target.start.value,
         start_time: e.target.start.value,
         end_time: e.target.end.value,
@@ -38,7 +50,9 @@ const LocationCreateEvent = ({ setNewEvent, setStep }) => {
           Event Date
         </label>
         <input
-          className="p-2 bg-white rounded-lg text-xs border border-gray-300"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="p-2 bg-white rounded-lg text-xs text-black/80 border border-gray-300"
           type="date"
           name="date"
           required
@@ -53,7 +67,8 @@ const LocationCreateEvent = ({ setNewEvent, setStep }) => {
             Start Time
           </label>
           <input
-            className="p-2 bg-white rounded-lg text-xs border border-gray-300"
+            value="03:22"
+            className="p-2 bg-white rounded-lg text-black/80 text-xs border border-gray-300"
             type="time"
             name="start"
             required
@@ -64,7 +79,7 @@ const LocationCreateEvent = ({ setNewEvent, setStep }) => {
             End Time
           </label>
           <input
-            className="p-2 bg-white rounded-lg text-xs border border-gray-300"
+            className="p-2 bg-white rounded-lg text-black/80 text-xs border border-gray-300"
             type="time"
             name="end"
             required
@@ -104,7 +119,7 @@ const LocationCreateEvent = ({ setNewEvent, setStep }) => {
         </label>
         <input
           onChange={(e) => setAddress(e.target.value)}
-          className="p-2 bg-white rounded-lg text-xs border border-gray-300 placeholder:text-black/80 disabled:placeholder:text-dark-gray"
+          className="p-2 bg-white rounded-lg text-xs border text-black/80 border-gray-300 placeholder:text-black/80 disabled:placeholder:text-dark-gray"
           type="text"
           name="location"
           placeholder={loc === "Offline" ? "Legenda wisata" : "Online"}
@@ -121,7 +136,7 @@ const LocationCreateEvent = ({ setNewEvent, setStep }) => {
           Capacity
         </label>
         <input
-          className="p-2 bg-white rounded-lg text-xs border border-gray-300 placeholder:text-black/80"
+          className="p-2 bg-white rounded-lg text-xs text-black/80 border border-gray-300 placeholder:text-dark-gray"
           type="number"
           name="capacity"
           placeholder="400"

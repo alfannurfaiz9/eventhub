@@ -125,9 +125,9 @@ export const events = [
     location: "Bandung",
     attendees: 48,
     capacity: 100,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
   {
     id: 2,
@@ -142,9 +142,9 @@ export const events = [
     location: "Jakarta",
     attendees: 234,
     capacity: 300,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
   {
     id: 3,
@@ -159,9 +159,9 @@ export const events = [
     location: "Bandung",
     attendees: 167,
     capacity: 200,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
   {
     id: 4,
@@ -176,9 +176,9 @@ export const events = [
     location: "Online Event",
     attendees: 89,
     capacity: 150,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
   {
     id: 5,
@@ -193,9 +193,9 @@ export const events = [
     location: "Surabaya",
     attendees: 45,
     capacity: 60,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
   {
     id: 6,
@@ -210,9 +210,9 @@ export const events = [
     location: "Jakarta",
     attendees: 120,
     capacity: 120,
-    style: function () {
-      return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
-    },
+    // style: function () {
+    //   return `absolute left-0 top-0 rounded-full bg-green h-full w-[${(this.attendees / this.capacity) * 100}%]`;
+    // },
   },
 ];
 

@@ -1,7 +1,8 @@
 import { FaRegEye } from "react-icons/fa";
 import { FiEdit3 } from "react-icons/fi";
+import { Link } from "react-router";
 
-const EventCard = ({ img, title, date, location, attendees, capacity }) => {
+const EventCard = ({ id, img, title, date, location, attendees, capacity }) => {
   return (
     <article className="p-3 flex gap-4 items-start w-full bg-white border border-gray-300 rounded-lg">
       <div className="w-24 h-16 overflow-hidden rounded-lg">
@@ -38,9 +39,12 @@ const EventCard = ({ img, title, date, location, attendees, capacity }) => {
           ></div>
         </div>
         <div className="flex gap-2">
-          <button className="flex gap-3 items-center cursor-pointer text-black/80 hover:opacity-60 py-1 px-3 text-sm border border-gray-300 rounded-lg">
+          <Link
+            to={`edit-event/${id}`}
+            className="flex gap-3 items-center cursor-pointer text-black/80 hover:opacity-60 py-1 px-3 text-sm border border-gray-300 rounded-lg"
+          >
             <FiEdit3 /> Edit
-          </button>
+          </Link>
           <button className="flex gap-3 items-center cursor-pointer text-black/80 hover:opacity-60 py-1 px-3 text-sm">
             <FaRegEye /> attandees
           </button>

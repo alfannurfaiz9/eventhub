@@ -67,6 +67,7 @@ const OrganizerDashboard = () => {
           <p className="font-semibold">Your Event</p>
           {events?.map((event) => (
             <EventCard
+              id={event.id}
               key={event.id}
               img={event.img}
               title={event.title}
@@ -95,7 +96,10 @@ const OrganizerDashboard = () => {
             >
               + Create New Event
             </Link>
-            <Link to="/events" className="py-1.5 flex gap-2 items-center justify-center w-full bg-gray rounded-lg text-sm hover:opacity-60 cursor-pointer">
+            <Link
+              to="/events"
+              className="py-1.5 flex gap-2 items-center justify-center w-full bg-gray rounded-lg text-sm hover:opacity-60 cursor-pointer"
+            >
               <FaRegEye /> Preview as attandees
             </Link>
           </div>

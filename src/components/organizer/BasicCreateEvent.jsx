@@ -2,34 +2,40 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import { categories } from "../../utils/datas.js";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 
 const BasicCreateEvent = ({ setNewEvent, setStep }) => {
-  const [categoryId, setCategoryId] = useState("");
-  const [communityId, setCommunityId] = useState("");
-  const [img, setImg] = useState("");
+  const { id } = useParams();
 
   const events = useSelector((state) => state.eventsState.events);
   const communities = useSelector(
     (state) => state.communitiesState.communities,
   );
 
+  const event = events.find((e) => e.id === Number(id));
+
+  const [title, setTitle] = useState(event?.title || "");
+  const [desc, setDesc] = useState(event?.desc || "");
+  const [img, setImg] = useState(event?.img || "");
+  const [categoryId, setCategoryId] = useState("");
+  const [communityId, setCommunityId] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setNewEvent({
-      id: events.length + 1,
+      id: event?.id || events.length + 1,
       community_id: Number(communityId),
       category_id: Number(categoryId),
-      title: e.target.title.value,
-      desc: e.target.desc.value,
+      title: event?.title || title,
+      desc: event?.desc || desc,
       sub_desc: "",
-      img,
+      img: event?.img || img,
       date: "",
       time: "",
       location: "",
       attendees: 0,
-      capacity: 60,
+      capacity: 0,
       speakers: null,
     });
 
@@ -75,6 +81,8 @@ const BasicCreateEvent = ({ setNewEvent, setStep }) => {
           Event Title
         </label>
         <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="p-2 bg-white rounded-lg text-xs border border-gray-300 text-black"
           type="text"
           name="title"
@@ -87,6 +95,8 @@ const BasicCreateEvent = ({ setNewEvent, setStep }) => {
           Description
         </label>
         <textarea
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
           className="p-2 bg-white rounded-lg text-xs border border-gray-300 text-black"
           rows={5}
           type="text"

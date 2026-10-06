@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import BasicCreateEvent from "../../components/organizer/BasicCreateEvent.jsx";
 import LocationCreateEvent from "../../components/organizer/LocationCreateEvent.jsx";
 import SpeakersCreateEvent from "../../components/organizer/SpeakersCreateEvent.jsx";
 import FinishCreateEvent from "../../components/organizer/FinishCreateEvent.jsx";
 
 const CreateEvent = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
@@ -27,7 +28,7 @@ const CreateEvent = () => {
       <section className="flex items-center justify-between bg-white py-4 px-6 lg:px-58 border-b border-b-gray shadow-xs">
         <div>
           <Link
-            to="/events"
+            to="/dashboard"
             className="w-fit flex items-center gap-2 text-dark-gray text-sm cursor-pointer hover:opacity-60 hover:underline"
           >
             <FaArrowLeft />
