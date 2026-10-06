@@ -7,14 +7,14 @@ import registerReducer from "./slices/registerSlice";
 
 import persistStore from "redux-persist/es/persistStore";
 import persistReducer from "redux-persist/es/persistReducer";
-import {
-  FLUSH,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-  REHYDRATE,
-} from "redux-persist";
+// import {
+//   FLUSH,
+//   PAUSE,
+//   PERSIST,
+//   PURGE,
+//   REGISTER,
+//   REHYDRATE,
+// } from "redux-persist";
 
 const storage = {
   getItem: (key) => {
@@ -64,9 +64,10 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false
+      // serializableCheck: {
+      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      // },
     }),
 });
 

@@ -46,10 +46,27 @@ const Homepage = () => {
 
   const [showModal, setShowModal] = useState(false);
 
+  const [dataFromApi, setDataFromApi] = useState(null);
+
   useEffect(() => {
     !events.length && dispatch(getEventsThunk(eventsDatas));
     !communities.length && dispatch(getCommunitiesThunk(communitiesData));
   }, [dispatch, communities, events]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await fetch("http://localhost:9000/events");
+        const res = await data.json();
+
+        setDataFromApi(res);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  console.log(dataFromApi)
 
   return (
     <>

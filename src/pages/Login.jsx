@@ -20,40 +20,27 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const registeredUsers = useSelector(
-    (state) => state.registerState.registeredUser,
-  );
-
   const authState = useSelector((state) => state.authState);
 
-  const organizerAndAdmin = [
-    JSON.parse(import.meta.env.VITE_ORGANIZER),
-    JSON.parse(import.meta.env.VITE_ADMIN),
-  ];
-
-  const combinedUser = registeredUsers
-    ? [...organizerAndAdmin, ...registeredUsers]
-    : [...organizerAndAdmin];
-
   const onSubmit = async (data) => {
-    try {
-      const user = combinedUser.find((user) => user.email === data.email);
-      const userPassword = user ? user?.password : null;
-
-      if (userPassword !== data.password) {
-        setError("password", {
-          type: "manual",
-          message: "Incorrect email or password",
-        });
-
-        return;
-      }
-
-      await dispatch(loginThunk(user.id)).unwrap();
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
+    const { email, password } = data;
+    dispatch(
+      loginThunk({
+        body: {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        },
+        next: () => {
+          navigate("/");
+        },
+      }),
+    );
   };
 
   useEffect(() => {
@@ -63,8 +50,15 @@ const Login = () => {
       } else {
         setLoading(false);
       }
+
+      if (authState.isRejected) {
+        setError("password", {
+          type: "manual",
+          message: "Invalid email or password",
+        });
+      }
     })();
-  }, [authState]);
+  }, [authState, setError]);
 
   return (
     <>
@@ -155,7 +149,6 @@ const Login = () => {
                 {errors?.password?.message || "error"}
               </span>
             </div>
-
             <button
               className="flex items-center justify-center bg-primary text-white py-2 rounded-lg cursor-pointer hover:opacity-90 text-sm"
               type="submit"
