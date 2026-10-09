@@ -33,11 +33,19 @@ const MyProfileLayout = () => {
             <div className="relative h-fit w-fit">
               <div className="absolute h-4 w-4 bg-green rounded-full bottom-1 right-1 border-2 border-white"></div>
               <div className="w-18 h-18 rounded-xl overflow-hidden">
-                <img
-                  className="h-full w-full object-cover"
-                  src={user?.img_url}
-                  alt="profile-photo"
-                />
+                {user.img_url ? (
+                  <div className="flex items-center justify-center h-full w-full bg-purple text-white">
+                    <p className="text-2xl">
+                      {`${user.full_name[0].toUpperCase()}${user.full_name[1].toUpperCase()}`}
+                    </p>
+                  </div>
+                ) : (
+                  <img
+                    className="h-full w-full object-cover"
+                    src={user?.img_url}
+                    alt="profile-pict"
+                  />
+                )}
               </div>
             </div>
             <div className="grid gap-4 w-8/12">
