@@ -34,7 +34,6 @@ const attendeeAndOrganizerList = [
 ];
 
 const Navbar = () => {
-  const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);

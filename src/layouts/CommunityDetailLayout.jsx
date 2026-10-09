@@ -3,7 +3,7 @@ import { getCategories } from "../utils/getDatas";
 import { FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { joinCommunityThunk } from "../redux/slices/registerSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Modal from "../components/Modal";
 import useAuth from "../hooks/useAuth";
@@ -15,16 +15,10 @@ const CommunityDetailLayout = () => {
 
   const user = useAuth();
 
-  const communities = useSelector(
-    (state) => state.communitiesState.communities,
-  );
+  const [community, setCommunity] = useState(null);
 
   const joinedCommunity = user?.community_id?.includes(Number(id));
-
-  const community = communities.find((com) => com.id === Number(id));
-
   const [showModal, setShowModal] = useState(false);
-
   const register = useSelector((state) => state.registerState);
 
   const handleJoin = () => {
@@ -45,6 +39,28 @@ const CommunityDetailLayout = () => {
     );
   };
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/communities/${id}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+
+        const data = await response.json();
+        
+        setCommunity(data.Data)
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [id]);
+
+  console.log(community)
+
   return (
     <>
       <div className={showModal ? "block" : "hidden"}>
@@ -60,10 +76,10 @@ const CommunityDetailLayout = () => {
         </Link>
       </div>
       <section className="w-full h-64 lg:h-80 relative">
-        {community?.img ? (
+        {community?.img_url ? (
           <img
             className="w-full h-full object-cover"
-            src={community.img}
+            src={`${import.meta.env.VITE_API_URL}/communities/img/${community.img_url}`}
             alt="community-banner"
           />
         ) : (
@@ -77,7 +93,7 @@ const CommunityDetailLayout = () => {
               </h2>
               <div className="flex gap-4">
                 <p className="text-sm">
-                  {community?.member} <span className="ml-1">members</span>
+                  {community?.total_member} <span className="ml-1">members</span>
                 </p>
                 <p className="text-sm">
                   {community?.upcoming_event}{" "}

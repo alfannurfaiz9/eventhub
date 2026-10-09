@@ -12,7 +12,7 @@ export const getEventsThunk = createAsyncThunk(
   "get_events",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:9000/events`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/events`);
 
       const data = await response.json();
 

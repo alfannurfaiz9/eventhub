@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 const initialState = {
-  registeredUser: [],
   isPending: false,
   isFulfilled: false,
   isRejected: false,
@@ -11,17 +11,18 @@ const initialState = {
 
 export const registerUserThunk = createAsyncThunk(
   "regist_user",
-  async (user, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const data = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(user);
-        }, 3000);
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        payload.data,
+      );
 
-      return data;
+      return payload
     } catch (error) {
-      return rejectWithValue(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data.Message);
+      }
     }
   },
 );
@@ -116,169 +117,170 @@ const registerSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    return builder
-      .addAsyncThunk(registerUserThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          state.registeredUser.push(payload);
-          state.isPending = false;
-          state.isFulfilled = true;
-          toast.success("Account created successfully");
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      })
-      .addAsyncThunk(joinEventThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          const selected = state.registeredUser.find(
-            (user) => user.id === payload.userId,
-          );
+    return builder.addAsyncThunk(registerUserThunk, {
+      pending: (state) => {
+        state.isPending = true;
+        state.isFulfilled = false;
+        state.isRejected = false;
+      },
+      fulfilled: (state, { payload }) => {
+        state.isPending = false;
+        state.isFulfilled = true;
+        toast.success("Account created successfully");
+        if (payload.next) {
+          payload.next();
+        }
+      },
+      rejected: (state, { payload }) => {
+        state.isPending = false;
+        state.isRejected = true;
+        state.error = payload;
+      },
+    });
+    // .addAsyncThunk(joinEventThunk, {
+    //   pending: (state) => {
+    //     state.isPending = true;
+    //     state.isFulfilled = false;
+    //     state.isRejected = false;
+    //   },
+    //   fulfilled: (state, { payload }) => {
+    //     const selected = state.registeredUser.find(
+    //       (user) => user.id === payload.userId,
+    //     );
 
-          const joined = selected.event_id.includes(payload.eventId);
+    //     const joined = selected.event_id.includes(payload.eventId);
 
-          if (joined) {
-            selected.event_id = selected.event_id.filter(
-              (id) => id != payload.eventId,
-            );
+    //     if (joined) {
+    //       selected.event_id = selected.event_id.filter(
+    //         (id) => id != payload.eventId,
+    //       );
 
-            toast.success("You have left the event");
-          } else {
-            selected.event_id.push(payload.eventId);
-            toast.success("Successfully joined the event");
-          }
-          state.isPending = false;
-          state.isFulfilled = true;
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      })
-      .addAsyncThunk(saveEventThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          const selected = state.registeredUser.find(
-            (user) => user.id === payload.userId,
-          );
+    //       toast.success("You have left the event");
+    //     } else {
+    //       selected.event_id.push(payload.eventId);
+    //       toast.success("Successfully joined the event");
+    //     }
+    //     state.isPending = false;
+    //     state.isFulfilled = true;
+    //   },
+    //   rejected: (state, { payload }) => {
+    //     state.isPending = false;
+    //     state.isRejected = true;
+    //     state.error = payload;
+    //   },
+    // })
+    // .addAsyncThunk(saveEventThunk, {
+    //   pending: (state) => {
+    //     state.isPending = true;
+    //     state.isFulfilled = false;
+    //     state.isRejected = false;
+    //   },
+    //   fulfilled: (state, { payload }) => {
+    //     const selected = state.registeredUser.find(
+    //       (user) => user.id === payload.userId,
+    //     );
 
-          const saved = selected.saved_event_id.includes(payload.eventId);
+    //     const saved = selected.saved_event_id.includes(payload.eventId);
 
-          if (saved) {
-            selected.saved_event_id = selected.saved_event_id.filter(
-              (id) => id != payload.eventId,
-            );
-            toast.success("Event removed from your list");
-          } else {
-            selected.saved_event_id.push(payload.eventId);
-            toast.success("Successfully save the event");
-          }
-          state.isPending = false;
-          state.isFulfilled = true;
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      })
-      .addAsyncThunk(joinCommunityThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          const selected = state.registeredUser.find(
-            (user) => user.id === payload.userId,
-          );
+    //     if (saved) {
+    //       selected.saved_event_id = selected.saved_event_id.filter(
+    //         (id) => id != payload.eventId,
+    //       );
+    //       toast.success("Event removed from your list");
+    //     } else {
+    //       selected.saved_event_id.push(payload.eventId);
+    //       toast.success("Successfully save the event");
+    //     }
+    //     state.isPending = false;
+    //     state.isFulfilled = true;
+    //   },
+    //   rejected: (state, { payload }) => {
+    //     state.isPending = false;
+    //     state.isRejected = true;
+    //     state.error = payload;
+    //   },
+    // })
+    // .addAsyncThunk(joinCommunityThunk, {
+    //   pending: (state) => {
+    //     state.isPending = true;
+    //     state.isFulfilled = false;
+    //     state.isRejected = false;
+    //   },
+    //   fulfilled: (state, { payload }) => {
+    //     const selected = state.registeredUser.find(
+    //       (user) => user.id === payload.userId,
+    //     );
 
-          const saved = selected.community_id.includes(payload.communityId);
+    //     const saved = selected.community_id.includes(payload.communityId);
 
-          if (saved) {
-            selected.community_id = selected.community_id.filter(
-              (id) => id != payload.communityId,
-            );
-            toast.success("You have left the community");
-          } else {
-            selected.community_id.push(payload.communityId);
-            toast.success("Successfully joined the community");
-          }
+    //     if (saved) {
+    //       selected.community_id = selected.community_id.filter(
+    //         (id) => id != payload.communityId,
+    //       );
+    //       toast.success("You have left the community");
+    //     } else {
+    //       selected.community_id.push(payload.communityId);
+    //       toast.success("Successfully joined the community");
+    //     }
 
-          state.isPending = false;
-          state.isFulfilled = true;
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      })
-      .addAsyncThunk(updateProfileThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          const selected = state.registeredUser.find(
-            (user) => user.id === payload.userId,
-          );
+    //     state.isPending = false;
+    //     state.isFulfilled = true;
+    //   },
+    //   rejected: (state, { payload }) => {
+    //     state.isPending = false;
+    //     state.isRejected = true;
+    //     state.error = payload;
+    //   },
+    // })
+    // .addAsyncThunk(updateProfileThunk, {
+    //   pending: (state) => {
+    //     state.isPending = true;
+    //     state.isFulfilled = false;
+    //     state.isRejected = false;
+    //   },
+    //   fulfilled: (state, { payload }) => {
+    //     const selected = state.registeredUser.find(
+    //       (user) => user.id === payload.userId,
+    //     );
 
-          selected.img = payload.img;
-          selected.full_name = payload.full_name;
-          selected.address = payload.address;
-          selected.bio = payload.bio;
+    //     selected.img = payload.img;
+    //     selected.full_name = payload.full_name;
+    //     selected.address = payload.address;
+    //     selected.bio = payload.bio;
 
-          state.isPending = false;
-          state.isFulfilled = true;
-          toast.success("Profile updated successfully");
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      })
-      .addAsyncThunk(resetPasswordThunk, {
-        pending: (state) => {
-          state.isPending = true;
-          state.isFulfilled = false;
-          state.isRejected = false;
-        },
-        fulfilled: (state, { payload }) => {
-          const selected = state.registeredUser.find(
-            (user) => user.id === payload.userId,
-          );
+    //     state.isPending = false;
+    //     state.isFulfilled = true;
+    //     toast.success("Profile updated successfully");
+    //   },
+    //   rejected: (state, { payload }) => {
+    //     state.isPending = false;
+    //     state.isRejected = true;
+    //     state.error = payload;
+    //   },
+    // })
+    // .addAsyncThunk(resetPasswordThunk, {
+    //   pending: (state) => {
+    //     state.isPending = true;
+    //     state.isFulfilled = false;
+    //     state.isRejected = false;
+    //   },
+    //   fulfilled: (state, { payload }) => {
+    //     const selected = state.registeredUser.find(
+    //       (user) => user.id === payload.userId,
+    //     );
 
-          selected.password = payload.new_password;
+    //     selected.password = payload.new_password;
 
-          state.isPending = false;
-          state.isFulfilled = true;
-          toast.success("Password updated successfully");
-        },
-        rejected: (state, { payload }) => {
-          state.isPending = false;
-          state.isRejected = true;
-          state.error = payload;
-        },
-      });
+    //     state.isPending = false;
+    //     state.isFulfilled = true;
+    //     toast.success("Password updated successfully");
+    //   },
+    //   rejected: (state, { payload }) => {
+    //     state.isPending = false;
+    //     state.isRejected = true;
+    //     state.error = payload;
+    //   },
+    // });
   },
 });
 

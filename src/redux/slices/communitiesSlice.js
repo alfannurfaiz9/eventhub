@@ -12,7 +12,9 @@ export const getCommunitiesThunk = createAsyncThunk(
   "get_communities",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:9000/communities");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities`,
+      );
       const data = await response.json();
 
       if (!response.ok) {

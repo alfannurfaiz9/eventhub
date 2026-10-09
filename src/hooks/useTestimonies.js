@@ -6,7 +6,7 @@ const useTestimonies = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch("http://localhost:9000/testimonies");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/testimonies`);
 
         if (!response.ok) {
           throw new Error("failed fetching testimonies");

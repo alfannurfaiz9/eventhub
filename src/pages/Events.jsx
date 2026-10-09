@@ -295,7 +295,7 @@ const Movies = () => {
               <EventsCard
                 key={`${event.id}-${idx}`}
                 id={event.id}
-                img={`http://localhost:9000/events/img/${event.img_url}`}
+                img={`${import.meta.env.VITE_API_URL}/events/img/${event.img_url}`}
                 cat={event.category.split(",")}
                 title={event.title}
                 date={moment(event.start_at).add(1, "year").format("LL")}

@@ -187,7 +187,7 @@ const Communities = () => {
               <CommunitiesCard
                 key={`${community.id}-${idx}`}
                 id={community.id}
-                img={`http://localhost:9000/communities/img/${community.img_url}`}
+                img={`${import.meta.env.VITE_API_URL}/communities/img/${community.img_url}`}
                 name={community.name}
                 desc={community.description}
                 cat={community.category}

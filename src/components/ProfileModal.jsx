@@ -59,7 +59,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
           >
             <img
               className="h-full w-full object-cover"
-              src={img ? img : user?.img}
+              src={img ? img : user?.img_url}
               alt="profile-pict"
             />
             <input

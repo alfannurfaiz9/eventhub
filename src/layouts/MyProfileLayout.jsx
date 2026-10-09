@@ -7,10 +7,11 @@ import useAuth from "../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { TbPasswordUser } from "react-icons/tb";
 import ResetPasswordModal from "../components/ResetPasswordModal";
+import useEvent from "../hooks/useEvent.js";
 
 const MyProfileLayout = () => {
   const user = useAuth();
-  const events = useSelector((state) => state.eventsState.events);
+  const events = useEvent();
   const communities = useSelector(
     (state) => state.communitiesState.communities,
   );
@@ -34,7 +35,7 @@ const MyProfileLayout = () => {
               <div className="w-18 h-18 rounded-xl overflow-hidden">
                 <img
                   className="h-full w-full object-cover"
-                  src={user?.img}
+                  src={user?.img_url}
                   alt="profile-photo"
                 />
               </div>

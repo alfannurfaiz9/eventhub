@@ -17,77 +17,52 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const registeredUsers = useSelector(
-    (state) => state.registerState.registeredUser,
-  );
-
-  const organizerAndAdmin = [
-    JSON.parse(import.meta.env.VITE_ORGANIZER),
-    JSON.parse(import.meta.env.VITE_ADMIN),
-  ];
-
-  const combinedUser = registeredUsers
-    ? [...organizerAndAdmin, ...registeredUsers]
-    : [...organizerAndAdmin];
-
-  const newId = registeredUsers
-    ? combinedUser.map((user) => user.id)[combinedUser.length - 1] + 1
-    : 3;
-
   const reg = useSelector((state) => state.registerState);
 
-  const onSubmit = async (data) => {
-    try {
-      const { full_name, email, password, confirm_password } = data;
-
-      if (confirm_password !== password) {
-        setError("confirm_password", {
-          type: "manual",
-          message: "The passwords you entered do not match",
-        });
-        return;
-      }
-      if (combinedUser.find((user) => user.email === email)) {
-        setError("email", {
-          type: "manual",
-          message: "Email is already registered",
-        });
-        return;
-      }
-
-      const newUser = {
-        id: newId,
-        role: "attendee",
-        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0gppkHIVokayxdmqAv4oVpaLvHevFoHG_hZlukO0lG-jqvKWZ_8sd-_mi&s=10",
-        full_name,
-        email,
-        password,
-        community_id: [],
-        event_id: [],
-        saved_community_id: [],
-        saved_event_id: [],
-      };
-
-      await dispatch(registerUserThunk(newUser)).unwrap();
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
+  const onSubmit = (data) => {
+    const { full_name, email, password, confirm_password } = data;
+    if (confirm_password !== password) {
+      setError("confirm_password", {
+        type: "manual",
+        message: "The passwords you entered do not match",
+      });
+      return;
     }
-  };
 
-  const [loading, setLoading] = useState(false);
+    const newUser = {
+      full_name,
+      email,
+      password,
+    };
+
+    dispatch(
+      registerUserThunk({
+        data: newUser,
+        next: () => {
+          navigate("/login");
+        },
+      }),
+    );
+  };
 
   useEffect(() => {
     (() => {
+      if (reg.isRejected) {
+        setError("email", {
+          type: "manual",
+          message: "User already exist",
+        });
+      }
+
       if (reg.isPending) {
         setLoading(true);
       } else {
         setLoading(false);
       }
     })();
-  }, [reg]);
+  }, [reg, setError]);
 
   return (
     <>

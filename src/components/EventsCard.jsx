@@ -106,7 +106,7 @@ const EventsCard = ({
           {cat.map((el, idx) => (
             <p
               key={`${idx}`}
-              className={`backdrop-blur-[3px] shadow-sm text-white/60 bg-white/20 p-1 rounded-md`}
+              className={`backdrop-blur-[3px] shadow-sm text-white/90 bg-white/10 py-1 px-2 rounded-xl`}
             >
               {el}
             </p>

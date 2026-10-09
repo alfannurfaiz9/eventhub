@@ -23,21 +23,20 @@ import {
 } from "../redux/slices/registerSlice.js";
 import useAuth from "../hooks/useAuth.js";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useCommunity from "../hooks/useCommunity.js";
+import moment from "moment";
 
 const EventDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
   const user = useAuth();
+  const communities = useCommunity();
 
-  const events = useSelector((state) => state.eventsState.events);
-  const communities = useSelector(
-    (state) => state.communitiesState.communities,
-  );
+  const [event, setEvent] = useState(null);
 
-  const event = events.find((e) => e.id === Number(id));
-  const disabledEvent = event.attendees === event.capacity;
-  const community = communities.find((comm) => comm.id === event.community_id);
+  const disabledEvent = event?.total_attendee === event?.capacity;
+  const community = communities.find((comm) => comm.id === event?.community_id);
 
   const [discuss, setDiscuss] = useState(null);
   const [newDiscuss, setNewDiscuss] = useState("");
@@ -52,6 +51,26 @@ const EventDetail = () => {
       setDiscuss(discussions);
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/events/detail/${id}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("failed to fetch");
+        }
+
+        const data = await response.json();
+
+        setEvent(data.Data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [id]);
 
   const handleJoin = () => {
     setSelectedBtn("join");
@@ -139,10 +158,10 @@ const EventDetail = () => {
             <section className="lg:col-span-3 grid gap-8 lg:px-8">
               <div className="grid gap-3">
                 <div className="h-68 rounded-xl overflow-hidden">
-                  {event.img ? (
+                  {event.img_url ? (
                     <img
                       className="w-full h-full object-cover"
-                      src={event.img}
+                      src={`${import.meta.env.VITE_API_URL}/events/img/${event.img_url}`}
                       alt="event-detail-thumb"
                     />
                   ) : (
@@ -161,8 +180,7 @@ const EventDetail = () => {
                 </div>
                 <h2 className="text-3xl font-bold">{event.title}</h2>
                 <h3 className="font-bold">About this event</h3>
-                <p className="text-dark-gray text-sm">{event.desc}</p>
-                <p className="text-dark-gray text-sm">{event.sub_desc}</p>
+                <p className="text-dark-gray text-sm">{event.description}</p>
               </div>
               <div className="grid gap-4">
                 <h3 className="font-bold">Speakers</h3>
@@ -250,11 +268,21 @@ const EventDetail = () => {
                 <p className="text-dark-gray text-xs">EVENT INFO</p>
                 <div className="flex gap-1 text-dark-gray">
                   <CiCalendar />
-                  <p className="text-xs text-black">{event.date}</p>
+                  <p className="text-xs text-black">
+                    {moment(event.start_at).add(1, "year").format("LL")}
+                  </p>
                 </div>
                 <div className="flex gap-1 text-dark-gray">
                   <IoMdTime />
-                  <p className="text-xs text-black">{event.time}</p>
+                  <p className="text-xs text-black">
+                    {
+                      moment(event.start_at)
+                        .add(1, "day")
+                        .format("LLL")
+                        .split(" ")[3]
+                    }{" "}
+                    WIB
+                  </p>
                 </div>
                 <div className="flex gap-1 text-dark-gray">
                   <CiLocationOn />
@@ -263,20 +291,21 @@ const EventDetail = () => {
                 <div className="w-full h-[0.5px] bg-gray-200 my-1"></div>
                 <div className="flex gap-2 text-xs text-dark-gray">
                   <p>
-                    {Math.round((event.attendees / event.capacity) * 100)}% full
+                    {Math.round((event.total_attendee / event.capacity) * 100)}%
+                    full
                   </p>
-                  <p>{event.capacity - event.attendees} spots left</p>
+                  <p>{event.capacity - event.total_attendee} spots left</p>
                 </div>
                 <div className="text-xs text-dark-gray flex justify-between">
-                  <p>{event.attendees} attendees</p>
+                  <p>{event.total_attendee} attendees</p>
                   <p>{event.capacity} capacity</p>
                 </div>
                 <div className="relative w-full py-1 rounded-full bg-gray">
                   <div
                     style={{
-                      width: `${(event.attendees / event.capacity) * 100}%`,
+                      width: `${(event.total_attendee / event.capacity) * 100}%`,
                     }}
-                    className={`absolute left-0 top-0 rounded-full ${Math.round((event.attendees / event.capacity) * 100) < 80 && "bg-green"} ${Math.round((event.attendees / event.capacity) * 100) > 80 && Math.round((event.attendees / event.capacity) * 100) < 100 && "bg-yellow"} ${Math.round((event.attendees / event.capacity) * 100) === 100 && "bg-red"}  h-full`}
+                    className={`absolute left-0 top-0 rounded-full ${Math.round((event.total_attendee / event.capacity) * 100) < 80 && "bg-green"} ${Math.round((event.total_attendee / event.capacity) * 100) > 80 && Math.round((event.total_attendee / event.capacity) * 100) < 100 && "bg-yellow"} ${Math.round((event.attendees / event.capacity) * 100) === 100 && "bg-red"}  h-full`}
                   ></div>
                 </div>
                 <button

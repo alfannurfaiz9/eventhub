@@ -14,14 +14,14 @@ export const loginThunk = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        "http://localhost:9000/auth/login",
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         payload.opt,
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw data.Message
+        throw data.Message;
       }
 
       return {
@@ -39,7 +39,7 @@ export const logoutThunk = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        "http://localhost:9000/auth/logout",
+        `${import.meta.env.VITE_API_URL}/auth/logout`,
         payload.opt,
       );
 
@@ -68,7 +68,7 @@ const authSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.user = payload.data;
-          state.user.img_url = `http://localhost:9000/user/img/${payload.data.img_url}`;
+          state.user.img_url = `${import.meta.env.VITE_API_URL}/user/img/${payload.data.img_url}`;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("Successfully loged in");

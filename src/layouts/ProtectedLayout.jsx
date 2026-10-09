@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import useAuth from "../hooks/useAuth.js";
 
 const ProtectedLayout = () => {
-  const { user } = useAuth();
+  const user = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
