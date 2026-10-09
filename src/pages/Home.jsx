@@ -5,32 +5,24 @@ import CommunitiesCard from "../components/CommunitiesCard.jsx";
 import TestimonialsCard from "../components/TestimonialsCard.jsx";
 import Modal from "../components/Modal.jsx";
 
-import {
-  reviews,
-  events as eventsDatas,
-  communities as communitiesData,
-} from "../utils/datas.js";
 import { categories } from "../utils/datas.js";
 import { getCategories } from "../utils/getDatas.js";
 
 import { BsStars } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { getEventsThunk } from "../redux/slices/eventsSlice.js";
-import { getCommunitiesThunk } from "../redux/slices/communitiesSlice.js";
+import { useState } from "react";
 import useAuth from "../hooks/useAuth.js";
 import { RiArrowRightUpLongLine } from "react-icons/ri";
 import moment from "moment";
 import useEvent from "../hooks/useEvent.js";
 import useCommunity from "../hooks/useCommunity.js";
+import useTestimonies from "../hooks/useTestimonies.js";
 
 const Homepage = () => {
-  const dispatch = useDispatch();
   const user = useAuth();
-
   const events = useEvent();
   const communities = useCommunity();
+  const testimonies = useTestimonies();
 
   const renderedCommunities = communities?.filter((comm) =>
     user?.community_id?.includes(comm.id),
@@ -45,11 +37,6 @@ const Homepage = () => {
   const search = searchParams.get("search") || "";
 
   const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    !events?.length && dispatch(getEventsThunk(eventsDatas));
-    !communities?.length && dispatch(getCommunitiesThunk(communitiesData));
-  }, [dispatch, communities, events]);
 
   return (
     <>
@@ -242,12 +229,12 @@ const Homepage = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 my-6 gap-4">
-          {reviews.map((review, idx) => (
+          {testimonies?.map((review, idx) => (
             <TestimonialsCard
               key={`${review.id}-${idx}`}
-              desc={review.desc}
+              desc={review.message}
               name={review.name}
-              role={review.role}
+              role={`${review.position} - ${review.company}`}
             />
           ))}
         </div>

@@ -34,37 +34,16 @@ const persistAuthConfig = {
   whitelist: ["user"],
 };
 
-const persistEventsConfig = {
-  key: "events",
-  storage,
-  whitelist: ["events"],
-};
-
-const persistCommunitiesConfig = {
-  key: "communities",
-  storage,
-  whitelist: ["communities"],
-};
-
-const persistRegisterConfig = {
-  key: "registered_user",
-  storage,
-  whitelist: ["registeredUser"],
-};
-
 const store = configureStore({
   reducer: {
     authState: persistReducer(persistAuthConfig, authReducer),
-    registerState: persistReducer(persistRegisterConfig, registerReducer),
-    eventsState: persistReducer(persistEventsConfig, eventsReducer),
-    communitiesState: persistReducer(
-      persistCommunitiesConfig,
-      communitiesReducer,
-    ),
+    registerState: registerReducer,
+    eventsState: eventsReducer,
+    communitiesState: communitiesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false
+      serializableCheck: false,
       // serializableCheck: {
       //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       // },

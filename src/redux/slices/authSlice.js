@@ -17,11 +17,12 @@ export const loginThunk = createAsyncThunk(
         "http://localhost:9000/auth/login",
         payload.opt,
       );
-      if (!response.ok) {
-        throw await response.json();
-      }
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw data.Message
+      }
 
       return {
         data: data.Data,
@@ -46,7 +47,7 @@ export const logoutThunk = createAsyncThunk(
         throw await response.json();
       }
 
-      return payload
+      return payload;
     } catch (error) {
       return rejectWithValue(error.message);
     }

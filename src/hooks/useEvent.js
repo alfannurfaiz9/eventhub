@@ -1,20 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getEventsThunk } from "../redux/slices/eventsSlice";
 
 const useEvent = () => {
-  const [events, setEvents] = useState(null);
+  const dispatch = useDispatch();
+  const events = useSelector((state) => state.eventsState.events);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetch("http://localhost:9000/events");
-        const res = await data.json();
-
-        setEvents(res.Data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+    dispatch(getEventsThunk());
+  }, [dispatch]);
 
   return events;
 };

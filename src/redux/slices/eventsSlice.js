@@ -10,34 +10,39 @@ const initialState = {
 
 export const getEventsThunk = createAsyncThunk(
   "get_events",
-  async (events, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const datas = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(events);
-        }, 3000);
-      });
+      const response = await fetch(`http://localhost:9000/events`);
 
-      return datas;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   },
 );
 
 export const addEventsThunk = createAsyncThunk(
   "add_events",
-  async (newEvent, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const datas = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(newEvent);
-        }, 3000);
-      });
+      const response = await fetch(
+        `http://localhost:9000/communities?search=${payload.search}?location=${payload.location}?category=${payload.category}?page=${payload.page}`,
+      );
+      const events = await response.json();
 
-      return datas;
+      if (!response.ok) {
+        throw await response.json();
+      }
+
+      return events;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   },
 );
@@ -55,11 +60,13 @@ const eventsSlice = createSlice({
           state.isRejected = false;
         },
         fulfilled: (state, { payload }) => {
-          state.events = payload;
+          state.events = payload.Data;
           state.isPending = false;
           state.isFulfilled = true;
+          state.error = null;
         },
         isRejected: (state, { payload }) => {
+          console.log(payload);
           state.isPending = false;
           state.isRejected = true;
           state.error = payload;

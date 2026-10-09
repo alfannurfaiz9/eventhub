@@ -54,7 +54,7 @@ const Login = () => {
       if (authState.isRejected) {
         setError("password", {
           type: "manual",
-          message: "Invalid email or password",
+          message: authState.error,
         });
       }
     })();

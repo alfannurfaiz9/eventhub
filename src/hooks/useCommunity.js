@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCommunitiesThunk } from "../redux/slices/communitiesSlice.js";
 
 const useCommunity = () => {
-  const [communities, setCommunities] = useState(null);
+  const dispatch = useDispatch();
+  const communities = useSelector(
+    (state) => state.communitiesState.communities,
+  );
 
   useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetch("http://localhost:9000/communities");
-        const res = await data.json();
-
-        setCommunities(res.Data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+    dispatch(getCommunitiesThunk());
+  }, [dispatch]);
 
   return communities;
 };

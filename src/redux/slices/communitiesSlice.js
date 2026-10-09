@@ -10,15 +10,16 @@ const initialState = {
 
 export const getCommunitiesThunk = createAsyncThunk(
   "get_communities",
-  async (communities, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const datas = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(communities);
-        }, 3000);
-      });
+      const response = await fetch("http://localhost:9000/communities");
+      const data = await response.json();
 
-      return datas;
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -37,7 +38,7 @@ const communitiesSlice = createSlice({
         state.isRejected = false;
       },
       fulfilled: (state, { payload }) => {
-        state.communities = payload;
+        state.communities = payload.Data;
         state.isPending = false;
         state.isFulfilled = true;
       },

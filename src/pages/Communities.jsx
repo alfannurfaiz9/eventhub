@@ -5,8 +5,8 @@ import { categories } from "../utils/datas.js";
 import { useSearchParams } from "react-router";
 import { CiSearch } from "react-icons/ci";
 import { useState } from "react";
-import { getJoinedCommunity } from "../utils/getDatas.js";
 import { useSelector } from "react-redux";
+import useCommunity from "../hooks/useCommunity.js";
 
 const Communities = () => {
   const logedInUser = useSelector((state) => state.authState.user);
@@ -15,9 +15,7 @@ const Communities = () => {
   );
   const user = registeredUser.find((u) => u.id === logedInUser);
 
-  const communities = useSelector(
-    (state) => state.communitiesState.communities,
-  );
+  const communities = useCommunity();
 
   const [activeLink, setActiveLink] = useState("");
   const [activeFilter, setActiveFilter] = useState("");
@@ -83,14 +81,6 @@ const Communities = () => {
     }
 
     setFilterParams(newParams);
-  };
-
-  const renderCommunity = () => {
-    const event = communities.filter((event) => {
-      return getJoinedCommunity(event.id);
-    });
-
-    setJoinedEvent(event);
   };
 
   return (
@@ -195,13 +185,13 @@ const Communities = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 my-6 gap-4">
             {filteredCategory().map((community, idx) => (
               <CommunitiesCard
-                key={`c-${community.id}-${idx}`}
+                key={`${community.id}-${idx}`}
                 id={community.id}
-                img={community.img}
+                img={`http://localhost:9000/communities/img/${community.img_url}`}
                 name={community.name}
-                desc={community.desc}
-                cat={community.categories}
-                member={community.member}
+                desc={community.description}
+                cat={community.category}
+                member={community.total_member}
                 upcoming_event={community.upcoming_event}
                 setShowModal={setShowModal}
               />

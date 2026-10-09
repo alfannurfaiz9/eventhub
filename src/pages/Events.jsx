@@ -6,20 +6,17 @@ import Modal from "../components/Modal.jsx";
 import { categories, communities } from "../utils/datas.js";
 import {
   getAllLocations,
-  getCategories,
   sortEventByPopularity,
   sortEventByRemainingCap,
 } from "../utils/getDatas.js";
 import { useSearchParams } from "react-router";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { useSelector } from "react-redux";
+import moment from "moment";
+import useEvent from "../hooks/useEvent.js";
 
 const Movies = () => {
-  const events = useSelector((state) => state.eventsState.events);
-  const [renderedEvents, setRenderedEvents] = useState(
-    events.filter((e, i) => i < 6),
-  );
+  const events = useEvent();
 
   const [activeLink, setActiveLink] = useState({
     category: "",
@@ -38,7 +35,7 @@ const Movies = () => {
   const [showModal, setShowModal] = useState(false);
 
   const filteredEvents = () => {
-    const filtered = renderedEvents.filter((event) => {
+    const filtered = events?.filter((event) => {
       const searchFilter = search.length
         ? event.title.toLowerCase().includes(search)
         : event;
@@ -298,27 +295,32 @@ const Movies = () => {
               <EventsCard
                 key={`${event.id}-${idx}`}
                 id={event.id}
-                img={event.img}
-                cat={getCategories(event)}
+                img={`http://localhost:9000/events/img/${event.img_url}`}
+                cat={event.category.split(",")}
                 title={event.title}
-                date={event.date}
-                time={event.time}
+                date={moment(event.start_at).add(1, "year").format("LL")}
+                time={
+                  moment(event.start_at)
+                    .add(1, "day")
+                    .format("LLL")
+                    .split(" ")[3]
+                }
                 location={event.location}
-                attendees={event.attendees}
+                attendees={event.total_attendee}
                 capacity={event.capacity}
                 setShowModal={setShowModal}
               />
             ))}
           </div>
           <div className="w-fit mx-auto">
-            <button
+            {/* <button
               onClick={() => {
                 setRenderedEvents(events);
               }}
               className={`${renderedEvents.length > 6 && "hidden"} py-2 px-4 font-medium text-sm text-black rounded-xl border border-gray-300 cursor-pointer hover:opacity-60`}
             >
               Load more events
-            </button>
+            </button> */}
           </div>
         </div>
       </section>

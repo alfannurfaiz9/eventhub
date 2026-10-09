@@ -5,7 +5,7 @@ const TestimonialsCard = ({ desc, name, role }) => {
       <p className="text-sm text-dark-gray">{desc}</p>
       <div className="flex gap-2 items-center">
         <p className="w-8 h-8 flex items-center justify-center text-sm bg-blue rounded-full text-white font-bold">
-          {name[0] + name[1].toUpperCase()}
+          {name[0].toUpperCase() + name[1].toUpperCase()}
         </p>
         <div>
           <p className="text-sm font-bold">{name}</p>
