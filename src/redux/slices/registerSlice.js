@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 const initialState = {
@@ -13,16 +12,24 @@ export const registerUserThunk = createAsyncThunk(
   "regist_user",
   async (payload, { rejectWithValue }) => {
     try {
-      await axios.post(
+      const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/register`,
-        payload.data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(payload.data),
+        },
       );
 
-      return payload
-    } catch (error) {
-      if (error.response) {
-        return rejectWithValue(error.response.data.Message);
+      if (!response.ok) {
+        throw await response.json();
       }
+
+      return payload;
+    } catch (error) {
+      return rejectWithValue(error.Message);
     }
   },
 );

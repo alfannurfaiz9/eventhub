@@ -57,7 +57,11 @@ export const logoutThunk = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    removeToken: () => {
+      return initialState;
+    },
+  },
   extraReducers: (builder) => {
     return builder
       .addAsyncThunk(loginThunk, {
@@ -108,4 +112,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { removeToken } = authSlice.actions;
 export default authSlice.reducer;

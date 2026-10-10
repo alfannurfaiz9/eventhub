@@ -8,10 +8,12 @@ import { useSelector } from "react-redux";
 import { TbPasswordUser } from "react-icons/tb";
 import ResetPasswordModal from "../components/ResetPasswordModal";
 import useEvent from "../hooks/useEvent.js";
+import useUser from "../hooks/useUser.js";
 
 const MyProfileLayout = () => {
   const user = useAuth();
   const events = useEvent();
+  const userProfile = useUser();
   const communities = useSelector(
     (state) => state.communitiesState.communities,
   );
@@ -33,29 +35,30 @@ const MyProfileLayout = () => {
             <div className="relative h-fit w-fit">
               <div className="absolute h-4 w-4 bg-green rounded-full bottom-1 right-1 border-2 border-white"></div>
               <div className="w-18 h-18 rounded-xl overflow-hidden">
-                {user.img_url ? (
-                  <div className="flex items-center justify-center h-full w-full bg-purple text-white">
-                    <p className="text-2xl">
-                      {`${user.full_name[0].toUpperCase()}${user.full_name[1].toUpperCase()}`}
-                    </p>
-                  </div>
-                ) : (
+                {userProfile?.img_url ? (
                   <img
                     className="h-full w-full object-cover"
-                    src={user?.img_url}
+                    src={userProfile?.img_url}
                     alt="profile-pict"
                   />
+                ) : (
+                  <div className="flex items-center justify-center h-full w-full bg-purple text-white">
+                    <p className="text-2xl">
+                      {`${userProfile?.full_name[0].toUpperCase()}${userProfile?.full_name[1].toUpperCase()}`}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
             <div className="grid gap-4 w-8/12">
               <div className="grid gap-2">
-                <h2 className="text-xl font-bold">{user?.full_name}</h2>
-                <p className="text-sm text-dark-gray">{user?.email}</p>
+                <h2 className="text-xl font-bold">{userProfile?.full_name}</h2>
+                <p className="text-sm text-dark-gray">{userProfile?.email}</p>
                 <button
                   onClick={() => setShowModal(true)}
                   disabled={
-                    user?.role === "organizer" || user?.role === "admin"
+                    userProfile?.role === "organizer" ||
+                    userProfile?.role === "admin"
                   }
                   className="flex lg:hidden items-center gap-2 hover:opacity-60 cursor-pointer w-fit py-1 px-2 text-xs rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
                 >
@@ -65,7 +68,8 @@ const MyProfileLayout = () => {
                 <button
                   onClick={() => setEditModal(true)}
                   disabled={
-                    user?.role === "organizer" || user?.role === "admin"
+                    userProfile?.role === "organizer" ||
+                    userProfile?.role === "admin"
                   }
                   className="flex lg:hidden items-center gap-2 hover:opacity-60 cursor-pointer w-fit py-1 px-2 text-xs rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
                 >
@@ -82,27 +86,28 @@ const MyProfileLayout = () => {
                     <p>August 2026</p>
                   </div>
                   <p className="py-0.5 px-1 rounded-full text-primary bg-light-primary">
-                    {user?.role}
+                    {userProfile?.role}
                   </p>
                 </div>
                 <p className="text-xs lg:text-sm text-dark-gray">
-                  {user?.bio || "No bio"}
+                  {userProfile?.bio || "No bio"}
                 </p>
               </div>
               <div className="hidden lg:flex w-full gap-8 items-center justify-between">
                 <div className="grid gap-1 place-items-center">
                   <p className="text-xl font-bold">
-                    {user?.role === "organizer" || user?.role === "admin"
+                    {userProfile?.role === "organizer" ||
+                    userProfile?.role === "admin"
                       ? events.length
-                      : user?.event_id?.length}
+                      : userProfile?.event_id?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Events</p>
                 </div>
                 <div className="grid gap-1 place-items-center">
                   <p className="text-xl font-bold">
-                    {user?.role === "organizer"
+                    {userProfile?.role === "organizer"
                       ? 0
-                      : user?.role === "admin"
+                      : userProfile?.role === "admin"
                         ? communities.length
                         : user?.community_id?.length}
                   </p>
@@ -110,9 +115,10 @@ const MyProfileLayout = () => {
                 </div>
                 <div className="grid gap-1 place-items-center">
                   <p className="text-xl font-bold">
-                    {user?.role === "organizer" || user?.role === "admin"
+                    {userProfile?.role === "organizer" ||
+                    userProfile?.role === "admin"
                       ? 0
-                      : user?.saved_event_id?.length}
+                      : userProfile?.saved_event_id?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Saved</p>
                 </div>
@@ -122,27 +128,29 @@ const MyProfileLayout = () => {
           <div className="flex lg:hidden w-full items-center justify-around">
             <div className="grid gap-1 place-items-center">
               <p className="text-xl font-bold">
-                {user?.role === "organizer" || user?.role === "admin"
+                {userProfile?.role === "organizer" ||
+                userProfile?.role === "admin"
                   ? events.length
-                  : user?.event_id?.length}
+                  : userProfile?.event_id?.length}
               </p>
               <p className="text-xs text-dark-gray">Events</p>
             </div>
             <div className="grid gap-1 place-items-center">
               <p className="text-xl font-bold">
-                {user?.role === "organizer"
+                {userProfile?.role === "organizer"
                   ? 0
-                  : user?.role === "admin"
+                  : userProfile?.role === "admin"
                     ? communities.length
-                    : user?.community_id?.length}
+                    : userProfile?.community_id?.length}
               </p>
               <p className="text-xs text-dark-gray">Communities</p>
             </div>
             <div className="grid gap-1 place-items-center">
               <p className="text-xl font-bold">
-                {user?.role === "organizer" || user?.role === "admin"
+                {userProfile?.role === "organizer" ||
+                userProfile?.role === "admin"
                   ? 0
-                  : user?.saved_event_id?.length}
+                  : userProfile?.saved_event_id?.length}
               </p>
               <p className="text-xs text-dark-gray">Saved</p>
             </div>
@@ -150,7 +158,10 @@ const MyProfileLayout = () => {
           <div className="lg:grid gap-2 hidden place-items-end w-full">
             <button
               onClick={() => setShowModal(true)}
-              disabled={user?.role === "organizer" || user?.role === "admin"}
+              disabled={
+                userProfile?.role === "organizer" ||
+                userProfile?.role === "admin"
+              }
               className="flex w-fit items-center gap-2 hover:opacity-60 cursor-pointer py-2 px-4 text-sm rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
             >
               <FiEdit3 />
@@ -158,7 +169,10 @@ const MyProfileLayout = () => {
             </button>
             <button
               onClick={() => setEditModal(true)}
-              disabled={user?.role === "organizer" || user?.role === "admin"}
+              disabled={
+                userProfile?.role === "organizer" ||
+                userProfile?.role === "admin"
+              }
               className="flex w-fit items-center gap-2 hover:opacity-60 cursor-pointer py-2 px-4 text-sm rounded-lg border border-gray-300 disabled:bg-gray-300 disabled:text-dark-gray"
             >
               <TbPasswordUser />
@@ -177,9 +191,10 @@ const MyProfileLayout = () => {
             Events
             <span>
               (
-              {user?.role === "organizer" || user?.role === "admin"
+              {userProfile?.role === "organizer" ||
+              userProfile?.role === "admin"
                 ? events.length
-                : user?.event_id?.length}
+                : userProfile?.event_id?.length}
               )
             </span>
           </NavLink>
@@ -192,11 +207,11 @@ const MyProfileLayout = () => {
             Communities
             <span>
               (
-              {user?.role === "organizer"
+              {userProfile?.role === "organizer"
                 ? 0
-                : user?.role === "admin"
+                : userProfile?.role === "admin"
                   ? communities.length
-                  : user?.community_id?.length}
+                  : userProfile?.community_id?.length}
               )
             </span>
           </NavLink>
@@ -209,9 +224,10 @@ const MyProfileLayout = () => {
             Saved{" "}
             <span>
               (
-              {user?.role === "organizer" || user?.role === "admin"
+              {userProfile?.role === "organizer" ||
+              userProfile?.role === "admin"
                 ? 0
-                : user?.saved_event_id?.length}
+                : userProfile?.saved_event_id?.length}
               )
             </span>
           </NavLink>

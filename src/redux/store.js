@@ -4,6 +4,7 @@ import authReducer from "./slices/authSlice";
 import eventsReducer from "./slices/eventsSlice";
 import communitiesReducer from "./slices/communitiesSlice";
 import registerReducer from "./slices/registerSlice";
+import userReducer from "./slices/userSlice";
 
 import persistStore from "redux-persist/es/persistStore";
 import persistReducer from "redux-persist/es/persistReducer";
@@ -40,6 +41,7 @@ const store = configureStore({
     registerState: registerReducer,
     eventsState: eventsReducer,
     communitiesState: communitiesReducer,
+    userState: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

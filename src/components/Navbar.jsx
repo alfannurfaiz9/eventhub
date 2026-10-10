@@ -160,16 +160,16 @@ const Navbar = () => {
                 onClick={() => setShowPopUp(!showPopUp)}
                 className="cursor-pointer"
               >
-                {user.img_url ? (
-                  <div className="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-purple text-white">
-                    {`${user.full_name[0].toUpperCase()}${user.full_name[1].toUpperCase()}`}
-                  </div>
-                ) : (
+                {user?.img_url ? (
                   <img
                     className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
                     src={user?.img_url}
                     alt="profile-pict"
                   />
+                ) : (
+                  <div className="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-purple text-white">
+                    {`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}
+                  </div>
                 )}
                 <div
                   className={`${showPopUp ? "grid" : "hidden"} bg-white text-xs shadow-2xl border border-gray-300 absolute top-11 right-0 text-start gap-2 p-2 rounded-lg`}
@@ -236,16 +236,16 @@ const Navbar = () => {
               className={`${showMenu ? "block" : "hidden"} absolute bg-white top-9 right-0 min-w-60 rounded-lg shadow-sm border border-gray-300`}
             >
               <div className={user ? "p-2 flex items-center gap-2" : "hidden"}>
-                {user.img_url ? (
-                  <div className="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-purple text-white">
-                    {`${user.full_name[0].toUpperCase()}${user.full_name[1].toUpperCase()}`}
-                  </div>
-                ) : (
+                {user?.img_url ? (
                   <img
                     className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
                     src={user?.img_url}
                     alt="profile-pict"
                   />
+                ) : (
+                  <div className="flex items-center justify-center w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-purple text-white">
+                    {`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}
+                  </div>
                 )}
                 <div>
                   <p className="font-semibold text-sm">{user?.full_name}</p>
