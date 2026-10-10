@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { data, Link, useParams } from "react-router";
 
 import EventSpeakers from "../components/EventSpeakers.jsx";
 import DiscussionCard from "../components/DiscussionCard.jsx";
@@ -71,6 +71,8 @@ const EventDetail = () => {
       }
     })();
   }, [id]);
+
+  console.log(event);
 
   const handleJoin = () => {
     setSelectedBtn("join");
@@ -185,12 +187,12 @@ const EventDetail = () => {
               <div className="grid gap-4">
                 <h3 className="font-bold">Speakers</h3>
                 <div className="grid lg:grid-cols-2 gap-2 lg:gap-4">
-                  {speakers.map((speaker, idx) => (
+                  {event?.speaker?.map((speaker, idx) => (
                     <EventSpeakers
                       key={`${speaker.id}-${idx}`}
                       name={speaker.name}
-                      role={speaker.role}
-                      img={speaker.img}
+                      role={speaker.position}
+                      img={speaker.img_url}
                     />
                   ))}
                 </div>
@@ -204,12 +206,12 @@ const EventDetail = () => {
                   </h3>
                 </div>
                 <div className="grid gap-4">
-                  {discuss?.map((discuss, idx) => (
+                  {event?.event_discussion?.map((discuss, idx) => (
                     <DiscussionCard
                       key={`${discuss.id}-${idx}`}
-                      img={discuss.img}
-                      name={discuss.name}
-                      desc={discuss.desc}
+                      img={`${import.meta.env.VITE_API_URL}/user/img/${discuss.img_url}`}
+                      name={discuss.full_name}
+                      desc={discuss.message}
                     />
                   ))}
                   <div
@@ -373,7 +375,8 @@ const EventDetail = () => {
                     alt="organized-profile"
                   />
                   <div>
-                    <p className="font-bold">Rizky Pratama</p>
+                    <p className="font-bold">{event.organizer}</p>
+                    <p className="text-sm text-dark-gray">{event.community}</p>
                     <Link
                       to={`/communities/detail/${community?.id}`}
                       className="text-xs text-blue hover:underline hover:opacity-80"
