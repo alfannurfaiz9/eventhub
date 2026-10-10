@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { data, Link, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 import EventSpeakers from "../components/EventSpeakers.jsx";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 import RecommendationCard from "../components/RecommendationCard.jsx";
 import Modal from "../components/Modal.jsx";
 
-import { discussions, speakers } from "../utils/datas.js";
+import { discussions } from "../utils/datas.js";
 import { getCategories, getRecommendations } from "../utils/getDatas.js";
 
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
@@ -209,7 +209,7 @@ const EventDetail = () => {
                   {event?.event_discussion?.map((discuss, idx) => (
                     <DiscussionCard
                       key={`${discuss.id}-${idx}`}
-                      img={`${import.meta.env.VITE_API_URL}/user/img/${discuss.img_url}`}
+                      img={discuss.img_url}
                       name={discuss.full_name}
                       desc={discuss.message}
                     />
@@ -369,11 +369,17 @@ const EventDetail = () => {
               <div className="bg-white py-3 px-2 grid gap-3 rounded-xl border border-gray-300">
                 <p className="text-dark-gray text-xs">ORGANIZED BY</p>
                 <div className="flex gap-2 items-center">
-                  <img
-                    className="w-11 h-11 rounded-full"
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmGSTrfvxa6sHR51cGE8mRJQXhHCFM9MxvbA5QzWaON8hSdBPlcrdHHFCk&s=10"
-                    alt="organized-profile"
-                  />
+                  {event?.organizer_img ? (
+                    <img
+                      className="w-11 h-11 rounded-full"
+                      src={`${import.meta.env.VITE_API_URL}/user/img/${event?.organizer_img}`}
+                      alt="organized-profile"
+                    />
+                  ) : (
+                    <div className="bg-purple w-11 h-11 flex items-center justify-center rounded-full text-white">
+                      <p>{`${event.organizer[0].toUpperCase()}${event.organizer[1].toUpperCase()}`}</p>
+                    </div>
+                  )}
                   <div>
                     <p className="font-bold">{event.organizer}</p>
                     <p className="text-sm text-dark-gray">{event.community}</p>
