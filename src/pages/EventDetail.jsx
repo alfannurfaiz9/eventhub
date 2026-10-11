@@ -72,8 +72,6 @@ const EventDetail = () => {
     })();
   }, [id]);
 
-  console.log(event);
-
   const handleJoin = () => {
     setSelectedBtn("join");
 
@@ -202,7 +200,9 @@ const EventDetail = () => {
                   <GoComment />
                   <h3 className="font-bold">
                     Discussion
-                    <span className="ml-2 font-normal text-dark-gray">(3)</span>
+                    <span className="ml-2 font-normal text-dark-gray">
+                      ({event.event_discussion.length})
+                    </span>
                   </h3>
                 </div>
                 <div className="grid gap-4">

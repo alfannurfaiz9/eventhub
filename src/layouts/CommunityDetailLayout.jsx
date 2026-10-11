@@ -51,15 +51,13 @@ const CommunityDetailLayout = () => {
         }
 
         const data = await response.json();
-        
-        setCommunity(data.Data)
+
+        setCommunity(data.Data);
       } catch (error) {
         console.log(error);
       }
     })();
   }, [id]);
-
-  console.log(community)
 
   return (
     <>
@@ -93,7 +91,8 @@ const CommunityDetailLayout = () => {
               </h2>
               <div className="flex gap-4">
                 <p className="text-sm">
-                  {community?.total_member} <span className="ml-1">members</span>
+                  {community?.total_member}{" "}
+                  <span className="ml-1">members</span>
                 </p>
                 <p className="text-sm">
                   {community?.upcoming_event}{" "}
@@ -120,8 +119,7 @@ const CommunityDetailLayout = () => {
       <section className="bg-gray pt-20 lg:pt-12 py-8 px-4 lg:px-24">
         <div className="p-4 rounded-lg border border-gray-300 bg-white grid gap-3">
           <p className="text-dark-gray text-sm">
-            The premier Go programming community in Bandung — weekly meetups,
-            workshops, and mentoring for Gophers at all levels.
+            {community?.description}
           </p>
           <div className="flex gap-2 text-xs">
             {community &&

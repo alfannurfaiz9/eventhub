@@ -13,7 +13,7 @@ const Communities = () => {
   const registeredUser = useSelector(
     (state) => state.registerState.registeredUser,
   );
-  const user = registeredUser.find((u) => u.id === logedInUser);
+  const user = registeredUser?.find((u) => u.id === logedInUser);
 
   const communities = useCommunity();
 
