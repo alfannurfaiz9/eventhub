@@ -38,7 +38,7 @@ const MyProfileLayout = () => {
                 {userProfile?.img_url ? (
                   <img
                     className="h-full w-full object-cover"
-                    src={userProfile?.img_url}
+                    src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
                     alt="profile-pict"
                   />
                 ) : (

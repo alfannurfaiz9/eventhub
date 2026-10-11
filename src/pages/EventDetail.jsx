@@ -220,11 +220,17 @@ const EventDetail = () => {
                   <div
                     className={`${user ? "grid" : "hidden"} grid-cols-[auto_1fr] gap-4`}
                   >
-                    <img
-                      className="w-7 h-7 rounded-full"
-                      src={user?.img}
-                      alt="avatar-profile"
-                    />
+                    {user.img_url ? (
+                      <img
+                        className="w-7 h-7 rounded-full"
+                        src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
+                        alt="avatar-profile"
+                      />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center bg-purple text-white p-2">
+                        <p className="text-sm">{`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}</p>
+                      </div>
+                    )}
                     <div className="p-2 rounded-lg text-sm bg-white flex gap-2 justify-between">
                       <input
                         className="focus:outline-none w-full text-dark-gray"

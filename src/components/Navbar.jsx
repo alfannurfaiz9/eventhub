@@ -48,6 +48,8 @@ const Navbar = () => {
     setShowModal(true);
   };
 
+  console.log(user);
+
   return (
     <>
       <div className={showModal ? "block" : "hidden"}>
@@ -163,7 +165,7 @@ const Navbar = () => {
                 {user?.img_url ? (
                   <img
                     className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
-                    src={user?.img_url}
+                    src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
                     alt="profile-pict"
                   />
                 ) : (
@@ -236,10 +238,10 @@ const Navbar = () => {
               className={`${showMenu ? "block" : "hidden"} absolute bg-white top-9 right-0 min-w-60 rounded-lg shadow-sm border border-gray-300`}
             >
               <div className={user ? "p-2 flex items-center gap-2" : "hidden"}>
-                {user?.img_url ? (
+                {user?.img_url && user?.img_url !== null ? (
                   <img
                     className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
-                    src={user?.img_url}
+                    src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
                     alt="profile-pict"
                   />
                 ) : (

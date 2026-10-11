@@ -50,7 +50,6 @@ const userSlice = createSlice({
       },
       fulfilled: (state, { payload }) => {
         state.user = payload.Data;
-        state.user.img_url = `${import.meta.env.VITE_API_URL}/user/img/${payload.Data.img_url}`;
         state.isPending = false;
         state.isFulfilled = true;
       },

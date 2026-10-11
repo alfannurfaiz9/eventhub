@@ -1,47 +1,47 @@
 import { MdSend } from "react-icons/md";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 
-import { discussions } from "../utils/datas.js";
 import useAuth from "../hooks/useAuth.js";
-import { useState } from "react";
+import { useParams } from "react-router";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCommunityDiscussionsThunk } from "../redux/slices/communitiesSlice.js";
 
 const CommunityDetailDiscussions = () => {
+  const { id } = useParams();
   const user = useAuth();
+  const dispatch = useDispatch();
 
-  const [discuss, setDiscuss] = useState(discussions);
+  const discuss = useSelector((state) => state.communitiesState.discussion);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const newId = discuss && discuss[discuss.length - 1].id;
 
     if (!e.target.new_discuss) {
       return;
     }
 
-    setDiscuss((prev) => {
-      return [
-        {
-          id: newId + 1,
-          img: user?.img,
-          name: user?.full_name,
-          desc: e.target.new_discuss.value,
-        },
-        ...prev,
-      ];
-    });
-
     e.target.new_discuss.value = "";
   };
+
+  useEffect(() => {
+    dispatch(getCommunityDiscussionsThunk({ id }));
+  }, [dispatch, id]);
 
   return (
     <div className="grid gap-4">
       <div className={`${user ? "flex" : "hidden"} items-center gap-2`}>
-        <img
-          className="w-7 h-7 rounded-full"
-          src={user?.img}
-          alt="avatar-profile"
-        />
+        {user.img_url ? (
+          <img
+            className="w-7 h-7 rounded-full"
+            src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
+            alt="avatar-profile"
+          />
+        ) : (
+          <div className="w-7 h-7 rounded-full flex items-center justify-center bg-purple text-white p-2">
+            <p className="text-sm">{`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}</p>
+          </div>
+        )}
         <form
           onSubmit={handleSubmit}
           className="p-2 rounded-lg w-full text-sm bg-white flex gap-2 justify-between"
@@ -59,10 +59,10 @@ const CommunityDetailDiscussions = () => {
       </div>
       {discuss?.map((discussion, idx) => (
         <DiscussionCard
-          key={`${discussion.id}-${idx}`}
-          img={discussion.img}
-          name={discussion.name}
-          desc={discussion.desc}
+          key={`${idx}`}
+          img={discussion.img_url}
+          name={discussion.full_name}
+          desc={discussion.message}
         />
       ))}
     </div>

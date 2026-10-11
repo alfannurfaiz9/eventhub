@@ -43,8 +43,6 @@ const CommunityDetailLayout = () => {
     dispatch(getCommunityDetailThunk({ id }));
   }, [dispatch, id]);
 
-  console.log(community);
-
   return (
     <>
       <div className={showModal ? "block" : "hidden"}>

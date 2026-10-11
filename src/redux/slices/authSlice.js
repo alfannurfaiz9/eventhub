@@ -72,7 +72,6 @@ const authSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.user = payload.data;
-          state.user.img_url = `${import.meta.env.VITE_API_URL}/user/img/${payload.data.img_url}`;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("Successfully loged in");

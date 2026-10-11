@@ -188,6 +188,24 @@ const communitiesSlice = createSlice({
           state.isPending = false;
           state.error = payload;
         },
+      })
+      .addAsyncThunk(getCommunityDiscussionsThunk, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isRejected = false;
+          state.isFulfilled = false;
+        },
+        fulfilled: (state, { payload }) => {
+          console.log(payload);
+          state.isPending = false;
+          state.isFulfilled = true;
+          state.discussion = payload;
+        },
+        rejected: (state, { payload }) => {
+          state.isPending = false;
+          state.isRejected = true;
+          state.error = payload;
+        },
       });
   },
 });
