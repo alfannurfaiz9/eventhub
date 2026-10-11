@@ -1,5 +1,4 @@
 import { Link, NavLink, Outlet, useParams } from "react-router";
-import { getCategories } from "../utils/getDatas";
 import { FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { joinCommunityThunk } from "../redux/slices/registerSlice";
@@ -8,6 +7,7 @@ import { useEffect, useState } from "react";
 import Modal from "../components/Modal";
 import useAuth from "../hooks/useAuth";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { getCommunityDetailThunk } from "../redux/slices/communitiesSlice";
 
 const CommunityDetailLayout = () => {
   const { id } = useParams();
@@ -15,7 +15,7 @@ const CommunityDetailLayout = () => {
 
   const user = useAuth();
 
-  const [community, setCommunity] = useState(null);
+  const community = useSelector((state) => state.communitiesState.detail);
 
   const joinedCommunity = user?.community_id?.includes(Number(id));
   const [showModal, setShowModal] = useState(false);
@@ -40,24 +40,10 @@ const CommunityDetailLayout = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/communities/${id}`,
-        );
+    dispatch(getCommunityDetailThunk({ id }));
+  }, [dispatch, id]);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch");
-        }
-
-        const data = await response.json();
-
-        setCommunity(data.Data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [id]);
+  console.log(community);
 
   return (
     <>
@@ -118,16 +104,16 @@ const CommunityDetailLayout = () => {
       </section>
       <section className="bg-gray pt-20 lg:pt-12 py-8 px-4 lg:px-24">
         <div className="p-4 rounded-lg border border-gray-300 bg-white grid gap-3">
-          <p className="text-dark-gray text-sm">
-            {community?.description}
-          </p>
+          <p className="text-dark-gray text-sm">{community?.description}</p>
           <div className="flex gap-2 text-xs">
-            {community &&
-              getCategories(null, community).map((el, idx) => (
-                <p key={`${el}-${idx}`} className={el.style}>
-                  {el.name}
-                </p>
-              ))}
+            {community?.category?.split(",").map((el, idx) => (
+              <p
+                key={`${idx}`}
+                className="py-1 px-2 text-green bg-light-green rounded-full"
+              >
+                {el}
+              </p>
+            ))}
           </div>
         </div>
       </section>

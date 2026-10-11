@@ -7,7 +7,7 @@ import RecommendationCard from "../components/RecommendationCard.jsx";
 import Modal from "../components/Modal.jsx";
 
 import { discussions } from "../utils/datas.js";
-import { getCategories, getRecommendations } from "../utils/getDatas.js";
+import { getRecommendations } from "../utils/getDatas.js";
 
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
 import { CiBookmark, CiCalendar, CiLocationOn } from "react-icons/ci";
@@ -169,9 +169,12 @@ const EventDetail = () => {
                   )}
                 </div>
                 <div className="flex gap-2 text-xs h-fit">
-                  {getCategories(event).map((el, idx) => (
-                    <p key={`${el.id}-${idx}`} className={el.style}>
-                      {el.name}
+                  {event.category.split(",").map((el, idx) => (
+                    <p
+                      key={`${idx}`}
+                      className="py-1 px-2 text-green bg-light-green rounded-full"
+                    >
+                      {el}
                     </p>
                   ))}
                   <p className="py-1 px-2 text-green bg-light-green rounded-full">

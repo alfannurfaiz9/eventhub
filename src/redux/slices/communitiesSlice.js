@@ -2,7 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   communities: [],
-  communityDetail: null,
+  detail: null,
+  events: null,
+  members: null,
+  discussion: null,
   isPending: false,
   isFulfilled: false,
   isRejected: false,
@@ -34,7 +37,70 @@ export const getCommunityDetailThunk = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities/${payload.id}`,
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const getCommunityEventsThunk = createAsyncThunk(
+  "get_community_events",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
         `${import.meta.env.VITE_API_URL}/communities/${payload.id}/events`,
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data.Data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const getCommunityMemberThunk = createAsyncThunk(
+  "get_community_member",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities/${payload.id}/members`,
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data.Data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const getCommunityDiscussionsThunk = createAsyncThunk(
+  "get_community_discussion",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities/${payload.id}/discussions`,
       );
 
       const data = await response.json();
@@ -73,7 +139,7 @@ const communitiesSlice = createSlice({
           state.error = payload;
         },
       })
-      .addAsyncThunk(getCommunityDetailThunk, {
+      .addAsyncThunk(getCommunityEventsThunk, {
         pending: (state) => {
           state.isPending = true;
           state.isFulfilled = false;
@@ -82,12 +148,45 @@ const communitiesSlice = createSlice({
         fulfilled: (state, { payload }) => {
           state.isPending = false;
           state.isFulfilled = true;
-          state.communityDetail = payload;
+          state.events = payload;
         },
         rejected: (state, { payload }) => {
           state.isFulfilled = false;
           state.isRejected = true;
           state.error = payload.message;
+        },
+      })
+      .addAsyncThunk(getCommunityDetailThunk, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          state.detail = payload.Data;
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.isPending = false;
+          state.isRejected = true;
+          state.error = payload;
+        },
+      })
+      .addAsyncThunk(getCommunityMemberThunk, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          state.members = payload;
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.isPending = false;
+          state.error = payload;
         },
       });
   },

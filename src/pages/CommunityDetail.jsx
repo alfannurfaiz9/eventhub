@@ -2,23 +2,22 @@ import { useParams } from "react-router";
 
 import EventsCard from "../components/EventsCard.jsx";
 
-import { getCategories } from "../utils/getDatas.js";
 import { useEffect, useState } from "react";
 import Modal from "../components/Modal.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { getCommunityDetailThunk } from "../redux/slices/communitiesSlice.js";
+import { getCommunityEventsThunk } from "../redux/slices/communitiesSlice.js";
 import moment from "moment/moment.js";
 
 const CommunityDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const events = useSelector((state) => state.communitiesState.communityDetail);
+  const events = useSelector((state) => state.communitiesState.events);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    dispatch(getCommunityDetailThunk({ id }));
-  });
+    dispatch(getCommunityEventsThunk({ id }));
+  }, [dispatch, id]);
 
   return (
     <>
