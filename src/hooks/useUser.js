@@ -11,7 +11,7 @@ const useUser = () => {
   useEffect(() => {
     dispatch(
       getUserProfile({
-        token: user?.token,
+        token: user,
       }),
     );
   }, [dispatch, user]);

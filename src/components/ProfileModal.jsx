@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfileThunk } from "../redux/slices/registerSlice";
+import useUser from "../hooks/useUser";
+import { changeUserProfile } from "../redux/slices/userSlice";
 import useAuth from "../hooks/useAuth";
 
 const ProfileModal = ({ setShowModal = "" }) => {
   const dispatch = useDispatch();
 
-  const user = useAuth();
+  const token = useAuth();
+  const user = useUser();
 
-  const loading = useSelector((state) => state.registerState.isPending);
+  const loading = useSelector((state) => state.userState.isPending);
 
-  const [name, setName] = useState(user?.full_name);
-  const [address, setAddress] = useState(user?.address || "Bogor");
-  const [bio, setBio] = useState(user?.bio || "Hello this is my bio");
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [bio, setBio] = useState("");
   const [img, setImg] = useState("");
+  const [imgUpload, setImgUpload] = useState("");
 
   const handleClose = () => {
     setShowModal(false);
@@ -24,13 +27,25 @@ const ProfileModal = ({ setShowModal = "" }) => {
   const hanldeSubmit = (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    if (name.length) {
+      formData.append("full_name", name);
+    }
+    if (imgUpload) {
+      formData.append("img_url", imgUpload);
+    }
+    if (address.length) {
+      formData.append("address", address);
+    }
+
+    if (bio.length) {
+      formData.append("bio", bio);
+    }
+
     dispatch(
-      updateProfileThunk({
-        img,
-        userId: user.id,
-        full_name: name,
-        address,
-        bio,
+      changeUserProfile({
+        token: token,
+        data: formData,
       }),
     );
   };
@@ -57,13 +72,26 @@ const ProfileModal = ({ setShowModal = "" }) => {
             className="h-16 w-16 rounded-full overflow-hidden"
             htmlFor="image"
           >
-            <img
-              className="h-full w-full object-cover"
-              src={img ? img : user?.img_url}
-              alt="profile-pict"
-            />
+            {user?.img_url || img ? (
+              <img
+                className="h-full w-full object-cover"
+                src={
+                  img
+                    ? img
+                    : `${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`
+                }
+                alt="profile-pict"
+              />
+            ) : (
+              <div className="h-full w-full object-cover bg-purple text-white flex items-center justify-center text-lg">
+                <p>{`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}</p>
+              </div>
+            )}
             <input
-              onChange={(e) => setImg(URL.createObjectURL(e.target.files[0]))}
+              onChange={(e) => {
+                setImg(URL.createObjectURL(e.target.files[0]));
+                setImgUpload(e.target.files[0]);
+              }}
               className="hidden"
               type="file"
               name="image"
@@ -75,10 +103,10 @@ const ProfileModal = ({ setShowModal = "" }) => {
             <input
               onChange={(e) => setName(e.target.value)}
               value={name}
-              className="p-2 border border-gray-300 rounded-lg placeholder:text-black"
+              className="p-2 border border-gray-300 rounded-lg placeholder:text-dark-gray"
               name="full_name"
               type="text"
-              placeholder={user?.full_name}
+              placeholder="Your new name"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -86,10 +114,10 @@ const ProfileModal = ({ setShowModal = "" }) => {
             <input
               onChange={(e) => setAddress(e.target.value)}
               value={address}
-              className="p-2 border border-gray-300 rounded-lg placeholder:text-black"
+              className="p-2 border border-gray-300 rounded-lg placeholder:text-dark-gray"
               name="location"
               type="text"
-              placeholder={user?.address || "Unknown address"}
+              placeholder="Your new address"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -97,7 +125,7 @@ const ProfileModal = ({ setShowModal = "" }) => {
             <textarea
               onChange={(e) => setBio(e.target.value)}
               value={bio}
-              className="p-2 border border-gray-300 rounded-lg"
+              className="p-2 border border-gray-300 rounded-lg text-black"
               name="location"
               type="text"
               placeholder="Tell the community a little about yourself..."

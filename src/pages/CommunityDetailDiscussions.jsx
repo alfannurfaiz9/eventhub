@@ -1,7 +1,7 @@
 import { MdSend } from "react-icons/md";
 import DiscussionCard from "../components/DiscussionCard.jsx";
 
-import useAuth from "../hooks/useAuth.js";
+import useUser from "../hooks/useUser.js";
 import { useParams } from "react-router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import { getCommunityDiscussionsThunk } from "../redux/slices/communitiesSlice.j
 
 const CommunityDetailDiscussions = () => {
   const { id } = useParams();
-  const user = useAuth();
+  const user = useUser();
   const dispatch = useDispatch();
 
   const discuss = useSelector((state) => state.communitiesState.discussion);

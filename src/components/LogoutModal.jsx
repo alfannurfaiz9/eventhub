@@ -24,11 +24,12 @@ const LogoutModal = ({ setShowModal = "" }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${user}`,
           },
         },
         next: () => {
-          navigate("/login");
+          navigate("/")
+          setShowModal(false);
         },
       }),
     );

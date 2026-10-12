@@ -3,12 +3,11 @@ import { AiOutlineClose, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordThunk } from "../redux/slices/registerSlice";
-import useAuth from "../hooks/useAuth";
-
+import useUser from "../hooks/useUser";
 const ResetPasswordModal = ({ setEditModal = "" }) => {
   const dispatch = useDispatch();
 
-  const user = useAuth();
+  const user = useUser();
   const loading = useSelector((state) => state.registerState.isPending);
 
   const [error, setError] = useState(false);
@@ -51,11 +50,17 @@ const ResetPasswordModal = ({ setEditModal = "" }) => {
         </div>
         <div className="py-2 px-4 flex flex-col gap-2 text-sm">
           <div className="h-16 w-16 rounded-full overflow-hidden">
-            <img
-              className="h-full w-full object-cover"
-              src={user?.img}
-              alt="profile-pict"
-            />
+            {user?.img_url ? (
+              <img
+                className="h-full w-full object-cover"
+                src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
+                alt="profile-pict"
+              />
+            ) : (
+              <div className="h-full w-full object-cover bg-purple text-white flex items-center justify-center text-lg">
+                <p>{`${user?.full_name[0].toUpperCase()}${user?.full_name[1].toUpperCase()}`}</p>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="current_password">Current Password</label>

@@ -15,7 +15,7 @@ import { PiSignOutBold } from "react-icons/pi";
 import { AiOutlineClose } from "react-icons/ai";
 import { TbLayoutDashboard } from "react-icons/tb";
 
-import useAuth from "../hooks/useAuth.js";
+import useUser from "../hooks/useUser.js";
 import themeContext from "../context/themeContext.js";
 import { CiLight } from "react-icons/ci";
 import LogoutModal from "./LogoutModal.jsx";
@@ -36,7 +36,7 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const user = useAuth();
+  const user = useUser();
   const { theme, changeTheme } = useContext(themeContext);
 
   const renderedList =
@@ -47,8 +47,6 @@ const Navbar = () => {
   const handleLogout = () => {
     setShowModal(true);
   };
-
-  console.log(user);
 
   return (
     <>

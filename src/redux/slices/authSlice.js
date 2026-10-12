@@ -71,7 +71,7 @@ const authSlice = createSlice({
           state.isRejected = false;
         },
         fulfilled: (state, { payload }) => {
-          state.user = payload.data;
+          state.user = payload.data.token;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("Successfully loged in");

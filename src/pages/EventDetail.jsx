@@ -21,7 +21,7 @@ import {
   joinEventThunk,
   saveEventThunk,
 } from "../redux/slices/registerSlice.js";
-import useAuth from "../hooks/useAuth.js";
+import useUser from "../hooks/useUser.js"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useCommunity from "../hooks/useCommunity.js";
 import moment from "moment";
@@ -30,7 +30,7 @@ const EventDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const user = useAuth();
+  const user = useUser();
   const communities = useCommunity();
 
   const [event, setEvent] = useState(null);

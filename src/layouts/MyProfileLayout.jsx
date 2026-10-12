@@ -3,7 +3,6 @@ import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { NavLink, Outlet } from "react-router";
 import ProfileModal from "../components/ProfileModal";
 import { useState } from "react";
-import useAuth from "../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { TbPasswordUser } from "react-icons/tb";
 import ResetPasswordModal from "../components/ResetPasswordModal";
@@ -11,7 +10,6 @@ import useEvent from "../hooks/useEvent.js";
 import useUser from "../hooks/useUser.js";
 
 const MyProfileLayout = () => {
-  const user = useAuth();
   const events = useEvent();
   const userProfile = useUser();
   const communities = useSelector(
@@ -38,7 +36,7 @@ const MyProfileLayout = () => {
                 {userProfile?.img_url ? (
                   <img
                     className="h-full w-full object-cover"
-                    src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}
+                    src={`${import.meta.env.VITE_API_URL}/user/img/${userProfile?.img_url}`}
                     alt="profile-pict"
                   />
                 ) : (
@@ -79,7 +77,7 @@ const MyProfileLayout = () => {
                 <div className="flex flex-wrap gap-1 lg:gap-3 text-dark-gray text-xs items-center">
                   <div className="flex gap-1 items-center">
                     <CiLocationOn />
-                    <p>{user?.address || "Unknown address"}</p>
+                    <p>{userProfile?.address || "Unknown address"}</p>
                   </div>
                   <div className="flex gap-1 items-center">
                     <CiCalendar />
@@ -109,7 +107,7 @@ const MyProfileLayout = () => {
                       ? 0
                       : userProfile?.role === "admin"
                         ? communities.length
-                        : user?.community_id?.length}
+                        : userProfile?.community_id?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Communities</p>
                 </div>
