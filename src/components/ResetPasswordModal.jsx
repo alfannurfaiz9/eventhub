@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useUser from "../hooks/useUser";
 import useAuth from "../hooks/useAuth";
 import { resetPassword } from "../redux/slices/userSlice";
+
 const ResetPasswordModal = ({ setEditModal = "" }) => {
   const dispatch = useDispatch();
 

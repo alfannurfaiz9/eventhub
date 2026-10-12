@@ -8,10 +8,17 @@ import { TbPasswordUser } from "react-icons/tb";
 import ResetPasswordModal from "../components/ResetPasswordModal";
 import useEvent from "../hooks/useEvent.js";
 import useUser from "../hooks/useUser.js";
+import useMyEvent from "../hooks/useMyEvent.js";
+import useMyCommunity from "../hooks/useMyCommunity.js";
+import useMySavedEvent from "../hooks/useMySavedEvent.js";
 
 const MyProfileLayout = () => {
   const events = useEvent();
   const userProfile = useUser();
+  const myEvent = useMyEvent();
+  const mySavedEvent = useMySavedEvent();
+  const myCommunity = useMyCommunity();
+
   const communities = useSelector(
     (state) => state.communitiesState.communities,
   );
@@ -97,7 +104,7 @@ const MyProfileLayout = () => {
                     {userProfile?.role === "organizer" ||
                     userProfile?.role === "admin"
                       ? events.length
-                      : userProfile?.event_id?.length}
+                      : myEvent?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Events</p>
                 </div>
@@ -107,7 +114,7 @@ const MyProfileLayout = () => {
                       ? 0
                       : userProfile?.role === "admin"
                         ? communities.length
-                        : userProfile?.community_id?.length}
+                        : myCommunity?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Communities</p>
                 </div>
@@ -116,7 +123,7 @@ const MyProfileLayout = () => {
                     {userProfile?.role === "organizer" ||
                     userProfile?.role === "admin"
                       ? 0
-                      : userProfile?.saved_event_id?.length}
+                      : mySavedEvent?.length}
                   </p>
                   <p className="text-xs text-dark-gray">Saved</p>
                 </div>
@@ -129,7 +136,7 @@ const MyProfileLayout = () => {
                 {userProfile?.role === "organizer" ||
                 userProfile?.role === "admin"
                   ? events.length
-                  : userProfile?.event_id?.length}
+                  : myEvent?.length}
               </p>
               <p className="text-xs text-dark-gray">Events</p>
             </div>
@@ -139,7 +146,7 @@ const MyProfileLayout = () => {
                   ? 0
                   : userProfile?.role === "admin"
                     ? communities.length
-                    : userProfile?.community_id?.length}
+                    : myCommunity?.length}
               </p>
               <p className="text-xs text-dark-gray">Communities</p>
             </div>
@@ -148,7 +155,7 @@ const MyProfileLayout = () => {
                 {userProfile?.role === "organizer" ||
                 userProfile?.role === "admin"
                   ? 0
-                  : userProfile?.saved_event_id?.length}
+                  : mySavedEvent?.length}
               </p>
               <p className="text-xs text-dark-gray">Saved</p>
             </div>
@@ -192,7 +199,7 @@ const MyProfileLayout = () => {
               {userProfile?.role === "organizer" ||
               userProfile?.role === "admin"
                 ? events.length
-                : userProfile?.event_id?.length}
+                : myEvent?.length}
               )
             </span>
           </NavLink>
@@ -209,7 +216,7 @@ const MyProfileLayout = () => {
                 ? 0
                 : userProfile?.role === "admin"
                   ? communities.length
-                  : userProfile?.community_id?.length}
+                  : myCommunity?.length}
               )
             </span>
           </NavLink>
@@ -225,7 +232,7 @@ const MyProfileLayout = () => {
               {userProfile?.role === "organizer" ||
               userProfile?.role === "admin"
                 ? 0
-                : userProfile?.saved_event_id?.length}
+                : mySavedEvent?.length}
               )
             </span>
           </NavLink>
