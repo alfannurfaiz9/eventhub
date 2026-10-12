@@ -220,7 +220,7 @@ const EventDetail = () => {
                   <div
                     className={`${user ? "grid" : "hidden"} grid-cols-[auto_1fr] gap-4`}
                   >
-                    {user.img_url ? (
+                    {user?.img_url ? (
                       <img
                         className="w-7 h-7 rounded-full"
                         src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}

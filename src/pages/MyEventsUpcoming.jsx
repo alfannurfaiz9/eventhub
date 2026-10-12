@@ -1,33 +1,30 @@
+import moment from "moment/moment";
 import EventsCard from "../components/EventsCard";
 import useAuth from "../hooks/useAuth";
-import { getCategories } from "../utils/getDatas";
-import { useSelector } from "react-redux";
+import useMyEvent from "../hooks/useMyEvent"
 
 const MyEvents = () => {
   const user = useAuth();
-
-  const events = useSelector((state) => state.eventsState.events);
-  const joinedEvent = events?.filter((e) => user?.event_id?.includes(e.id));
-
-  const rendered =
-    user?.role === "organizer" || user?.role === "admin" ? events : joinedEvent;
+  const events = useMyEvent();
 
   return (
     <>
       <section
-        className={`${rendered?.length ? "h-fit" : "min-h-dvh"} py-6 px-4 lg:px-24 bg-gray grid lg:grid-cols-3 gap-4`}
+        className={`${events?.length ? "h-fit" : "min-h-dvh"} py-6 px-4 lg:px-24 bg-gray grid lg:grid-cols-3 gap-4`}
       >
-        {rendered?.map((event, idx) => (
+        {events?.map((event, idx) => (
           <EventsCard
             key={`${event.id}-${idx}`}
             id={event.id}
-            img={event.img}
-            cat={getCategories(event)}
+            img={`${import.meta.env.VITE_API_URL}/events/img/${event.img_url}`}
+            cat={event.category.split(",")}
             title={event.title}
-            date={event.date}
-            time={event.time}
+            date={moment(event.start_at).add(1, "year").format("LL")}
+            time={
+              moment(event.start_at).add(1, "day").format("LLL").split(" ")[3]
+            }
             location={event.location}
-            attendees={event.attendees}
+            attendees={event.total_attendee}
             capacity={event.capacity}
           />
         ))}

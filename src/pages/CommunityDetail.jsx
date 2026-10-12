@@ -15,6 +15,8 @@ const CommunityDetail = () => {
   const events = useSelector((state) => state.communitiesState.events);
   const [showModal, setShowModal] = useState(false);
 
+  console.log(events)
+
   useEffect(() => {
     dispatch(getCommunityEventsThunk({ id }));
   }, [dispatch, id]);
