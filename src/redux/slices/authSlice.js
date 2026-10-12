@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import { removeUser } from "./userSlice";
 
 const initialState = {
   user: null,
@@ -36,7 +37,7 @@ export const loginThunk = createAsyncThunk(
 
 export const logoutThunk = createAsyncThunk(
   "logout_user",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/logout`,
@@ -46,6 +47,8 @@ export const logoutThunk = createAsyncThunk(
       if (!response.ok) {
         throw await response.json();
       }
+
+      dispatch(removeUser());
 
       return payload;
     } catch (error) {

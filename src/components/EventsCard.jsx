@@ -4,11 +4,18 @@ import { RxPeople } from "react-icons/rx";
 import { CiBookmark } from "react-icons/ci";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { joinEventThunk, saveEventThunk } from "../redux/slices/registerSlice";
 import useAuth from "../hooks/useAuth.js";
 import { FaBookmark } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useMyEvent from "../hooks/useMyEvent.js";
+import useMySavedEvent from "../hooks/useMySavedEvent.js";
+import {
+  joinEvent,
+  leaveEvent,
+  saveEvent,
+  unsaveEvent,
+} from "../redux/slices/userSlice.js";
 
 const EventsCard = ({
   id,
@@ -24,10 +31,15 @@ const EventsCard = ({
 }) => {
   const dispatch = useDispatch();
   const user = useAuth();
+  const myEvent = useMyEvent();
+  const myEventId = myEvent?.map((m) => m.id);
+  const mySavedEvent = useMySavedEvent();
+  const mySavedEventId = mySavedEvent?.map((m) => m.id);
+
+  const loading = useSelector((state) => state?.userState?.isPending);
 
   const [selectedId, setSelectedId] = useState({ join: null, save: null });
 
-  const register = useSelector((state) => state.registerState);
   const disabledEvent = attendees === capacity;
 
   const handleJoin = (id) => {
@@ -48,10 +60,21 @@ const EventsCard = ({
       };
     });
 
+    if (myEventId.includes(id)) {
+      dispatch(
+        leaveEvent({
+          id: id,
+          token: user,
+        }),
+      );
+
+      return;
+    }
+
     dispatch(
-      joinEventThunk({
-        userId: user.id,
-        eventId: id,
+      joinEvent({
+        id: id,
+        token: user,
       }),
     );
   };
@@ -74,21 +97,32 @@ const EventsCard = ({
       };
     });
 
+    if (mySavedEventId.includes(id)) {
+      dispatch(
+        unsaveEvent({
+          id: id,
+          token: user,
+        }),
+      );
+
+      return;
+    }
+
     dispatch(
-      saveEventThunk({
-        userId: user.id,
-        eventId: id,
+      saveEvent({
+        id: id,
+        token: user,
       }),
     );
   };
 
   useEffect(() => {
     (() => {
-      if (!register.isPending) {
+      if (!loading) {
         setSelectedId({ join: null, save: null });
       }
     })();
-  }, [register.isPending]);
+  }, [loading]);
 
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">
@@ -151,11 +185,11 @@ const EventsCard = ({
               user?.role === "admin" ||
               disabledEvent
             }
-            className={`${user?.event_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
+            className={`${myEventId?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1.5 px-4 w-10/12 rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
           >
             {selectedId.join === id ? (
               <AiOutlineLoading3Quarters className="text-xl animate-spin" />
-            ) : user?.event_id?.includes(id) ? (
+            ) : myEventId?.includes(id) ? (
               "✔ Registered"
             ) : (
               "Join Event"
@@ -168,21 +202,17 @@ const EventsCard = ({
               user?.role === "admin" ||
               disabledEvent
             }
-            className={`${user?.saved_event_id?.includes(id) ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
+            className={`${mySavedEventId?.includes(id) ? "text-primary bg-light-primary" : "text-dark-gray border-gray-300"} py-1 px-4 border rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray`}
           >
             {selectedId.save === id ? (
               <AiOutlineLoading3Quarters className="text-sm animate-spin" />
             ) : (
               <>
                 <CiBookmark
-                  className={
-                    user?.saved_event_id?.includes(id) ? "hidden" : "block"
-                  }
+                  className={mySavedEventId?.includes(id) ? "hidden" : "block"}
                 />
                 <FaBookmark
-                  className={
-                    user?.saved_event_id?.includes(id) ? "block" : "hidden"
-                  }
+                  className={mySavedEventId?.includes(id) ? "block" : "hidden"}
                 />
               </>
             )}

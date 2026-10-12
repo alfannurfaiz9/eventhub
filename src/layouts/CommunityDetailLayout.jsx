@@ -8,16 +8,19 @@ import Modal from "../components/Modal";
 import useAuth from "../hooks/useAuth";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { getCommunityDetailThunk } from "../redux/slices/communitiesSlice";
+import useMyCommunity from "../hooks/useMyCommunity"
 
 const CommunityDetailLayout = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
   const user = useAuth();
+  const myCommunity = useMyCommunity();
+  const myCommunityId = myCommunity.map((m) => m.id);
 
   const community = useSelector((state) => state.communitiesState.detail);
 
-  const joinedCommunity = user?.community_id?.includes(Number(id));
+  const joinedCommunity = myCommunityId?.includes(Number(id));
   const [showModal, setShowModal] = useState(false);
   const register = useSelector((state) => state.registerState);
 

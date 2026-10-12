@@ -43,7 +43,7 @@ export const getUserProfile = createAsyncThunk(
 
 export const changeUserProfile = createAsyncThunk(
   "change_profile",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/user/edit`,
@@ -56,6 +56,10 @@ export const changeUserProfile = createAsyncThunk(
         },
       );
 
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
+
       if (!response.ok) {
         throw await response.json().Data;
       }
@@ -67,7 +71,7 @@ export const changeUserProfile = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "reset_password",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/user/change-password`,
@@ -81,6 +85,10 @@ export const resetPassword = createAsyncThunk(
       );
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
 
       if (!response.ok) {
         throw data;
@@ -98,7 +106,7 @@ export const resetPassword = createAsyncThunk(
 
 export const getMyEvent = createAsyncThunk(
   "get_my_event",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/user/event`,
@@ -110,6 +118,10 @@ export const getMyEvent = createAsyncThunk(
       );
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
 
       if (!response.ok) {
         throw data;
@@ -124,7 +136,7 @@ export const getMyEvent = createAsyncThunk(
 
 export const getMyCommunity = createAsyncThunk(
   "get_my_community",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/user/community`,
@@ -136,6 +148,10 @@ export const getMyCommunity = createAsyncThunk(
       );
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
 
       if (!response.ok) {
         throw data;
@@ -150,7 +166,7 @@ export const getMyCommunity = createAsyncThunk(
 
 export const getMySavedEvent = createAsyncThunk(
   "get_my_saved_event",
-  async (payload, { rejectWithValue }) => {
+  async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/user/saved`,
@@ -163,6 +179,10 @@ export const getMySavedEvent = createAsyncThunk(
 
       const data = await response.json();
 
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
+
       if (!response.ok) {
         throw data;
       }
@@ -174,10 +194,130 @@ export const getMySavedEvent = createAsyncThunk(
   },
 );
 
+export const joinEvent = createAsyncThunk(
+  "join_event",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/events/${payload.id}/join`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMyEvent({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const leaveEvent = createAsyncThunk(
+  "leave_event",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/events/${payload.id}/leave`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMyEvent({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const saveEvent = createAsyncThunk(
+  "save_event",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/events/${payload.id}/save`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMySavedEvent({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const unsaveEvent = createAsyncThunk(
+  "unsave_event",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/events/${payload.id}/unsave`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMySavedEvent({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    removeUser: () => {
+      return initialState;
+    },
+  },
   extraReducers: (builder) => {
     return builder
       .addAsyncThunk(getUserProfile, {
@@ -285,8 +425,77 @@ const userSlice = createSlice({
           state.isPending = false;
           state.isRejected = true;
         },
+      })
+      .addAsyncThunk(joinEvent, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(leaveEvent, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(saveEvent, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(unsaveEvent, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
       });
   },
 });
 
+export const { removeUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,5 +1,3 @@
-import { categories } from "../utils/datas.js";
-
 import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router";
@@ -8,13 +6,14 @@ import { joinCommunityThunk } from "../redux/slices/registerSlice.js";
 import useAuth from "../hooks/useAuth.js";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useEffect, useState } from "react";
+import useMyCommunity from "../hooks/useMyCommunity.js";
 
 const CommunitiesCard = ({
   id,
   img,
   name,
   desc,
-  cat,
+  // cat,
   member,
   upcoming_event,
   setShowModal,
@@ -22,6 +21,9 @@ const CommunitiesCard = ({
   const dispatch = useDispatch();
 
   const user = useAuth();
+  const myCommunity = useMyCommunity();
+  const myCommunityId = myCommunity?.map((m) => m.id);
+
   const register = useSelector((state) => state.registerState);
 
   const [selectedId, setSelectedId] = useState(null);
@@ -102,11 +104,11 @@ const CommunitiesCard = ({
           <button
             onClick={() => handleJoin(id)}
             disabled={user?.role === "organizer" || user?.role === "admin"}
-            className={`${user?.community_id?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
+            className={`${myCommunityId?.includes(id) ? "bg-green text-white" : "bg-primary text-white"} text-sm py-1 w-full rounded-lg cursor-pointer hover:opacity-80 disabled:bg-gray-300 disabled:text-dark-gray flex justify-center`}
           >
             {selectedId === id ? (
               <AiOutlineLoading3Quarters className="text-xl animate-spin" />
-            ) : user?.community_id?.includes(id) ? (
+            ) : myCommunityId?.includes(id) ? (
               "✔ Registered"
             ) : (
               "Join Community"
