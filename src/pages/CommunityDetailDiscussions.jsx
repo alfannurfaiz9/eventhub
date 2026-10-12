@@ -31,7 +31,7 @@ const CommunityDetailDiscussions = () => {
   return (
     <div className="grid gap-4">
       <div className={`${user ? "flex" : "hidden"} items-center gap-2`}>
-        {user.img_url ? (
+        {user?.img_url ? (
           <img
             className="w-7 h-7 rounded-full"
             src={`${import.meta.env.VITE_API_URL}/user/img/${user?.img_url}`}

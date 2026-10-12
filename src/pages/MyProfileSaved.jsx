@@ -1,14 +1,12 @@
-import { getCategories } from "../utils/getDatas";
-
 import EventsCard from "../components/EventsCard";
-import { useSelector } from "react-redux";
 import useAuth from "../hooks/useAuth";
+import useMySavedEvent from "../hooks/useMySavedEvent";
+import moment from "moment/moment";
 
 const MyProfileEvent = () => {
   const user = useAuth();
+  const savedEvent = useMySavedEvent();
 
-  const events = useSelector((state) => state.eventsState.events);
-  const savedEvent = events.filter((e) => user?.saved_event_id?.includes(e.id));
   return (
     <>
       <section
@@ -18,13 +16,15 @@ const MyProfileEvent = () => {
           <EventsCard
             key={`${event.id}-${idx}`}
             id={event.id}
-            img={event.img}
-            cat={getCategories(event)}
+            img={`${import.meta.env.VITE_API_URL}/events/img/${event.img_url}`}
+            cat={event.category.split(",")}
             title={event.title}
-            date={event.date}
-            time={event.time}
+            date={moment(event.start_at).add(1, "year").format("LL")}
+            time={
+              moment(event.start_at).add(1, "day").format("LLL").split(" ")[3]
+            }
             location={event.location}
-            attendees={event.attendees}
+            attendees={event.total_attendee}
             capacity={event.capacity}
           />
         ))}

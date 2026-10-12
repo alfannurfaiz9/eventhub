@@ -1,10 +1,12 @@
 import { NavLink, Outlet } from "react-router";
 import useAuth from "../hooks/useAuth";
-import { useSelector } from "react-redux";
+import useMyEvent from "../hooks/useMyEvent";
+import useMySavedEvent from "../hooks/useMySavedEvent";
 
 const MyEventLayout = () => {
   const user = useAuth();
-  const events = useSelector((state) => state.eventsState.events);
+  const events = useMyEvent();
+  const saved = useMySavedEvent();
 
   return (
     <>
@@ -23,7 +25,7 @@ const MyEventLayout = () => {
               (
               {user?.role === "organizer" || user?.role === "admin"
                 ? events?.length
-                : user?.event_id?.length}
+                : events?.length}
               )
             </span>
           </NavLink>
@@ -46,7 +48,7 @@ const MyEventLayout = () => {
               (
               {user?.role === "organizer" || user?.role === "admin"
                 ? 0
-                : user?.saved_event_id?.length}
+                : saved?.length}
               )
             </span>
           </NavLink>

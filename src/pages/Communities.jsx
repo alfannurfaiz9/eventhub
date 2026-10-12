@@ -16,6 +16,7 @@ const Communities = () => {
   const user = registeredUser?.find((u) => u.id === logedInUser);
 
   const communities = useCommunity();
+  console.log(communities)
 
   const [activeLink, setActiveLink] = useState("");
   const [activeFilter, setActiveFilter] = useState("");

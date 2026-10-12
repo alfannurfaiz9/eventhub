@@ -24,7 +24,7 @@ const CommunityDetail = () => {
             {member?.img_url ? (
               <img
                 className="h-8 w-8 rounded-full"
-                src={member.img_url}
+                src={`${import.meta.env.VITE_API_URL}/user/img/${member.img_url}`}
                 alt="profie-pict"
               />
             ) : (
