@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import { useDispatch, useSelector } from "react-redux";
-import { resetPasswordThunk } from "../redux/slices/registerSlice";
 import useUser from "../hooks/useUser";
+import useAuth from "../hooks/useAuth";
+import { resetPassword } from "../redux/slices/userSlice";
 const ResetPasswordModal = ({ setEditModal = "" }) => {
   const dispatch = useDispatch();
 
   const user = useUser();
+  const token = useAuth();
   const loading = useSelector((state) => state.registerState.isPending);
 
   const [error, setError] = useState(false);
@@ -19,13 +21,21 @@ const ResetPasswordModal = ({ setEditModal = "" }) => {
   const hanldeSubmit = (e) => {
     e.preventDefault();
 
-    if (user.password !== e.target.current_password.value) {
+    const body = {
+      current_password: e.target.current_password.value,
+      new_password: e.target.new_password.value,
+    };
+
+    if (e.target.new_password.value.length < 7) {
       setError(true);
     } else {
       dispatch(
-        resetPasswordThunk({
-          userId: user.id,
-          new_password: e.target.new_password.value,
+        resetPassword({
+          token,
+          body,
+          next: () => {
+            setEditModal(false);
+          },
         }),
       );
     }
