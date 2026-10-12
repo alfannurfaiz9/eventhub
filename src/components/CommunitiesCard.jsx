@@ -2,11 +2,11 @@ import { RxPeople } from "react-icons/rx";
 import { CiCalendar } from "react-icons/ci";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { joinCommunityThunk } from "../redux/slices/registerSlice.js";
 import useAuth from "../hooks/useAuth.js";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import useMyCommunity from "../hooks/useMyCommunity.js";
+import { joinCommunity, leaveCommunity } from "../redux/slices/userSlice.js";
 
 const CommunitiesCard = ({
   id,
@@ -24,7 +24,7 @@ const CommunitiesCard = ({
   const myCommunity = useMyCommunity();
   const myCommunityId = myCommunity?.map((m) => m.id);
 
-  const register = useSelector((state) => state.registerState);
+  const loading = useSelector((state) => state?.userState?.isPending);
 
   const [selectedId, setSelectedId] = useState(null);
 
@@ -41,21 +41,31 @@ const CommunitiesCard = ({
       return;
     }
 
+    if (myCommunityId.includes(id)) {
+      dispatch(
+        leaveCommunity({
+          id: id,
+          token: user,
+        }),
+      );
+      return;
+    }
+
     dispatch(
-      joinCommunityThunk({
-        userId: user.id,
-        communityId: id,
+      joinCommunity({
+        id: id,
+        token: user,
       }),
     );
   };
 
   useEffect(() => {
     (() => {
-      if (!register.isPending) {
+      if (!loading) {
         setSelectedId(null);
       }
     })();
-  }, [register.isPending]);
+  }, [loading]);
 
   return (
     <article className="grid gap-2 border border-gray-300 rounded-lg overflow-hidden">

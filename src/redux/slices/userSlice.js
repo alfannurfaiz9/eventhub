@@ -164,6 +164,64 @@ export const getMyCommunity = createAsyncThunk(
   },
 );
 
+export const joinCommunity = createAsyncThunk(
+  "join_community",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities/${payload.id}/join`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMyCommunity({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const leaveCommunity = createAsyncThunk(
+  "leave_community",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/communities/${payload.id}/leave`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${payload.token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      dispatch(getMyCommunity({ token: payload.token }));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 export const getMySavedEvent = createAsyncThunk(
   "get_my_saved_event",
   async (payload, { dispatch, rejectWithValue }) => {
@@ -400,6 +458,40 @@ const userSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.community = payload.Data;
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(joinCommunity, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(leaveEvent, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          toast.success(payload.Message);
           state.isPending = false;
           state.isFulfilled = true;
         },
