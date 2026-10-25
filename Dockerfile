@@ -2,6 +2,8 @@ FROM node:24.18.0 AS builder
 
 WORKDIR /app
 
+ENV VITE_API_URL=/api
+
 COPY . .
 
 RUN npm ci
