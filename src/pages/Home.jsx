@@ -21,7 +21,7 @@ import useTestimonies from "../hooks/useTestimonies.js";
 const Homepage = () => {
   const user = useAuth();
   const events = useEvent();
-  const communities = useCommunity();
+  const communities = useCommunity({params: "/communities"});
   const testimonies = useTestimonies();
 
   const renderedCommunities = communities?.filter((comm) =>
@@ -106,7 +106,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      <section
+      {/* <section
         className={`${getRecommendation?.length ? "block" : "hidden"} py-6 px-6 lg:px-12 bg-med-gray`}
       >
         <div className="flex items-center justify-between">
@@ -146,7 +146,7 @@ const Homepage = () => {
               />
             ))}
         </div>
-      </section>
+      </section> */}
       <section className="py-6 px-6 lg:px-12 bg-med-gray">
         <div className="flex items-center justify-between">
           <div className="w-10/12">

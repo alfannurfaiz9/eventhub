@@ -14,10 +14,10 @@ const initialState = {
 
 export const getCommunitiesThunk = createAsyncThunk(
   "get_communities",
-  async (_, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/communities`,
+        `${import.meta.env.VITE_API_URL}${payload.params}`,
       );
       const data = await response.json();
 

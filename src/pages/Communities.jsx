@@ -15,8 +15,6 @@ const Communities = () => {
   );
   const user = registeredUser?.find((u) => u.id === logedInUser);
 
-  const communities = useCommunity();
-
   const [activeLink, setActiveLink] = useState("");
   const [activeFilter, setActiveFilter] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,39 +23,15 @@ const Communities = () => {
   const category = searchParams.get("category") || "";
   const status = filterParams.get("status") || "";
 
+  const communities = useCommunity({
+    params: search
+      ? `/communities?name=${search}`
+      : category
+        ? `/communities?category=${category}`
+        : "/communities",
+  });
+
   const [showModal, setShowModal] = useState(false);
-
-  const filteredCategory = () => {
-    return communities.filter((community) => {
-      const searchFilter = search.length
-        ? community.name.toLowerCase().includes(search)
-        : community;
-
-      const catId = categories.filter(
-        (cat) => cat.name.toLowerCase() === category,
-      )[0]?.id;
-
-      const categoryFilter = category.length
-        ? community.categories.includes(catId)
-        : community;
-
-      const joinedEvent = user?.community_id?.includes(community.id);
-
-      const notJoinedEvent = !user?.community_id?.includes(community.id);
-
-      let statusFilter;
-
-      if (status === "joined") {
-        statusFilter = joinedEvent;
-      } else if (status === "not-joined") {
-        statusFilter = notJoinedEvent;
-      } else {
-        statusFilter = community;
-      }
-
-      return searchFilter && categoryFilter && statusFilter;
-    });
-  };
 
   const handleUserFilter = (e) => {
     const newParams = new URLSearchParams(filterParams);
@@ -178,12 +152,12 @@ const Communities = () => {
         <div className="py-6 bg-med-gray">
           <p className="text-sm text-dark-gray">
             <span className="font-bold text-black mr-2">
-              {filteredCategory().length}
+              {communities?.length}
             </span>
             communites found
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-4 my-6 gap-4">
-            {filteredCategory().map((community, idx) => (
+            {communities?.map((community, idx) => (
               <CommunitiesCard
                 key={`${community.id}-${idx}`}
                 id={community.id}

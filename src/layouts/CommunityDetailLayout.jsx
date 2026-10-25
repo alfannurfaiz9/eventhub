@@ -16,7 +16,7 @@ const CommunityDetailLayout = () => {
 
   const user = useAuth();
   const myCommunity = useMyCommunity();
-  const myCommunityId = myCommunity.map((m) => m.id);
+  const myCommunityId = myCommunity?.map((m) => m.id);
 
   const community = useSelector((state) => state.communitiesState.detail);
 

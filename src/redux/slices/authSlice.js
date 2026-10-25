@@ -25,6 +25,8 @@ export const loginThunk = createAsyncThunk(
         throw data.Message;
       }
 
+      console.log(data)
+
       return {
         data: data.Data,
         next: payload.next,

@@ -31,7 +31,7 @@ const EventDetail = () => {
   const dispatch = useDispatch();
 
   const user = useUser();
-  const communities = useCommunity();
+  const communities = useCommunity({params: "/communities"});
 
   const [event, setEvent] = useState(null);
 
