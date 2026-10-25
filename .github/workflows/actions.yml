@@ -17,7 +17,7 @@ jobs:
           echo "ENV_TAG=dev" >> "$GITHUB_ENV"
 
       - name: run docker build
-        run: docker build -t $IMAGE:$ENV_TAG -t $IMAGE:$SHA_TAG .
+        run: docker build --no-cache -t $IMAGE:$ENV_TAG -t $IMAGE:$SHA_TAG .
 
       - name: login to ghcr
         run: |
