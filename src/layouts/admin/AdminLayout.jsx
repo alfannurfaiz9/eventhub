@@ -2,19 +2,19 @@ import { CiCalendar } from "react-icons/ci";
 import { IoShieldOutline } from "react-icons/io5";
 import { RxPeople } from "react-icons/rx";
 import { NavLink, Outlet, useNavigate } from "react-router";
-import useAuth from "../../hooks/useAuth";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const user = useAuth();
+  const role = useSelector((state) => state?.authState?.role);
 
   useEffect(() => {
-    user?.role !== "admin" && navigate("/");
-  }, [user?.role, navigate]);
+    role !== "admin" && navigate("/");
+  }, [role, navigate]);
 
   return (
-    user?.role === "admin" && (
+    role === "admin" && (
       <section className="py-6 px-4 lg:px-24 bg-gray flex flex-col gap-6 min-h-dvh">
         <section className="flex gap-4 lg:gap-0 flex-col lg:flex-row lg:items-center justify-between">
           <div className="flex gap-4">

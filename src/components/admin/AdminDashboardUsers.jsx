@@ -7,7 +7,8 @@ const AdminDashboardUsers = () => {
   const registeredUsers = useSelector(
     (state) => state.registerState.registeredUser,
   );
-  const totalUsers = [organizer, ...registeredUsers];
+  const totalUsers = organizer &&
+    registeredUsers && [organizer, ...registeredUsers];
 
   return (
     <section className="grid gap-4">

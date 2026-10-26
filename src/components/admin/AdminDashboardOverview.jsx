@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 const AdminDashboardOverview = () => {
   const organizer = JSON.parse(import.meta.env.VITE_ORGANIZER);
   const registeredUsers = useSelector(
-    (state) => state.registerState.registeredUser,
+    (state) => state?.registerState?.registeredUser,
   );
-  const totalUsers = [organizer, ...registeredUsers];
+  const totalUsers = organizer &&
+    registeredUsers && [organizer, ...registeredUsers];
 
   const events = useSelector((state) => state.eventsState.events);
   const communities = useSelector(
