@@ -7,10 +7,13 @@ const useMyEvent = () => {
   const dispatch = useDispatch();
   const token = useAuth();
   const event = useSelector((state) => state.userState.event);
+  const role = useSelector((state) => state?.userState?.user?.role);
 
   useEffect(() => {
-    dispatch(getMyEvent({ token }));
-  }, [dispatch, token]);
+    if (role === "attendee") {
+      dispatch(getMyEvent({ token }));
+    }
+  }, [dispatch, token, role]);
 
   return event;
 };

@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
-import useAuth from "../../hooks/useAuth.js";
+import { useSelector } from "react-redux";
 
 const OrganizerLayout = () => {
   const navigate = useNavigate();
-  const user = useAuth();
+  const role = useSelector((state) => state?.authState?.role);
 
   useEffect(() => {
-    user?.role !== "organizer" && navigate("/");
-  }, [user?.role, navigate]);
+    role !== "organizer" && navigate("/");
+  }, [role, navigate]);
 
-  return <>{user?.role === "organizer" && <Outlet />}</>;
+  return <>{role === "organizer" && <Outlet />}</>;
 };
 
 export default OrganizerLayout;

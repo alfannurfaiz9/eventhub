@@ -7,10 +7,13 @@ const useMySavedEvent = () => {
   const dispatch = useDispatch();
   const token = useAuth();
   const saved = useSelector((state) => state.userState.saved);
+  const role = useSelector((state) => state?.userState?.user?.role);
 
   useEffect(() => {
-    dispatch(getMySavedEvent({ token }));
-  }, [dispatch, token]);
+    if (role === "attendee") {
+      dispatch(getMySavedEvent({ token }));
+    }
+  }, [dispatch, token, role]);
 
   return saved;
 };

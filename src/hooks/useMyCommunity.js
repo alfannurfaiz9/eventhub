@@ -7,10 +7,13 @@ const useMyCommunity = () => {
   const dispatch = useDispatch();
   const token = useAuth();
   const community = useSelector((state) => state.userState.community);
+  const role = useSelector((state) => state?.userState?.user?.role);
 
   useEffect(() => {
-    dispatch(getMyCommunity({ token }));
-  }, [dispatch, token]);
+    if (role === "attendee") {
+      dispatch(getMyCommunity({ token }));
+    }
+  }, [dispatch, token, role]);
 
   return community;
 };

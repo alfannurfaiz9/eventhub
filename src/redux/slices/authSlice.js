@@ -4,6 +4,7 @@ import { removeUser } from "./userSlice";
 
 const initialState = {
   user: null,
+  role: null,
   isPending: false,
   isFulfilled: false,
   isRejected: false,
@@ -25,7 +26,7 @@ export const loginThunk = createAsyncThunk(
         throw data.Message;
       }
 
-      console.log(data)
+      console.log(data);
 
       return {
         data: data.Data,
@@ -77,6 +78,7 @@ const authSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.user = payload.data.token;
+          state.role = payload.data.role;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("Successfully loged in");
@@ -100,6 +102,7 @@ const authSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           state.user = null;
+          state.role = null;
           state.isPending = false;
           state.isFulfilled = true;
           toast.success("You have been logged out successfully");

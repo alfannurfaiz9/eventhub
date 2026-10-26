@@ -19,6 +19,7 @@ import useUser from "../hooks/useUser.js";
 import themeContext from "../context/themeContext.js";
 import { CiLight } from "react-icons/ci";
 import LogoutModal from "./LogoutModal.jsx";
+import { useSelector } from "react-redux";
 
 const guestAndAdminList = [
   { icon: BiHomeAlt, name: "Explore", link: "/explore" },
@@ -37,12 +38,11 @@ const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
 
   const user = useUser();
+  const role = useSelector((state) => state?.authState?.role);
   const { theme, changeTheme } = useContext(themeContext);
 
   const renderedList =
-    !user || user.role === "admin"
-      ? guestAndAdminList
-      : attendeeAndOrganizerList;
+    !user || role === "admin" ? guestAndAdminList : attendeeAndOrganizerList;
 
   const handleLogout = () => {
     setShowModal(true);
@@ -86,7 +86,7 @@ const Navbar = () => {
             </ul>
           </div>
           <div
-            className={user ? "hidden" : "hidden lg:flex items-center gap-4"}
+            className={role ? "hidden" : "hidden lg:flex items-center gap-4"}
           >
             <p className="px-1 text-sm text-dark-gray">Browsing as guest</p>
             <div
@@ -108,10 +108,10 @@ const Navbar = () => {
             </Link>
           </div>
           <div
-            className={user ? "hidden lg:flex items-center gap-4" : "hidden"}
+            className={role ? "hidden lg:flex items-center gap-4" : "hidden"}
           >
-            <div className={user ? "flex items-center gap-4" : "hidden"}>
-              <div className={user?.role === "organizer" ? "block" : "hidden"}>
+            <div className={role ? "flex items-center gap-4" : "hidden"}>
+              <div className={role === "organizer" ? "block" : "hidden"}>
                 <NavLink
                   to="/dashboard"
                   className={({ isActive }) =>
@@ -122,7 +122,7 @@ const Navbar = () => {
                   <p className="text-xs font-semibold">Dashboard</p>
                 </NavLink>
               </div>
-              <div className={user?.role === "admin" ? "block" : "hidden"}>
+              <div className={role === "admin" ? "block" : "hidden"}>
                 <NavLink
                   to="/admin"
                   className={({ isActive }) =>
@@ -155,7 +155,7 @@ const Navbar = () => {
                 />
               </div>
             </div>
-            <div className={user ? "relative hidden lg:block" : "hidden"}>
+            <div className={role ? "relative hidden lg:block" : "hidden"}>
               <button
                 onClick={() => setShowPopUp(!showPopUp)}
                 className="cursor-pointer"
@@ -198,7 +198,7 @@ const Navbar = () => {
             <div
               className={`${theme === "light" ? "text-black" : "text-white"} lg:hidden flex items-center gap-4`}
             >
-              <div className={user ? "flex items-center" : "hidden"}>
+              <div className={role ? "flex items-center" : "hidden"}>
                 <Link to="/notifications" className="cursor-pointer relative">
                   <div className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 z-10 flex items-center justify-center rounded-full bg-primary text-white">
                     <p className="text-[7px]">1</p>
@@ -235,7 +235,7 @@ const Navbar = () => {
             <div
               className={`${showMenu ? "block" : "hidden"} absolute bg-white top-9 right-0 min-w-60 rounded-lg shadow-sm border border-gray-300`}
             >
-              <div className={user ? "p-2 flex items-center gap-2" : "hidden"}>
+              <div className={role ? "p-2 flex items-center gap-2" : "hidden"}>
                 {user?.img_url && user?.img_url !== null ? (
                   <img
                     className="w-6 h-6 lg:w-7 lg:h-7 rounded-full"
@@ -253,11 +253,7 @@ const Navbar = () => {
                 </div>
               </div>
               <ul>
-                <li
-                  className={
-                    user && user?.role === "admin" ? "w-full" : "hidden"
-                  }
-                >
+                <li className={role === "admin" ? "w-full" : "hidden"}>
                   <NavLink
                     to="/admin"
                     className={({ isActive }) =>
@@ -269,9 +265,7 @@ const Navbar = () => {
                   </NavLink>
                 </li>
                 <li
-                  className={
-                    user && user?.role === "organizer" ? "w-full" : "hidden"
-                  }
+                  className={role === "organizer" ? "w-full" : "hidden"}
                 >
                   <NavLink
                     to="/dashboard"
@@ -296,7 +290,7 @@ const Navbar = () => {
                     </NavLink>
                   </li>
                 ))}
-                <li className={user ? "w-full" : "hidden"}>
+                <li className={role ? "w-full" : "hidden"}>
                   <NavLink
                     to="/profile"
                     className={({ isActive }) =>
@@ -309,7 +303,7 @@ const Navbar = () => {
                 </li>
                 <li
                   className={
-                    !user ? "w-full border-t border-t-gray-100" : "hidden"
+                    !role ? "w-full border-t border-t-gray-100" : "hidden"
                   }
                 >
                   <NavLink
@@ -323,7 +317,7 @@ const Navbar = () => {
                 <li
                   onClick={handleLogout}
                   className={
-                    user ? "w-full border-t border-t-gray-100" : "hidden"
+                    role ? "w-full border-t border-t-gray-100" : "hidden"
                   }
                 >
                   <p className="p-3 w-full flex items-center gap-2 font-semibold text-red">

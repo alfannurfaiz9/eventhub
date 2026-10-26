@@ -49,11 +49,11 @@ const Movies = () => {
       )[0];
 
       const categoryFilter = category?.length
-        ? comms.categories.includes(catId)
+        ? comms?.categories?.includes(catId)
         : event;
 
       const locationFilter = location.length
-        ? event.location.toLowerCase() === location
+        ? event?.location?.toLowerCase() === location
         : event;
 
       return searchFilter && categoryFilter && locationFilter;
