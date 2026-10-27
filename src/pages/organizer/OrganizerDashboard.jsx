@@ -5,12 +5,24 @@ import { TbStairsUp } from "react-icons/tb";
 import OrganizerChart from "../../components/organizer/OrganizerChart.jsx";
 import { RiSignalCellular3Line } from "react-icons/ri";
 import { Link } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EventCard from "../../components/organizer/EventCard.jsx";
 import UpcomingEvent from "../../components/organizer/UpcomingEvent.jsx";
+import { useEffect } from "react";
+import {
+  getOrganizerDashboard,
+  getOrganizerEvents,
+} from "../../redux/slices/userSlice.js";
 
 const OrganizerDashboard = () => {
-  const events = useSelector((state) => state.eventsState.events);
+  const dispatch = useDispatch();
+  const events = useSelector((state) => state.userState.event);
+  const dashboard = useSelector((state) => state.userState.dashboard);
+
+  useEffect(() => {
+    dispatch(getOrganizerDashboard());
+    dispatch(getOrganizerEvents());
+  }, [dispatch]);
 
   return (
     <section className="py-6 px-4 lg:px-24 bg-gray">
@@ -35,7 +47,9 @@ const OrganizerDashboard = () => {
               <p className="text-sm">TOTAL EVENTS</p>
               <CiCalendar />
             </div>
-            <p className="text-2xl text-black font-bold">{events?.length}</p>
+            <p className="text-2xl text-black font-bold">
+              {dashboard?.total_event}
+            </p>
             <p className="text-xs">All time</p>
           </div>
           <div className="grid gap-2 bg-white p-2 w-full rounded-lg border border-gray-300 text-dark-gray">
@@ -43,7 +57,9 @@ const OrganizerDashboard = () => {
               <p className="text-sm">TOTAL ATTENDEES</p>
               <RxPeople />
             </div>
-            <p className="text-2xl text-black font-bold">102</p>
+            <p className="text-2xl text-black font-bold">
+              {dashboard?.total_attendee}
+            </p>
             <p className="text-xs">Accross all events</p>
           </div>
           <div className="grid gap-2 bg-white p-2 w-full rounded-lg border border-gray-300 text-dark-gray">
@@ -51,7 +67,9 @@ const OrganizerDashboard = () => {
               <p className="text-sm">AVG FILL RATE</p>
               <TbStairsUp />
             </div>
-            <p className="text-2xl text-black font-bold">57%</p>
+            <p className="text-2xl text-black font-bold">
+              {dashboard?.avg_fill_rate}
+            </p>
             <p className="text-xs">Capacity utilization</p>
           </div>
           <div className="grid gap-2 bg-white p-2 w-full rounded-lg border border-gray-300 text-dark-gray">
@@ -65,10 +83,10 @@ const OrganizerDashboard = () => {
         </div>
         <div className="grid gap-4 h-fit">
           <p className="font-semibold">Your Event</p>
-          {events?.map((event) => (
+          {events?.map((event, idx) => (
             <EventCard
               id={event.id}
-              key={event.id}
+              key={idx}
               img={event.img}
               title={event.title}
               date={event.date}
@@ -105,9 +123,9 @@ const OrganizerDashboard = () => {
           </div>
           <div className="p-4 grid gap-4 bg-white rounded-lg h-fit border border-gray-300">
             <p className="font-semibold">Upcoming Events</p>
-            {events?.map((event) => (
+            {events?.map((event, idx) => (
               <UpcomingEvent
-                key={event.id}
+                key={idx}
                 title={event.title}
                 date={event.date}
                 attendees={event.attendees}

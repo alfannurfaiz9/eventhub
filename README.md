@@ -133,4 +133,4 @@ This project is licensed under the [MIT License](https://opensource.org/license/
 
 ## Related Project
 
-[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub_backend.git)
+[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub_backend.git)1

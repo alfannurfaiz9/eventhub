@@ -11,6 +11,7 @@ const initialState = {
   isFulfilled: false,
   isRejected: false,
   error: null,
+  dashboard: null,
 };
 
 export const getUserProfile = createAsyncThunk(
@@ -368,6 +369,66 @@ export const unsaveEvent = createAsyncThunk(
   },
 );
 
+export const getOrganizerDashboard = createAsyncThunk(
+  "get_organizer_dashboard",
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const token = getState().authState.user;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/organizer/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const getOrganizerEvents = createAsyncThunk(
+  "get_organizer_events",
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const token = getState().authState.user;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/organizer/dashboard/events`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (response.status === 401) {
+        dispatch(removeToken());
+      }
+
+      if (!response.ok) {
+        throw data;
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -577,6 +638,40 @@ const userSlice = createSlice({
         },
         fulfilled: (state, { payload }) => {
           toast.success(payload.Message);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(getOrganizerDashboard, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          state.dashboard = payload.Data;
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(getOrganizerEvents, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          state.event = payload.Data;
           state.isPending = false;
           state.isFulfilled = true;
         },
