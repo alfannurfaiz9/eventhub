@@ -12,7 +12,7 @@
 
 Eventhub is a comprehensive Event Management Web Application built to connect event organizers, communities, and attendees. The platform supports multiple user roles including Admin, Organizer, and General Users, enabling seamless event creation, community management, ticket booking, and role-based administration.
 
-The backend lives in a separate repository: [eventhub_backend](https://github.com/alfannurfaiz9/eventhub_backend).
+The backend lives in a separate repository: [eventhub_backend](https://github.com/alfannurfaiz9/eventhub-backend.git).
 
 ## Tech Stack
 
@@ -73,11 +73,11 @@ User -> React Router -> Page -> Components -> Redux Store -> Backend REST API
 
 - [Node.js](https://nodejs.org/) (v24 recommended) and npm
 - [Git](https://git-scm.com/)
-- The [backend](https://github.com/alfannurfaiz9/eventhub_backend.git) up and running
+- The [backend](https://github.com/alfannurfaiz9/eventhub-backend.git) up and running
 
 ### 1. Make sure to run the backend first
 
-[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub_backend.git)
+[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub-backend.git)
 
 ### 2. Clone the repository
 
@@ -133,4 +133,4 @@ This project is licensed under the [MIT License](https://opensource.org/license/
 
 ## Related Project
 
-[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub_backend.git)1
+[![backend](https://img.shields.io/badge/BACKEND-GO-00ADD8?logo=go&logoColor=WHITE)](https://github.com/alfannurfaiz9/eventhub_backend.git)
