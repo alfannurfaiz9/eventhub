@@ -125,7 +125,7 @@ Open the local URL displayed in the terminal to access the application.
 
 ## API Reference
 
-Protected routes require the header `Authorization: Bearer <token>`.
+Protected routes require the header `Authorization: Bearer <token>`
 
 ## License
 

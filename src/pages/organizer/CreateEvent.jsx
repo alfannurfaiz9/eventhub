@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate } from "react-router";
 import BasicCreateEvent from "../../components/organizer/BasicCreateEvent.jsx";
 import LocationCreateEvent from "../../components/organizer/LocationCreateEvent.jsx";
 import SpeakersCreateEvent from "../../components/organizer/SpeakersCreateEvent.jsx";
 import FinishCreateEvent from "../../components/organizer/FinishCreateEvent.jsx";
 
 const CreateEvent = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);

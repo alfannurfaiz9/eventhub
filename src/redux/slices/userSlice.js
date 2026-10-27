@@ -429,6 +429,36 @@ export const getOrganizerEvents = createAsyncThunk(
   },
 );
 
+export const createEvent = createAsyncThunk(
+  "create_event",
+  async (payload, { getState, rejectWithValue }) => {
+    const token = getState().authState.user;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/events/create`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload.body),
+        },
+      );
+      const data = await response.json();
+
+      if (response.status === 401) {
+        throw { data, setErr: payload.setErr };
+      }
+      if (!response.ok) {
+        throw { data, setErr: payload.setErr };
+      }
+
+      return { data, next: payload.next };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -677,6 +707,23 @@ const userSlice = createSlice({
         },
         rejected: (state, { payload }) => {
           state.error = payload.Message;
+          state.isPending = false;
+          state.isRejected = true;
+        },
+      })
+      .addAsyncThunk(getOrganizerEvents, {
+        pending: (state) => {
+          state.isPending = true;
+          state.isFulfilled = false;
+          state.isRejected = false;
+        },
+        fulfilled: (state, { payload }) => {
+          console.log(payload);
+          state.isPending = false;
+          state.isFulfilled = true;
+        },
+        rejected: (state, { payload }) => {
+          console.log(payload);
           state.isPending = false;
           state.isRejected = true;
         },
